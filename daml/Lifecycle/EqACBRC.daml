@@ -1,0 +1,68 @@
+daml 1.2
+module Lifecycle.EqACBRC where
+
+import Lifecycle.Agreement
+import RefData.EqACBRC
+import Types
+import Utils
+
+template InstrumentLifecycle
+  with
+    instrumentHost  : Party
+    positionHosts   : [Party]
+  where
+    signatory instrumentHost
+    key instrumentHost : Party
+    maintainer key
+
+    controller instrumentHost can
+      nonconsuming InstrumentLifecycle_StockSplit: ()
+        with
+          instrumentId  : Id
+          ratio         : Decimal
+        do
+          -- Update Instrument
+          (_, acbrc) <- fetchAndArchiveByKey @EqACBRC instrumentId
+          let instrumentIdNew = instrumentId with version = instrumentId.version + 1
+          create acbrc with
+            instrumentId = instrumentIdNew
+            initialFixing = acbrc.initialFixing / ratio
+            
+          -- Create Position Lifecycle Rules
+          let outcome = [(instrumentIdNew, 1.0)]
+          mapA (\posHost -> optExerciseByKey @LifecycleAgreement (instrumentHost, posHost) LifecyclePosition_Create with ..) positionHosts
+
+          return ()
+
+      nonconsuming InstrumentLifecycle_ObserveNextFixing: ()
+        with
+          instrumentId  : Id
+          fixing        : Decimal
+        do
+          -- Update Instrument
+          (_, acbrc) <- fetchAndArchiveByKey @EqACBRC instrumentId
+          assertMsg "product already expired" $ acbrc.fixingIdx < length acbrc.fixingDates
+
+          let performance = fixing / acbrc.initialFixing
+          let barrierIsHit = acbrc.barrierIsHit || performance <= acbrc.barrier
+
+          let isRedemption = acbrc.fixingIdx == length acbrc.fixingDates - 1
+          let redemption = if barrierIsHit then min performance 1.0 else 1.0
+          
+          let isEarlyRedemption = not isRedemption && performance > 1.0
+          let earlyRedemption = 1.0
+          
+          let instrumentIdNew = instrumentId with version = instrumentId.version + 1
+          create acbrc with
+            instrumentId = instrumentIdNew
+            barrierIsHit
+            fixingDates = if isEarlyRedemption then take (acbrc.fixingIdx + 1) acbrc.fixingDates else acbrc.fixingDates
+            fixingIdx = acbrc.fixingIdx + 1
+
+          -- Create Position Lifecycle Rules
+          let paymentAmount = (acbrc.coupon + (if isEarlyRedemption then earlyRedemption else 0.0) + (if isRedemption then redemption else 0.0)) * acbrc.notional
+
+          let outcome = [(instrumentIdNew, 1.0), (acbrc.ccy, paymentAmount)]
+          mapA (\posHost -> optExerciseByKey @LifecycleAgreement (instrumentHost, posHost) LifecyclePosition_Create with ..) positionHosts
+
+          return ()

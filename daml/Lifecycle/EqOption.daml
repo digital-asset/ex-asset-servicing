@@ -1,0 +1,37 @@
+daml 1.2
+module Lifecycle.EqOption where
+
+import Lifecycle.Agreement
+import RefData.EqOption
+import Types
+import Utils
+
+template InstrumentLifecycle
+  with
+    instrumentHost  : Party
+    positionHosts   : [Party]
+  where
+    signatory instrumentHost
+    key instrumentHost : Party
+    maintainer key
+
+    controller instrumentHost can
+      nonconsuming InstrumentLifecycle_StockSplit: ()
+        with
+          instrumentId  : Id
+          ratio         : Decimal
+        do
+          -- Update Instrument
+          (_, eqOption) <- fetchAndArchiveByKey @EqOption instrumentId
+          let instrumentIdNew = instrumentId with version = instrumentId.version + 1       
+          create eqOption with
+            instrumentId = instrumentIdNew
+            underlying = eqOption.underlying with version = eqOption.underlying.version + 1
+            strike = eqOption.strike / ratio
+            contractSize = eqOption.strike * ratio
+
+          -- Create Position Lifecycle Rules
+          let outcome = [(instrumentIdNew, 1.0)]
+          mapA (\posHost -> optExerciseByKey @LifecycleAgreement (instrumentHost, posHost) LifecyclePosition_Create with ..) positionHosts
+
+          return ()

@@ -1,0 +1,23 @@
+{-# LANGUAGE AllowAmbiguousTypes #-}
+
+daml 1.2
+module Utils where
+
+fetchAndArchive : Template t => ContractId t -> Update t
+fetchAndArchive cid = do
+  c <- fetch cid
+  archive cid
+  return c
+
+fetchAndArchiveByKey : TemplateKey t k => k -> Update (ContractId t, t)
+fetchAndArchiveByKey key = do
+  (cid, c) <- fetchByKey key
+  archive cid
+  return (cid, c)
+
+optExerciseByKey : forall t k c r. (TemplateKey t k, Choice t c r) => k -> c -> Update (Optional r)
+optExerciseByKey k c = do
+  optCid <- lookupByKey @t k
+  case optCid of
+    Some cid -> Some <$> exercise cid c
+    None -> return None

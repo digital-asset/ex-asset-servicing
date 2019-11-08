@@ -1,0 +1,45 @@
+daml 1.2
+module TradeStore.Interface where
+
+import TradeStore.Position
+import TradeStore.Transaction
+import Types
+import Utils
+
+template Interface
+  with
+    host    : Party
+    nextId  : Int
+  where
+    signatory host
+    key host : Party
+    maintainer key
+
+    controller host can
+      Book: ()
+        with
+          positionId  : PositionId
+          quantity    : Decimal
+        do
+          -- Create Transaction
+          let transactionId = Id with label = show nextId, host, version = 0
+          create Transaction with ..
+
+          -- Create or Update Position
+          optPositionCid <- lookupByKey @Position positionId
+          case optPositionCid of
+            Some positionCid -> do
+              position <- fetchAndArchive positionCid
+              let positionNew = position.quantity + quantity
+              if abs positionNew > 0.0
+                then do
+                  create position with quantity = positionNew
+                  return ()
+                else return ()
+            None -> do
+              create Position with ..
+              return ()
+
+          -- Update Interface
+          create this with nextId = this.nextId + 1
+          return ()

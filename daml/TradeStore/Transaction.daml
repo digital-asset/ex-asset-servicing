@@ -1,0 +1,14 @@
+daml 1.2
+module TradeStore.Transaction where
+
+import Types
+
+template Transaction
+  with
+    transactionId : Id
+    positionId    : PositionId
+    quantity      : Decimal
+  where
+    signatory transactionId.host
+    key transactionId : Id
+    maintainer key.host

@@ -1,0 +1,16 @@
+daml 1.2
+module RefData.EqStock where
+
+import Types
+
+template EqStock
+  with
+    instrumentId : Id
+    ccy          : Id
+    obs          : [Party]
+  where
+    signatory instrumentId.host
+    observer obs
+    
+    key instrumentId : Id
+    maintainer key.host

@@ -1,0 +1,38 @@
+daml 1.2
+module Lifecycle.Agreement where
+
+import Lifecycle.Position
+import Types
+
+template LifecycleAgreement
+  with
+    instrumentHost  : Party
+    positionHost    : Party
+  where
+    signatory instrumentHost, positionHost
+    key (instrumentHost, positionHost) : (Party, Party)
+    maintainer key._1
+
+    controller instrumentHost can
+      nonconsuming LifecyclePosition_Create : ContractId LifecyclePosition
+        with
+          instrumentId  : Id
+          outcome       : [(Id, Decimal)]
+        do
+          create LifecyclePosition with ..
+
+template LifecycleAgreementRequest
+  with
+    instrumentHost  : Party
+    positionHost    : Party
+  where
+    signatory positionHost
+
+    controller instrumentHost can
+      LifecycleAgreement_Accept : ContractId LifecycleAgreement
+        do
+          create LifecycleAgreement with ..
+
+      Decline : ()
+        do
+          return ()

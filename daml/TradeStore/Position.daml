@@ -1,0 +1,13 @@
+daml 1.2
+module TradeStore.Position where
+
+import Types
+
+template Position
+  with
+    positionId  : PositionId
+    quantity    : Decimal
+  where
+    signatory positionId.host
+    key positionId : PositionId
+    maintainer key.host

@@ -1,0 +1,19 @@
+daml 1.2
+module Types where
+
+data Id = Id
+  with
+    host    : Party
+    label   : Text
+    version : Int
+  deriving (Eq, Show)
+
+data PositionId = PositionId
+  with
+    host          : Party
+    instrumentId  : Id
+    book          : Text
+    counterParty  : Text
+  deriving (Eq, Show)
+
+

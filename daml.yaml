@@ -1,0 +1,12 @@
+sdk-version: 0.13.32
+name: asset-servicing
+source: daml
+scenario: Test:example
+parties:
+  - PrivateBank
+  - CSD
+  - InvestmentBank
+version: 0.0.1
+dependencies:
+  - daml-prim
+  - daml-stdlib

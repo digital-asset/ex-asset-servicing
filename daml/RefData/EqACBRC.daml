@@ -1,0 +1,24 @@
+daml 1.2
+module RefData.EqACBRC where
+
+import Types
+
+template EqACBRC
+  with
+    instrumentId    : Id
+    ccy             : Id
+    notional        : Decimal
+    barrier         : Decimal
+    barrierIsHit    : Bool
+    fixingDates     : [Date]
+    fixingIdx       : Int
+    coupon          : Decimal
+    underlying      : Id
+    initialFixing   : Decimal
+    obs             : [Party]
+  where
+    signatory instrumentId.host
+    observer obs
+    
+    key instrumentId : Id
+    maintainer key.host
