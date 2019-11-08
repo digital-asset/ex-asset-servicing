@@ -1,4 +1,4 @@
-sdk-version: 0.13.32
+sdk-version: 0.13.34
 name: asset-servicing
 source: daml
 scenario: Test:example
