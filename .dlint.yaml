@@ -2,7 +2,7 @@
 # examples of how to enable or disable a rule.
 
 # This rule is enabled by default. Uncomment to disable.
-#- ignore: {name: Use fewer imports}
+- ignore: {name: Reduce duplication}
 
 # This rule is disabled by default. Uncomment to enable.
 #- suggest: {name: Use module export list}

@@ -11,20 +11,30 @@ This reference application demonstrates asset servicing workflows for stocks, li
 
 ## Quick Start
 
-Install the UI Javascript dependencies:
-```sh
-(cd ui; yarn install)
-```
+Build the DAML project:
 
-Start the sandbox and json api via:
-```
-daml start --sandbox-option '--ledgerid=testLedger' --start-navigator "no"
-```
+    daml build
 
-Start up the UI:
-```sh
-(cd ui; yarn start)
-```
+Start the sandbox ledger:
+
+    daml start --start-navigator 'no'
+
+Generate the Typescript code:
+
+    daml codegen ts -o daml2ts -p package.json .daml/dist/*.dar
+
+Install the Javascript dependencies:
+
+    yarn install
+
+Build the UI code:
+
+    yarn workspaces run build
+
+Start up the development server:
+
+    cd ui-ts && yarn start
+
 
 This opens a browser page pointing to `http://localhost:3000/#/login`.
 
