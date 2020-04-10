@@ -1,0 +1,258 @@
+daml 1.2
+
+module Init where
+
+import Daml.Script
+import DA.Date as D
+import DA.Next.Set
+import DA.Foldable
+import DA.Finance.Asset
+import DA.Finance.Asset.Lifecycle
+import DA.Finance.Instrument.Currency
+import DA.Finance.Instrument.Equity.Stock
+import DA.Finance.Instrument.Equity.Stock.Lifecycle
+import DA.Finance.Instrument.Equity.Option
+import DA.Finance.Instrument.Equity.Option.Lifecycle
+import DA.Finance.Instrument.Equity.ACBRC
+import DA.Finance.Instrument.Equity.ACBRC.Lifecycle
+import DA.Finance.Instrument.Equity.CashDividend
+import DA.Finance.Instrument.Equity.StockSplit
+import DA.Finance.Instrument.FixedIncome.Bond
+import DA.Finance.Instrument.FixedIncome.Bond.Lifecycle
+import DA.Finance.RefData.Fixing
+import DA.Finance.Types
+
+getAsset : Party -> Text -> Decimal -> (Id, Asset)
+getAsset sig label quantity =
+  let id = Id with signatories = fromList [sig]; label; version = 0
+  in (id, Asset with ..)
+
+getAccount : Party -> Text -> Party -> Party -> Account
+getAccount sig label provider owner =
+  let id = Id with signatories = fromList [sig]; label; version = 0
+  in Account with ..
+
+data Parties = Parties
+  with
+    fed : Party
+    ecb : Party
+    snb : Party
+    eurex : Party
+    six : Party
+    jpm : Party
+  deriving (Eq, Show)
+
+data Assets = Assets
+  with
+    usd : Asset
+    eur : Asset
+    chf : Asset
+    csgn : Asset
+    ubsg : Asset
+    csgnCall : Asset
+    ubsgPut : Asset
+  deriving (Eq, Show)
+
+data Accounts = Accounts
+  with
+    jpmSnbAccount : Account
+    jpmSixAccount : Account
+    jpmEurexAccount : Account
+  deriving (Eq, Show)
+
+init : Script ()
+init = do
+  -- Parties
+  snb <- allocatePartyWithHint "SNB" $ PartyIdHint with partyIdHint = "SNB"
+  six <- allocatePartyWithHint "SIX" $ PartyIdHint with partyIdHint = "SIX"
+  jpm <- allocatePartyWithHint "JPM" $ PartyIdHint with partyIdHint = "JPM"
+
+  let observers = fromList [ jpm ]
+
+  let
+    -- Assets
+    (usdId, usd)            = getAsset snb "USD" 1_000_000.0
+    (eurId, eur)            = getAsset snb "EUR" 5_000_000.0
+    (chfId, chf)            = getAsset snb "CHF" 10_000_000.0
+    (csgnId, csgn)          = getAsset six "CSGN.S" 25_000.0
+    (ubsgId, ubsg)          = getAsset six "UBSG.S" 15_000.0
+    (csgnCallId, csgnCall)  = getAsset six "000-CSGN-CALL-Sep19" 10_000.0
+    (ubsgPutId, ubsgPut)    = getAsset six "000-UBSG-PUT-Jul19" 1_000.0
+    (acbrcId, acbrc)        = getAsset six "CSGN-ACBRC-Dec19" 1_000_000.0
+    (bondId, bond)          = getAsset six "CSGN-3Y-Dec21" 10_000_000.0
+
+    -- Accounts
+    jpmSnbAccount   = getAccount snb "JPM@SNB" snb jpm
+    jpmSixAccount   = getAccount six "JPM@SIX" six jpm
+    jpmSnbLifecycleRule = AssetLifecycleRule with account = jpmSnbAccount
+    jpmSixLifecycleRule = AssetLifecycleRule with account = jpmSixAccount
+
+  submit snb do createCmd jpmSnbLifecycleRule
+  submit six do createCmd jpmSixLifecycleRule
+
+  -- Asset categorization
+  let
+    usdCat      = AssetCategorization with id = usdId; assetType = "Currency"; assetClass = "FX"; ..
+    eurCat      = AssetCategorization with id = eurId; assetType = "Currency"; assetClass = "FX"; ..
+    chfCat      = AssetCategorization with id = chfId; assetType = "Currency"; assetClass = "FX"; ..
+    csgnCat     = AssetCategorization with id = csgnId; assetType = "Stock"; assetClass = "Equity"; ..
+    ubsgCat     = AssetCategorization with id = ubsgId; assetType = "Stock"; assetClass = "Equity"; ..
+    csgnCallCat = AssetCategorization with id = csgnCallId; assetType = "Option"; assetClass = "Equity"; ..
+    ubsgPutCat  = AssetCategorization with id = ubsgPutId; assetType = "Option"; assetClass = "Equity"; ..
+    acbrcCat    = AssetCategorization with id = acbrcId; assetType = "Exotic"; assetClass = "Equity"; ..
+    bondCat     = AssetCategorization with id = bondId; assetType = "Bond"; assetClass = "FixedIncome"; ..
+
+  submit snb do createCmd usdCat
+  submit snb do createCmd eurCat
+  submit snb do createCmd chfCat
+  submit six do createCmd csgnCat
+  submit six do createCmd ubsgCat
+  submit six do createCmd csgnCallCat
+  submit six do createCmd ubsgPutCat
+  submit six do createCmd acbrcCat
+  submit six do createCmd bondCat
+
+    -- Deposits
+  let
+    usdDeposit  = AssetDeposit with account = jpmSnbAccount; asset = usd; observers = empty
+    eurDeposit  = AssetDeposit with account = jpmSnbAccount; asset = eur; observers = empty
+    chfDeposit  = AssetDeposit with account = jpmSnbAccount; asset = chf; observers = empty
+    csgnDeposit = AssetDeposit with account = jpmSixAccount; asset = csgn; observers = empty
+    ubsgDeposit = AssetDeposit with account = jpmSixAccount; asset = ubsg; observers = empty
+    csgnCallDeposit = AssetDeposit with account = jpmSixAccount; asset = csgnCall; observers = empty
+    ubsgPutDeposit  = AssetDeposit with account = jpmSixAccount; asset = ubsgPut; observers = empty
+    acbrcDeposit    = AssetDeposit with account = jpmSixAccount; asset = acbrc; observers = empty
+    bondDeposit     = AssetDeposit with account = jpmSixAccount; asset = bond; observers = empty
+
+  usdDepositCid <- submit snb do createCmd usdDeposit
+  eurDepositCid <- submit snb do createCmd eurDeposit
+  chfDepositCid <- submit snb do createCmd chfDeposit
+  csgnDepositCid <- submit six do createCmd csgnDeposit
+  ubsgDepositCid <- submit six do createCmd ubsgDeposit
+  csgnCallDepositCid  <- submit six do createCmd csgnCallDeposit
+  ubsgPutDepositCid   <- submit six do createCmd ubsgPutDeposit
+  acbrcDepositCid     <- submit six do createCmd acbrcDeposit
+  bondDepositCid      <- submit six do createCmd bondDeposit
+
+  -- Instruments
+  let
+    usdCcy = Currency with id = usdId; isoCode = "USD"; ..
+    eurCcy = Currency with id = eurId; isoCode = "EUR"; ..
+    chfCcy = Currency with id = chfId; isoCode = "CHF"; ..
+    csgnEquity = EquityStock with id = csgnId; ccy = chfId; ..
+    ubsgEquity = EquityStock with id = ubsgId; ccy = chfId; ..
+    csgnCallOption = EquityOption
+      with
+        id = csgnCallId
+        underlyingId = csgnId
+        optionType = CALL
+        exerciseType = EUROPEAN
+        strike = 7.0
+        contractSize = 100.0
+        maturity = D.date 2019 Sep 21
+        settlementType = CASH
+        ..
+    callOptions =
+      [ csgnCallOption
+      , csgnCallOption with id = (csgnCallId with label = "001-CSGN-CALL-Oct19"); maturity = D.date 2019 Oct 21; strike = 8.0
+      , csgnCallOption with id = (csgnCallId with label = "002-CSGN-CALL-Nov19"); maturity = D.date 2019 Nov 21; strike = 8.0
+      , csgnCallOption with id = (csgnCallId with label = "003-CSGN-CALL-Dev19"); maturity = D.date 2019 Dec 21; strike = 8.0
+      , csgnCallOption with id = (csgnCallId with label = "004-CSGN-CALL-Oct19"); maturity = D.date 2019 Oct 21; strike = 8.5
+      , csgnCallOption with id = (csgnCallId with label = "005-CSGN-CALL-Nov19"); maturity = D.date 2019 Nov 21; strike = 8.5
+      , csgnCallOption with id = (csgnCallId with label = "006-CSGN-CALL-Dec19"); maturity = D.date 2019 Dec 21; strike = 8.5 ]
+    ubsgPutOption = EquityOption
+      with
+        id = ubsgPutId
+        underlyingId = ubsgId
+        optionType = PUT
+        exerciseType = EUROPEAN
+        strike = 9.0
+        contractSize = 100.0
+        maturity = D.date 2019 Jul 20
+        settlementType = CASH
+        ..
+    putOptions =
+      [ ubsgPutOption
+      , ubsgPutOption with id = (csgnCallId with label = "001-UBSG-PUT-Aug19"); maturity = D.date 2019 Aug 21; strike = 9.5
+      , ubsgPutOption with id = (csgnCallId with label = "002-UBSG-PUT-Sep19"); maturity = D.date 2019 Sep 21; strike = 9.5
+      , ubsgPutOption with id = (csgnCallId with label = "003-UBSG-PUT-Oct19"); maturity = D.date 2019 Oct 21; strike = 9.5
+      , ubsgPutOption with id = (csgnCallId with label = "004-UBSG-PUT-Aug19"); maturity = D.date 2019 Aug 21; strike = 10.0
+      , ubsgPutOption with id = (csgnCallId with label = "005-UBSG-PUT-Sep19"); maturity = D.date 2019 Sep 21; strike = 10.0
+      , ubsgPutOption with id = (csgnCallId with label = "006-UBSG-PUT-Oct19"); maturity = D.date 2019 Oct 21; strike = 10.0 ]
+    acbrcInstrument = ACBRC
+      with
+        id = acbrcId
+        underlyingId = csgnId
+        currencyId = chfId
+        knockInBarrier = 0.8
+        knockInBarrierHit = False
+        callBarrier = 1.2
+        callBarrierHit = False
+        fixingDates =
+          [ D.date 2019 Jun 15
+          , D.date 2019 Sep 15
+          , D.date 2019 Dec 15 ]
+        fixingIdx = 1
+        coupon = 0.05
+        initialFixing = 8.0
+        observers
+    bondInstrument = Bond
+      with
+        id = bondId
+        currencyId = csgnId
+        couponDates =
+          [ D.date 2018 Jan 12
+          , D.date 2019 Jan 12
+          , D.date 2020 Jan 12 ]
+        couponIdx = 0
+        coupon = 0.025
+        observers
+  submit snb do createCmd usdCcy
+  submit snb do createCmd eurCcy
+  submit snb do createCmd chfCcy
+  submit six do createCmd csgnEquity
+  submit six do createCmd ubsgEquity
+  mapA_ (\o -> submit six do createCmd o) callOptions
+  mapA_ (\o -> submit six do createCmd o) putOptions
+  submit six do createCmd acbrcInstrument
+  submit six do createCmd bondInstrument
+
+  -- Events
+  let
+    csgnDiv = EquityCashDividend
+      with 
+        id = csgnId
+        exDate = D.date 2019 Apr 20
+        settlementDate = D.date 2019 Apr 22
+        perShare = 0.7
+        ..
+    ubsgSplit = EquityStockSplit
+      with
+        id = ubsgId
+        exDate = D.date 2019 May 15
+        rFactor = 0.5
+        ..
+    fixings =
+      [ Fixing with id = csgnId, currency = chfId, date = D.date 2019 Jun 15, value = 7.0, observers
+      , Fixing with id = csgnId, currency = chfId, date = D.date 2019 Sep 15, value = 6.0, observers ]
+
+  submit six do createCmd csgnDiv
+  submit six do createCmd ubsgSplit
+  mapA_ (\f -> submit six do createCmd f) fixings
+
+  -- Lifecycle rules
+  let
+    splitRuleStock  = EquityStockSplitRule        with signatories = fromList [ six ]
+    splitRuleOption = EquityOptionStockSplitRule  with signatories = fromList [ six ]
+    splitRuleAcbrc  = ACBRCStockSplitRule         with signatories = fromList [ six ]
+    divRuleStock    = EquityStockCashDividendRule with signatories = fromList [ six ]
+    fixingRuleAcbrc = ACBRCFixingRule             with signatories = fromList [ six ]
+    couponRuleBond  = BondCouponRule              with signatories = fromList [ six ]
+  submit six do createCmd splitRuleStock
+  submit six do createCmd splitRuleOption
+  submit six do createCmd splitRuleAcbrc
+  submit six do createCmd divRuleStock
+  submit six do createCmd fixingRuleAcbrc
+  submit six do createCmd couponRuleBond
+
+  pure ()

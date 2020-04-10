@@ -28,7 +28,7 @@ template InstrumentLifecycle
             instrumentId = instrumentIdNew
             underlying = eqOption.underlying with version = eqOption.underlying.version + 1
             strike = eqOption.strike / ratio
-            contractSize = eqOption.strike * ratio
+            contractSize = eqOption.contractSize * ratio
 
           -- Create Position Lifecycle Rules
           let outcome = [(instrumentIdNew, 1.0)]

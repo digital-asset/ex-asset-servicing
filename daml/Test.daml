@@ -21,9 +21,9 @@ data PartySetup = PartySetup
 
 partySetup : Scenario PartySetup
 partySetup = do
-  pb <- getParty "PrivateBank"
+  pb <- getParty "PB"
   csd <- getParty "CSD"
-  ib <- getParty "InvestmentBank"
+  ib <- getParty "IB"
   return PartySetup with ..
 
 data InstrumentSetup = InstrumentSetup
@@ -92,17 +92,17 @@ example = do
   lifecycleSetup
   
   -- Some initial bookings
-  let csgnPosRT = PositionId with host = pb, instrumentId = csgn, book = "001", counterParty = "CSi"
+  let csgnPosRT = PositionId with host = pb, instrumentId = csgn, book = "001", counterParty = "IB"
   let csgnPosC = PositionId with host = pb, instrumentId = csgn, book = "001", counterParty = "Bob"
 
-  let ubsgPosRT = PositionId with host = pb, instrumentId = csgn, book = "001", counterParty = "CSi"
+  let ubsgPosRT = PositionId with host = pb, instrumentId = csgn, book = "001", counterParty = "IB"
   let ubsgPosC = PositionId with host = pb, instrumentId = csgn, book = "001", counterParty = "Alice"
 
   let csgnCallPosC = PositionId with host = pb, instrumentId = csgnCall, book = "123", counterParty = "Alice"
-  let csgnCallPosRT = PositionId with host = pb, instrumentId = csgnCall, book = "123", counterParty = "CSi"
+  let csgnCallPosRT = PositionId with host = pb, instrumentId = csgnCall, book = "123", counterParty = "IB"
 
   let acbrcPosC = PositionId with host = pb, instrumentId = acbrc, book = "123", counterParty = "Bob"
-  let acbrcPosRT = PositionId with host = pb, instrumentId = acbrc, book = "123", counterParty = "CSi"
+  let acbrcPosRT = PositionId with host = pb, instrumentId = acbrc, book = "123", counterParty = "IB"
 
   submit pb do
     exerciseByKey @TradeStore.Interface pb Book with positionId = csgnPosC, quantity = 10000.0
