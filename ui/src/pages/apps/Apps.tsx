@@ -6,11 +6,12 @@ import caImage from "./entrepreneur-1340649_640.jpg";
 import lcImage from "./stock-1863880_640.jpg";
 import pfImage from "./business-1730089_640.jpg";
 import { useUserState } from "../../context/UserContext";
+import { getRole } from "../../config";
 
 export default function Apps({ history } : RouteComponentProps) {
   const classes = useStyles();
   const user = useUserState();
-  const isCsd = user.party === "SIX";
+  const isCsd = getRole(user.party) === "CSD";
 
   return (
     <Grid container direction="column" justify="center" alignItems="center" spacing={4}>
@@ -69,7 +70,7 @@ export default function Apps({ history } : RouteComponentProps) {
                   />
                   <CardContent>
                     <Typography gutterBottom variant="h5" component="h2">
-                      Instrument Lifecycling
+                      Position Management
                     </Typography>
                     <Typography variant="body2" color="textSecondary" component="p">
                       Manage positions and lifecycle events

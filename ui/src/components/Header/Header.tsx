@@ -6,6 +6,7 @@ import classNames from "classnames";
 import useStyles from "./styles";
 import { useLayoutState, useLayoutDispatch, toggleSidebar } from "../../context/LayoutContext";
 import { useUserDispatch, signOut, useUserState } from "../../context/UserContext";
+import { getRole } from "../../config";
 
 function Header({ history } : RouteComponentProps) {
   const classes = useStyles();
@@ -13,8 +14,8 @@ function Header({ history } : RouteComponentProps) {
   // global
   const layoutState = useLayoutState();
   const layoutDispatch = useLayoutDispatch();
-  const userState = useUserState();
-  const isCsd = userState.party === "SIX";
+  const user = useUserState();
+  const isCsd = getRole(user.party) === "CSD";
   const userDispatch = useUserDispatch();
 
   return (
@@ -49,7 +50,7 @@ function Header({ history } : RouteComponentProps) {
           Asset Servicing ({isCsd ? "CSD" : "BANK"})
         </Typography>
         <div className={classes.grow} />
-        <Typography variant="h6">User: {userState.party}</Typography>
+        <Typography variant="h6">User: {user.party}</Typography>
         <IconButton
           color="inherit"
           aria-haspopup="true"

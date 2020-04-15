@@ -86,7 +86,7 @@ function loginUser(
     dispatch({ type: "LOGIN_SUCCESS", token, party });
     setError(false);
     setIsLoading(false);
-    history.push("/app");
+    history.push("/apps");
   } else {
     dispatch({ type: "LOGIN_FAILURE" });
     setError(true);

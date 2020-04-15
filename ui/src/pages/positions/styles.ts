@@ -7,6 +7,16 @@ export default makeStyles((theme : any) => createStyles({
     paddingBottom: 6,
     fontSize: "0.75rem"
   },
+  tableCellButton: {
+    verticalAlign: "center",
+    paddingTop: 0,
+    paddingBottom: 0,
+    fontSize: "0.75rem"
+  },
+  lcButton: {
+    paddingTop: 2,
+    paddingBottom: 2,
+  },
   tableRow: {
     height: "auto"
   },

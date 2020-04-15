@@ -40,14 +40,15 @@ template BondCouponRule
                 [ Asset with id = bond.currencyId, quantity = bond.coupon
                 , Asset with id = bond.currencyId, quantity = redemptionAmount ]
               | otherwise =
-                [ Asset with id = bond.currencyId, quantity = bond.coupon
-                , Asset with id = newBondId, quantity = 1.0  ]
+                [ Asset with id = newBondId, quantity = 1.0
+                , Asset with id = bond.currencyId, quantity = bond.coupon ]
           
           newBondCid <- create bond with
             id = newBondId
             couponIdx = bond.couponIdx + 1
           lifecycleEffectsCid <- create LifecycleEffects with
             id = bond.id
+            label = if isRedemption then "Redemption" else "Coupon Payment"
             consuming = []
             effects
             observers = bond.observers

@@ -30,9 +30,9 @@ const StockSplits : React.FC<RouteComponentProps> = ({ history } : RouteComponen
             <TableCell key={0} className={classes.tableCell}>{a.payload.id.label}</TableCell>
             <TableCell key={1} className={classes.tableCell}>{a.payload.underlyingId.label}</TableCell>
             <TableCell key={2} className={classes.tableCell}>{a.payload.initialFixing}</TableCell>
-            <TableCell key={3} className={classes.tableCell}>{a.payload.knockInBarrier}</TableCell>
-            <TableCell key={4} className={classes.tableCell}>{a.payload.callBarrier}</TableCell>
-            <TableCell key={5} className={classes.tableCell}>{a.payload.coupon}</TableCell>
+            <TableCell key={3} className={classes.tableCell}>{+a.payload.knockInBarrier * 100}%</TableCell>
+            <TableCell key={4} className={classes.tableCell}>{+a.payload.callBarrier * 100}%</TableCell>
+            <TableCell key={5} className={classes.tableCell}>{+a.payload.coupon * 100}%</TableCell>
             <TableCell key={6} className={classes.tableCell}>
               <IconButton color="primary" size="small" component="span" onClick={() => history.push("/apps/lifecycling/derivatives/" + a.contractId.substring(1))}>
                 <KeyboardArrowRight fontSize="small"/>

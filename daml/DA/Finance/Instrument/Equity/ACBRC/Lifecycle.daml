@@ -48,6 +48,7 @@ template ACBRCStockSplitRule
 
           lifecycleEffectsCid <- create LifecycleEffects with
                                     id = acbrc.id
+                                    label = "Stock Split on " <> stockSplit.id.label
                                     consuming = []
                                     effects = [ Asset with id = acbrcIdNew, quantity = 1.0 ]
                                     observers = acbrc.observers
@@ -103,6 +104,7 @@ template ACBRCFixingRule
             fixingIdx = acbrc.fixingIdx + 1
           lifecycleEffectsCid <- create LifecycleEffects with
             id = acbrc.id
+            label = "Fixing on " <> show fixing.date
             consuming = []
             effects
             observers = acbrc.observers

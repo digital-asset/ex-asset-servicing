@@ -25,11 +25,13 @@ const StockSplit : React.FC = () => {
   const lifecycleStock = useExerciseByKey(EquityStockSplitRule.EquityStockSplit_Lifecycle);
   const lifecycleOption = useExerciseByKey(EquityOptionStockSplitRule.EquityOptionStockSplit_Lifecycle);
   const lifecycleAcbrc = useExerciseByKey(ACBRCStockSplitRule.ACBRCStockSplit_Lifecycle);
-  const stocks = useStreamQuery(EquityStock, () => { return { id: { label: stockSplit?.payload.id.label } } }, [stockSplit]).contracts.slice().sort((a, b) => { return a.payload.id.label < b.payload.id.label ? -1 : 1; });;
-  const options = useStreamQuery(EquityOption, () => { return { underlyingId: { label: stockSplit?.payload.id.label } } }, [stockSplit]).contracts.slice().sort((a, b) => { return a.payload.id.label < b.payload.id.label ? -1 : 1; });;
-  const acbrcs = useStreamQuery(ACBRC, () => { return { underlyingId: { label: stockSplit?.payload.id.label } } }, [stockSplit]).contracts.slice().sort((a, b) => { return a.payload.id.label < b.payload.id.label ? -1 : 1; });;
+  const stocks = useStreamQuery(EquityStock, () => { return { id: { label: stockSplit?.payload.id.label } } }, [stockSplit]).contracts.slice().sort((a, b) => { return a.contractId < b.contractId ? -1 : 1; });;
+  const options = useStreamQuery(EquityOption, () => { return { underlyingId: { label: stockSplit?.payload.id.label } } }, [stockSplit]).contracts.slice().sort((a, b) => { return a.contractId < b.contractId ? -1 : 1; });;
+  const acbrcs = useStreamQuery(ACBRC, () => { return { underlyingId: { label: stockSplit?.payload.id.label } } }, [stockSplit]).contracts.slice().sort((a, b) => { return a.contractId < b.contractId ? -1 : 1; });;
 
   if (!stockSplit) return (null);
+
+  console.log(acbrcs);
 
   const lifecycleStocks = async () => {
     setIsLifecyclingStocks(true);
@@ -40,9 +42,12 @@ const StockSplit : React.FC = () => {
 
   const lifecycleOptions = async () => {
     setIsLifecyclingOptions(true);
-    const all = Promise.all(options.map(o =>
-      lifecycleOption(stockSplit.payload.id.signatories, { optionCid: o.contractId, stockSplitCid: stockSplit.contractId})));
-    await all;
+    for (var i = 0; i < options.length; i++) {
+      await lifecycleOption(stockSplit.payload.id.signatories, { optionCid: options[i].contractId, stockSplitCid: stockSplit.contractId});
+    }
+    // const all = Promise.all(options.map(o =>
+    //   lifecycleOption(stockSplit.payload.id.signatories, { optionCid: o.contractId, stockSplitCid: stockSplit.contractId})));
+    // await all;
     setIsLifecyclingOptions(false);
   }
 

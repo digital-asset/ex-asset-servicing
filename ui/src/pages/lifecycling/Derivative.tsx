@@ -7,6 +7,7 @@ import { useParams, RouteComponentProps } from "react-router-dom";
 import useStyles from "./styles";
 import { Fixing } from "@daml2ts/asset-servicing-0.0.1/lib/DA/Finance/RefData/Fixing";
 import { ContractId } from "@daml/types";
+import { KeyboardArrowRight } from "@material-ui/icons";
 
 const Derivative : React.FC<RouteComponentProps> = ({ history }) => {
   const classes = useStyles();
@@ -64,7 +65,7 @@ const Derivative : React.FC<RouteComponentProps> = ({ history }) => {
                   </TableRow>
                   <TableRow key={4} className={classes.tableRow}>
                     <TableCell key={0} className={classes.tableCell}>Knock-in Barrier</TableCell>
-                    <TableCell key={1} className={classes.tableCell}>{acbrc.payload.knockInBarrier}</TableCell>
+                    <TableCell key={1} className={classes.tableCell}>{+acbrc.payload.knockInBarrier * 100}%</TableCell>
                   </TableRow>
                   <TableRow key={5} className={classes.tableRow}>
                     <TableCell key={0} className={classes.tableCell}>Knock-in Barrier Hit?</TableCell>
@@ -72,7 +73,7 @@ const Derivative : React.FC<RouteComponentProps> = ({ history }) => {
                   </TableRow>
                   <TableRow key={6} className={classes.tableRow}>
                     <TableCell key={0} className={classes.tableCell}>Call Barrier</TableCell>
-                    <TableCell key={1} className={classes.tableCell}>{acbrc.payload.callBarrier}</TableCell>
+                    <TableCell key={1} className={classes.tableCell}>{+acbrc.payload.callBarrier * 100}%</TableCell>
                   </TableRow>
                   <TableRow key={7} className={classes.tableRow}>
                     <TableCell key={0} className={classes.tableCell}>Call Barrier Hit?</TableCell>
@@ -80,7 +81,7 @@ const Derivative : React.FC<RouteComponentProps> = ({ history }) => {
                   </TableRow>
                   <TableRow key={8} className={classes.tableRow}>
                     <TableCell key={0} className={classes.tableCell}>Coupon</TableCell>
-                    <TableCell key={1} className={classes.tableCell}>{acbrc.payload.coupon}</TableCell>
+                    <TableCell key={1} className={classes.tableCell}>{+acbrc.payload.coupon * 100}%</TableCell>
                   </TableRow>
                 </TableBody>
               </Table>
@@ -97,8 +98,9 @@ const Derivative : React.FC<RouteComponentProps> = ({ history }) => {
                 <TableBody>
                   {fixingValues.map((f, i) => (
                     <TableRow key={i} className={classes.tableRow}>
-                      <TableCell key={0} className={classes.tableCell}>{f.date}</TableCell>
-                      <TableCell key={1} className={classes.tableCell}>{f.value}</TableCell>
+                      <TableCell key={0} className={classes.tableCell} style={{ width: "10px" }}>{i === +acbrc.payload.fixingIdx ? (<KeyboardArrowRight />) : (null)}</TableCell>
+                      <TableCell key={1} className={classes.tableCell}>{f.date}</TableCell>
+                      {i <= +acbrc.payload.fixingIdx && <TableCell key={1} className={classes.tableCell}>{f.value}</TableCell>}
                       <TableCell key={2} className={classes.tableCell}>
                         {i === +acbrc.payload.fixingIdx && f.value && (
                           (isLifecyclingAcbrc ? (<CircularProgress size="10px"/>) : (<Button variant="contained" color="primary" size="small" className={classes.buttonLifecycle} onClick={() => applyFixing(f.contractId)}>Apply</Button>))

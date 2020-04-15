@@ -89,6 +89,7 @@ template EquityOptionExerciseRule
 
           lifecycleEffectsCid <- create LifecycleEffects with
                                   id
+                                  label = "Option Exercise"
                                   consuming = []
                                   effects = [Asset with id = entitlementId, quantity = 1.0]
                                   observers
@@ -139,9 +140,10 @@ template EquityOptionStockSplitRule
                         underlyingId = increaseVersion option.underlyingId
 
           lifecycleEffectsCid <- create LifecycleEffects with
-                                    id = option.id
-                                    consuming = []
-                                    effects = [Asset with id = optionIdNew, quantity = 1.0]
-                                    observers = option.observers
+            id = option.id
+            label = "Stock Split on " <> stockSplit.id.label
+            consuming = []
+            effects = [Asset with id = optionIdNew, quantity = 1.0]
+            observers = option.observers
 
           return (optionCid, lifecycleEffectsCid)

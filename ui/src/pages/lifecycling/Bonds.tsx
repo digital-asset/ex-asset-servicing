@@ -17,8 +17,8 @@ const Bonds : React.FC<RouteComponentProps> = ({ history } : RouteComponentProps
         <TableRow className={classes.tableRow}>
           <TableCell key={0} className={classes.tableCell}>Label</TableCell>
           <TableCell key={1} className={classes.tableCell}>Currency</TableCell>
-          <TableCell key={2} className={classes.tableCell}>Next Coupon Date</TableCell>
-          <TableCell key={3} className={classes.tableCell}>Coupon</TableCell>
+          <TableCell key={2} className={classes.tableCell}>Next Payment Date</TableCell>
+          <TableCell key={3} className={classes.tableCell}>Amount</TableCell>
           <TableCell key={4} className={classes.tableCell}></TableCell>
         </TableRow>
       </TableHead>
@@ -27,8 +27,8 @@ const Bonds : React.FC<RouteComponentProps> = ({ history } : RouteComponentProps
           <TableRow key={i} className={classes.tableRow}>
             <TableCell key={0} className={classes.tableCell}>{d.payload.id.label}</TableCell>
             <TableCell key={1} className={classes.tableCell}>{d.payload.currencyId.label}</TableCell>
-            <TableCell key={2} className={classes.tableCell}>{d.payload.couponDates[0]}</TableCell>
-            <TableCell key={3} className={classes.tableCell}>{d.payload.coupon}</TableCell>
+            <TableCell key={2} className={classes.tableCell}>{d.payload.couponDates[+d.payload.couponIdx]}</TableCell>
+            <TableCell key={3} className={classes.tableCell}>{(+d.payload.couponIdx === d.payload.couponDates.length - 1 ? (1 + (+d.payload.coupon)) * 100 : +d.payload.coupon * 100).toFixed(2)}%</TableCell>
             <TableCell key={4} className={classes.tableCell}>
             <IconButton color="primary" size="small" component="span" onClick={() => history.push("/apps/lifecycling/bonds/" + d.contractId.substring(1))}>
               <KeyboardArrowRight fontSize="small"/>

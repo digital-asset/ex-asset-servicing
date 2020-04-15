@@ -1,5 +1,3 @@
-version := 0.1
-
 build:
 	daml build
 	daml codegen ts -o daml2ts -p package.json .daml/dist/*.dar

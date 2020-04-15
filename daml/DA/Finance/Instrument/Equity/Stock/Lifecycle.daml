@@ -55,6 +55,7 @@ template EquityStockCashDividendRule
           lifecycleEffectsCid <-
             create LifecycleEffects with
               id = stock.id
+              label = "Cash Dividend on " <> stock.id.label
               consuming = []
               effects =
                 [ Asset with id = stockIdNew, quantity = 1.0
@@ -96,6 +97,7 @@ template EquityStockSplitRule
           lifecycleEffectsCid <-
             create LifecycleEffects with
               id = stock.id
+              label = "Stock Split on " <> stockSplit.id.label
               consuming = []
               effects = [ Asset with id = stockIdNew, quantity = 1.0 / stockSplit.rFactor ]
               observers = stockSplit.observers

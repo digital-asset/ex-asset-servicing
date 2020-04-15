@@ -5,6 +5,7 @@ import { BondCouponRule } from "@daml2ts/asset-servicing-0.0.1/lib/DA/Finance/In
 import { Typography, Grid, Table, TableBody, TableCell, TableRow, Button, CircularProgress } from "@material-ui/core";
 import { useParams, RouteComponentProps } from "react-router-dom";
 import useStyles from "./styles";
+import { KeyboardArrowRight } from "@material-ui/icons";
 
 const Bond : React.FC<RouteComponentProps> = ({ history }) => {
   const classes = useStyles();
@@ -50,7 +51,7 @@ const Bond : React.FC<RouteComponentProps> = ({ history }) => {
                   </TableRow>
                   <TableRow key={3} className={classes.tableRow}>
                     <TableCell key={0} className={classes.tableCell}>Coupon</TableCell>
-                    <TableCell key={1} className={classes.tableCell}>{bond.payload.coupon}</TableCell>
+                    <TableCell key={1} className={classes.tableCell}>{+bond.payload.coupon * 100}%</TableCell>
                   </TableRow>
                 </TableBody>
               </Table>
@@ -67,11 +68,12 @@ const Bond : React.FC<RouteComponentProps> = ({ history }) => {
                 <TableBody>
                   {bond.payload.couponDates.map((d, i) => (
                     <TableRow key={i} className={classes.tableRow}>
-                      <TableCell key={0} className={classes.tableCell}>{d}</TableCell>
-                      <TableCell key={1} className={classes.tableCell}>{bond.payload.coupon}</TableCell>
-                      <TableCell key={2} className={classes.tableCell}>
+                      <TableCell key={0} className={classes.tableCell} style={{ width: 1 }}>{i === +bond.payload.couponIdx ? (<KeyboardArrowRight />) : (null)}</TableCell>
+                      <TableCell key={1} className={classes.tableCell}>{d}</TableCell>
+                      <TableCell key={2} className={classes.tableCell}>{((i === bond.payload.couponDates.length - 1 ? (1 + (+bond.payload.coupon)) : +bond.payload.coupon) * 100).toFixed(2)}%</TableCell>
+                      <TableCell key={3} className={classes.tableCell}>
                         {i === +bond.payload.couponIdx && (
-                          (isLifecyclingBond ? (<CircularProgress size="10px"/>) : (<Button variant="contained" color="primary" size="small" className={classes.buttonLifecycle} onClick={payCoupon}>Pay</Button>))
+                          (isLifecyclingBond ? (<CircularProgress size="10px"/>) : (<Button variant="contained" color="primary" size="small" className={classes.buttonLifecycle} onClick={payCoupon}>{i === bond.payload.couponDates.length - 1 ? "Redeem" : "Pay"}</Button>))
                         )}
                       </TableCell>
                     </TableRow>

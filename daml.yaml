@@ -2,10 +2,8 @@ sdk-version: 0.13.55
 name: asset-servicing
 source: daml
 parties:
-  - SNB
-  - SIX
-  - EUREX
-  - JPM
+  - Alice
+  - Bob
 version: 0.0.1
 init-script: Init:init
 sandbox-options:
