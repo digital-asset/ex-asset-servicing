@@ -17,7 +17,7 @@ Build the DAML project:
 
 Start the sandbox ledger:
 
-    daml start --start-navigator 'no'
+    daml start --start-navigator='no'
 
 Generate the Typescript code:
 

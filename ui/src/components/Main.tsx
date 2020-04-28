@@ -7,12 +7,15 @@ import Apps from "../pages/apps/Apps";
 import CorporateActions from "../pages/apps/CorporateActions";
 import Lifecycling from "../pages/apps/Lifecycling";
 import PositionManagement from "../pages/apps/PositionManagement";
+import CsdInitialization from "../ledger/CsdInitialization";
+import DamlLedger from "@daml/react";
+import { httpBaseUrl, wsBaseUrl } from "../config";
 
 type MainProps = {
-  defaultPath : string
+  defaultPath: string
 }
 
-export default function Main({ defaultPath } : MainProps) {
+export default function Main({ defaultPath }: MainProps) {
   const userState = useUserState();
 
   return (
@@ -23,6 +26,7 @@ export default function Main({ defaultPath } : MainProps) {
         <PrivateRoute path="/apps/corporateactions" component={CorporateActions} />
         <PrivateRoute path="/apps/lifecycling" component={Lifecycling} />
         <PrivateRoute path="/apps/positions" component={PositionManagement} />
+        <PrivateRoute path="/apps/ledger/csd/initialize" component={CsdInitilize} />
         <PublicRoute path="/login" component={Login} />
         <Route component={ErrorComponent} />
       </Switch>
@@ -31,9 +35,17 @@ export default function Main({ defaultPath } : MainProps) {
 
   // #######################################################################
 
+  function CsdInitilize() {
+    return (
+      <DamlLedger party={userState.party} token={userState.token} httpBaseUrl={httpBaseUrl} wsBaseUrl={wsBaseUrl}>
+        <CsdInitialization />
+      </DamlLedger>
+    )
+  }
+
   function RootRoute() {
     var userDispatch = useUserDispatch();
-  
+
     useEffect(() => {
       const url = new URL(window.location.toString());
       const token = url.searchParams.get('token');
@@ -46,16 +58,16 @@ export default function Main({ defaultPath } : MainProps) {
       }
       localStorage.setItem("daml.party", party);
       localStorage.setItem("daml.token", token);
-  
+
       userDispatch({ type: "LOGIN_SUCCESS", token, party });
     })
-  
+
     return (
       <Redirect to={defaultPath} />
     )
   }
-  
-  function PrivateRoute({ component, ...rest } : any) {
+
+  function PrivateRoute({ component, ...rest }: any) {
     return (
       <Route
         {...rest}
@@ -63,21 +75,21 @@ export default function Main({ defaultPath } : MainProps) {
           userState.isAuthenticated ? (
             React.createElement(component, props)
           ) : (
-            <Redirect
-              to={{
-                pathname: "/login",
-                state: {
-                  from: props.location,
-                },
-              }}
-            />
-          )
+              <Redirect
+                to={{
+                  pathname: "/login",
+                  state: {
+                    from: props.location,
+                  },
+                }}
+              />
+            )
         }
       />
     );
   }
 
-  function PublicRoute({ component, ...rest } : any) {
+  function PublicRoute({ component, ...rest }: any) {
     return (
       <Route
         {...rest}
@@ -89,8 +101,8 @@ export default function Main({ defaultPath } : MainProps) {
               }}
             />
           ) : (
-            React.createElement(component, props)
-          )
+              React.createElement(component, props)
+            )
         }
       />
     );
