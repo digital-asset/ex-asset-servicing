@@ -1,0 +1,227 @@
+#!/bin/bash
+
+if [ -z ${DABL_ADMIN_TOKEN+x} ]; then
+  echo "Please provide your DABL admin token (will set DABL_ADMIN_TOKEN for current shell session):";
+  read -s TOKEN
+  echo $TOKEN
+  export DABL_ADMIN_TOKEN=$TOKEN
+fi
+
+AUTH_HEADER="Authorization: Bearer $DABL_ADMIN_TOKEN"
+
+# ===== WORKSPACE =====
+
+function workspace {
+  echo "Getting workspace"
+  curl -s -H "$AUTH_HEADER" https://api.projectdabl.com/api/site/workspace | jq
+}
+
+# ===== PROJECTS =====
+
+function getProjects {
+  echo "Getting projects"
+  curl -s -H "$AUTH_HEADER" https://api.projectdabl.com/api/site/projects | jq
+}
+
+function addProject {
+  if [ "$1" == "" ]; then
+    echo "Usage: dabl projects add <project-name>"
+    exit 1
+  fi
+
+  echo "Adding project $1"
+  REQUEST='{ "projectName": "'$1'" }'
+  echo $REQUEST
+  curl -s -H "$AUTH_HEADER" -d "$REQUEST" https://api.projectdabl.com/api/site/projects | jq
+}
+
+function deleteProject {
+  if [ "$1" == "" ]; then
+    echo "Usage: dabl projects del <project-id>"
+    exit 1
+  fi
+
+  echo "Deleting project $1"
+  curl -s -H "$AUTH_HEADER" -X DELETE https://api.projectdabl.com/api/site/projects/$1 | jq
+}
+
+function projects {
+  if [ "$1" == "" ]; then
+    echo "Please provide a sub-command: get|add|delete"
+    exit 1
+  fi
+
+  case $1 in
+    get)
+      getProjects
+      ;;
+    add)
+      addProject $2
+      ;;
+    del)
+      deleteProject $2
+      ;;
+    *)
+      echo "dabl projects <sub-command>"
+      echo "  sub-commands are:"
+      echo "    get - get projects"
+      echo "    add - add project"
+      echo "    del - delete project"
+      ;;
+  esac
+}
+
+# ===== LEDGERS =====
+function getLedgers {
+  echo "Getting ledgers"
+  curl -s -H "$AUTH_HEADER" https://api.projectdabl.com/api/site/ledgers | jq
+}
+
+function addLedger {
+  if [ "$1" == "" ] || [ "$2" == "" ]; then
+    echo "Usage: dabl ledgers add <project-id> <ledger-name>"
+    exit 1
+  fi
+
+  echo "Adding ledger $2 to project $1"
+  REQUEST='{ "projectId": "'$1'", "ledgerName": "'$2'" }'
+  echo $REQUEST
+  curl -s -H "$AUTH_HEADER" -d "$REQUEST" https://api.projectdabl.com/api/site/ledgers | jq
+}
+
+function deleteLedger {
+  if [ "$1" == "" ]; then
+    echo "Usage: dabl ledgers del <ledger-id>"
+    exit 1
+  fi
+
+  echo "Deleting ledger $1"
+  curl -s -H "$AUTH_HEADER" -X DELETE https://api.projectdabl.com/api/site/ledger/$1 | jq
+}
+
+function getAdminToken {
+  if [ "$1" == "" ]; then
+    echo "Usage: dabl ledgers token <ledger-id>"
+    exit 1
+  fi
+
+  #echo "Getting admin token for ledger $1"
+  curl -s -H "$AUTH_HEADER" -X POST https://api.projectdabl.com/api/ledger/$1/admin/user_grants | jq -r '.access_token'
+}
+
+function getParties {
+  if [ "$1" == "" ]; then
+    echo "Usage: dabl ledgers parties <ledger-id>"
+    exit 1
+  fi
+
+  echo "Getting parties for ledger $1"
+  HEADER="Authorization: Bearer $(getAdminToken $1)"
+  curl -s -H "$HEADER" https://api.projectdabl.com/api/ledger/$1/parties | jq
+}
+
+function getContracts {
+  if [ "$1" == "" ]; then
+    echo "Usage: dabl ledgers contracts <ledger-id>"
+    exit 1
+  fi
+
+  echo "Getting contracts for ledger $1"
+  # FIXME: needs party token, not ledger admin
+  HEADER="Authorization: Bearer $(getAdminToken $1)"
+  curl -s -H "$HEADER" https://api.projectdabl.com/data/$1/contracts | jq
+}
+
+function getModels {
+  if [ "$1" == "" ]; then
+    echo "Usage: dabl ledgers models <ledger-id>"
+    exit 1
+  fi
+
+  echo "Getting models for ledger $1"
+  HEADER="Authorization: Bearer $(getAdminToken $1)"
+  curl -s -H "$HEADER" https://api.projectdabl.com/api/ledger/$1/models | jq
+}
+
+function upload {
+  if [ "$1" == "" ]; then
+    echo "Usage: dabl ledgers upload <ledger-id> <filename>"
+    exit 1
+  fi
+
+  echo "Uploading $2 to ledger $1"
+
+  BINARY=$(cat $2 | base64)
+  FILE="data:application/octet-stream;base64,$BINARY"
+  FILENAME=$(basename $2)
+  REQUEST='{ "file": "'$FILE'", "fileName": "'$FILENAME'" }'
+  HEADER="Authorization: Bearer $(getAdminToken $1)"
+  TMP=$(mktemp)
+  exec 3>"$TMP"
+  echo $REQUEST > $TMP
+  curl -s -H "$HEADER" -d @$TMP https://api.projectdabl.com/api/ledger/$1/upload_dar | jq
+  rm "$TMP"
+}
+
+function ledgers {
+  if [ "$1" == "" ]; then
+    echo "Please provide a sub-command: get|add|del"
+    exit 1
+  fi
+
+  case $1 in
+    get)
+      getLedgers
+      ;;
+    add)
+      addLedger $2 $3
+      ;;
+    del)
+      deleteLedger $2
+      ;;
+    upload)
+      upload $2 $3
+      ;;
+    parties)
+      getParties $2
+      ;;
+    contracts)
+      getContracts $2
+      ;;
+    models)
+      getModels $2
+      ;;
+    token)
+      getAdminToken $2
+      ;;
+    *)
+      echo "dabl ledgers <sub-command>"
+      echo "  sub-commands are:"
+      echo "    get - get ledgers"
+      echo "    add - add ledger"
+      echo "    del - delete ledger"
+      ;;
+  esac
+}
+
+
+# ===== MAIN =====
+
+case $1 in
+
+  w|workspace)
+    workspace
+    ;;
+  p|projects)
+    projects $2 $3 $4
+    ;;
+  l|ledgers)
+    ledgers $2 $3 $4
+    ;;
+  *)
+    echo "dabl <command>"
+    echo "  commands are:"
+    echo "    w|workspace - get workspace"
+    echo "    p|projects - get projects"
+    ;;
+esac

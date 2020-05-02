@@ -5,7 +5,7 @@ parties:
   - Alice
   - Bob
 version: 0.0.1
-init-script: Init:init
+#init-script: Init:init
 sandbox-options:
   - --ledgerid=asset-servicing
   - -w

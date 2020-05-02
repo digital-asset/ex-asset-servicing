@@ -7,7 +7,6 @@ import Apps from "../pages/apps/Apps";
 import CorporateActions from "../pages/apps/CorporateActions";
 import Lifecycling from "../pages/apps/Lifecycling";
 import PositionManagement from "../pages/apps/PositionManagement";
-import CsdInitialization from "../ledger/CsdInitialization";
 import DamlLedger from "@daml/react";
 import { httpBaseUrl, wsBaseUrl } from "../config";
 
@@ -16,32 +15,25 @@ type MainProps = {
 }
 
 export default function Main({ defaultPath }: MainProps) {
-  const userState = useUserState();
-
+  const user = useUserState();
+  
   return (
-    <HashRouter>
-      <Switch>
-        <Route exact path="/" component={RootRoute} />
-        <PrivateRoute exact path="/apps" component={Apps} />
-        <PrivateRoute path="/apps/corporateactions" component={CorporateActions} />
-        <PrivateRoute path="/apps/lifecycling" component={Lifecycling} />
-        <PrivateRoute path="/apps/positions" component={PositionManagement} />
-        <PrivateRoute path="/apps/ledger/csd/initialize" component={CsdInitilize} />
-        <PublicRoute path="/login" component={Login} />
-        <Route component={ErrorComponent} />
-      </Switch>
-    </HashRouter>
+    <DamlLedger party={user.party} token={user.token} httpBaseUrl={httpBaseUrl} wsBaseUrl={wsBaseUrl}>
+      <HashRouter>
+        <Switch>
+          <Route exact path="/" component={RootRoute} />
+          <PrivateRoute exact path="/apps" component={Apps} />
+          <PrivateRoute path="/apps/corporateactions" component={CorporateActions} />
+          <PrivateRoute path="/apps/lifecycling" component={Lifecycling} />
+          <PrivateRoute path="/apps/positions" component={PositionManagement} />
+          <PublicRoute path="/login" component={Login} />
+          <Route component={ErrorComponent} />
+        </Switch>
+      </HashRouter>
+    </DamlLedger>
   );
 
   // #######################################################################
-
-  function CsdInitilize() {
-    return (
-      <DamlLedger party={userState.party} token={userState.token} httpBaseUrl={httpBaseUrl} wsBaseUrl={wsBaseUrl}>
-        <CsdInitialization />
-      </DamlLedger>
-    )
-  }
 
   function RootRoute() {
     var userDispatch = useUserDispatch();
@@ -72,7 +64,7 @@ export default function Main({ defaultPath }: MainProps) {
       <Route
         {...rest}
         render={props =>
-          userState.isAuthenticated ? (
+          user.isAuthenticated ? (
             React.createElement(component, props)
           ) : (
               <Redirect
@@ -94,7 +86,7 @@ export default function Main({ defaultPath }: MainProps) {
       <Route
         {...rest}
         render={props =>
-          userState.isAuthenticated ? (
+          user.isAuthenticated ? (
             <Redirect
               to={{
                 pathname: "/",

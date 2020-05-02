@@ -1,19 +1,35 @@
-import React from "react";
+import React, { useState } from "react";
 import { withRouter, RouteComponentProps } from "react-router-dom";
-import { AppBar, Toolbar, IconButton, Typography, Grid, Box } from "@material-ui/core";
-import { ExitToApp, Apps } from "@material-ui/icons";
+import { AppBar, Toolbar, IconButton, Typography, Grid, Box, CircularProgress } from "@material-ui/core";
+import { ExitToApp, Apps, PlayArrow, FastRewind } from "@material-ui/icons";
 import useStyles from "./styles";
 import { useUserDispatch, signOut, useUserState } from "../../context/UserContext";
-import { getRole } from "../../config";
+import { getRole, isLocalDev, nameMap } from "../../config";
 import headerLogo from "../../images/headerLogo.png";
 
-function Header({ history } : RouteComponentProps) {
+interface HeaderProps {
+  isInitialized : boolean
+  setup? : () => Promise<void>
+  teardown? : () => Promise<void>
+}
+
+function Header({ history, isInitialized, setup, teardown } : RouteComponentProps & HeaderProps) {
   const classes = useStyles();
 
   // global
   const user = useUserState();
   const isCsd = getRole(user.party) === "CSD";
   const userDispatch = useUserDispatch();
+
+  const [isInitializing, setIsInitializing] = useState(false);
+  const runScript = async () => {
+    setIsInitializing(true);
+    if (isInitialized)
+      await teardown!();
+    else
+      await setup!();
+    setIsInitializing(false);
+  }
 
   return (
     <AppBar position="fixed" className={classes.appBar}>
@@ -27,13 +43,24 @@ function Header({ history } : RouteComponentProps) {
         <Box style={{ width: "80px" }}>
           <Grid container direction="column">
             <Grid item xs={12}>
-              <Typography variant="body2">User: {user.party}</Typography>
+              <Typography variant="body2">User: {isLocalDev ? user.party : nameMap.get(user.party)}</Typography>
             </Grid>
             <Grid item xs={12}>
               <Typography variant="body2">Role: {isCsd ? "CSD" : "BANK"}</Typography>
             </Grid>
           </Grid>
         </Box>
+        {(setup || teardown) && <IconButton
+          color="inherit"
+          aria-haspopup="true"
+          disabled={isInitializing}
+          onClick={runScript}
+          className={classes.headerMenuButton}
+        >
+          {!isInitialized && !isInitializing && <PlayArrow classes={{ root: classes.headerIcon }} />}
+          {isInitialized && !isInitializing && <FastRewind classes={{ root: classes.headerIcon }} />}
+          {isInitializing && <CircularProgress size={28} classes={{ root: classes.headerIcon }} />}
+        </IconButton>}
         <IconButton
           color="inherit"
           aria-haspopup="true"
@@ -47,7 +74,7 @@ function Header({ history } : RouteComponentProps) {
           color="inherit"
           className={classes.headerMenuButton}
           aria-controls="profile-menu"
-          onClick={(event) => signOut(userDispatch, history)}
+          onClick={() => signOut(userDispatch, history)}
         >
           <ExitToApp classes={{ root: classes.headerIcon }} />
         </IconButton>

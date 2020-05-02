@@ -22,6 +22,16 @@ import DA.Finance.Instrument.FixedIncome.Bond.Lifecycle
 import DA.Finance.RefData.Fixing
 import DA.Finance.Types
 
+template InitDone
+  with
+    sender : Party
+    receiver : Party
+  where
+    signatory sender
+    observer receiver
+    key sender : Party
+    maintainer key
+
 getAsset : Party -> Text -> Decimal -> (Id, Asset)
 getAsset sig label quantity =
   let id = Id with signatories = fromList [sig]; label; version = 0

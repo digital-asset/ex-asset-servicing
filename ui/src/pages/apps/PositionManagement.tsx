@@ -5,16 +5,12 @@ import useStyles from "./styles";
 import Header from "../../components/Header/Header";
 import Sidebar from "../../components/Sidebar/Sidebar";
 import { useLayoutState } from "../../context/LayoutContext";
-import DamlLedger from "@daml/react";
-import { useUserState } from "../../context/UserContext";
-import { wsBaseUrl, httpBaseUrl } from "../../config";
 import { Poll, BarChart } from "@material-ui/icons";
 import { SidebarEntry } from "../../components/Sidebar/SidebarEntry";
 import Positions from "../positions/Positions";
 
 function PositionManagement() {
   const classes = useStyles();
-  const user = useUserState();
   const layoutState = useLayoutState();
   
   const entries : SidebarEntry[] =
@@ -34,31 +30,29 @@ function PositionManagement() {
   const allEntries = entries.flatMap(e => getChildren(e).concat([e]));
 
   return (
-    <DamlLedger party={user.party} token={user.token} httpBaseUrl={httpBaseUrl} wsBaseUrl={wsBaseUrl}>
-      <div className={classes.root}>
-          <>
-            <Header />
-            <Sidebar entries={entries} />
-            <div
-              className={classnames(classes.content, {
-                [classes.contentShift]: layoutState.isSidebarOpened,
-              })}
-            >
-              <div className={classes.fakeToolbar} />
-              <Switch>
-              {/* <Route key={"stock"} path={"/app/positions/equities/stocks/:contractId"} component={Stock} />
-              <Route key={"option"} path={"/app/positions/equities/options/:contractId"} component={Option} />
-              <Route key={"exotic"} path={"/app/positions/equities/exotics/:contractId"} component={Exotic} />
-              <Route key={"currency"} path={"/app/positions/fx/currencies/:contractId"} component={Currency} />
-              <Route key={"bond"} path={"/app/positions/fixedincome/bonds/:contractId"} component={Bond} /> */}
-                {allEntries.map(e => 
-                  <Route exact={true} key={e.key} path={e.path} render={e.render} />
-                )}
-              </Switch>
-            </div>
-          </>
-      </div>
-    </DamlLedger>
+    <div className={classes.root}>
+      <>
+        <Header isInitialized={true}/>
+        <Sidebar entries={entries} />
+        <div
+          className={classnames(classes.content, {
+            [classes.contentShift]: layoutState.isSidebarOpened,
+          })}
+        >
+          <div className={classes.fakeToolbar} />
+          <Switch>
+          {/* <Route key={"stock"} path={"/app/positions/equities/stocks/:contractId"} component={Stock} />
+          <Route key={"option"} path={"/app/positions/equities/options/:contractId"} component={Option} />
+          <Route key={"exotic"} path={"/app/positions/equities/exotics/:contractId"} component={Exotic} />
+          <Route key={"currency"} path={"/app/positions/fx/currencies/:contractId"} component={Currency} />
+          <Route key={"bond"} path={"/app/positions/fixedincome/bonds/:contractId"} component={Bond} /> */}
+            {allEntries.map(e => 
+              <Route exact={true} key={e.key} path={e.path} render={e.render} />
+            )}
+          </Switch>
+        </div>
+      </>
+    </div>
   );
 }
 
