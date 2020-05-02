@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import { useStreamQuery, useExerciseByKey } from "@daml/react";
-import { Bond as BondT } from "@daml2ts/asset-servicing-0.0.1/lib/DA/Finance/Instrument/FixedIncome/Bond";
-import { BondCouponRule } from "@daml2ts/asset-servicing-0.0.1/lib/DA/Finance/Instrument/FixedIncome/Bond/Lifecycle";
+import { useStreamQuery, useLedger } from "@daml/react";
+import { Bond as BondT } from "@daml2js/asset-servicing-0.0.1/lib/DA/Finance/Instrument/FixedIncome/Bond";
+import { BondCouponRule } from "@daml2js/asset-servicing-0.0.1/lib/DA/Finance/Instrument/FixedIncome/Bond/Lifecycle";
 import { Typography, Grid, Table, TableBody, TableCell, TableRow, Button, CircularProgress } from "@material-ui/core";
 import { useParams, RouteComponentProps } from "react-router-dom";
 import useStyles from "./styles";
@@ -13,16 +13,17 @@ const Bond : React.FC<RouteComponentProps> = ({ history }) => {
   const [isLifecyclingBond, setIsLifecyclingBond] = useState(false);
 
   const { contractId } = useParams();
-  const cid = '#' + contractId;
+  const cid = contractId.replace("_", "#");
+  
+  const ledger = useLedger();
   const bond = useStreamQuery(BondT).contracts.find(c => c.contractId === cid);
-  const lifecycleBond = useExerciseByKey(BondCouponRule.BondCoupon_Lifecycle);
 
   if (!bond) return (null);
 
   const payCoupon = async () => {
     setIsLifecyclingBond(true);
-    const result = await lifecycleBond(bond.payload.id.signatories, { bondCid: bond.contractId });
-    history.push("/apps/lifecycling/bonds/" + result._1.substring(1));
+    const [result, ] = await ledger.exerciseByKey(BondCouponRule.BondCoupon_Lifecycle, bond.payload.id.signatories, { bondCid: bond.contractId });
+    history.push("/apps/lifecycling/bonds/" + result._1.replace("#", "_"));
     setIsLifecyclingBond(false);
   }
 
@@ -39,7 +40,7 @@ const Bond : React.FC<RouteComponentProps> = ({ history }) => {
                 <TableBody>
                   <TableRow key={0} className={classes.tableRow}>
                     <TableCell key={0} className={classes.tableCell}>Contract</TableCell>
-                    <TableCell key={1} className={classes.tableCell}>{bond.contractId}</TableCell>
+                    <TableCell key={1} className={classes.tableCell}>{bond.contractId.substring(0, 8)}</TableCell>
                   </TableRow>
                   <TableRow key={1} className={classes.tableRow}>
                     <TableCell key={0} className={classes.tableCell}>Label</TableCell>

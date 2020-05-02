@@ -1,19 +1,16 @@
 import React from "react";
 import { withRouter, RouteComponentProps } from "react-router-dom";
-import { AppBar, Toolbar, IconButton, Typography } from "@material-ui/core";
-import { Menu, ExitToApp, ArrowBack, Apps } from "@material-ui/icons";
-import classNames from "classnames";
+import { AppBar, Toolbar, IconButton, Typography, Grid, Box } from "@material-ui/core";
+import { ExitToApp, Apps } from "@material-ui/icons";
 import useStyles from "./styles";
-import { useLayoutState, useLayoutDispatch, toggleSidebar } from "../../context/LayoutContext";
 import { useUserDispatch, signOut, useUserState } from "../../context/UserContext";
 import { getRole } from "../../config";
+import headerLogo from "../../images/headerLogo.png";
 
 function Header({ history } : RouteComponentProps) {
   const classes = useStyles();
 
   // global
-  const layoutState = useLayoutState();
-  const layoutDispatch = useLayoutDispatch();
   const user = useUserState();
   const isCsd = getRole(user.party) === "CSD";
   const userDispatch = useUserDispatch();
@@ -21,36 +18,22 @@ function Header({ history } : RouteComponentProps) {
   return (
     <AppBar position="fixed" className={classes.appBar}>
       <Toolbar className={classes.toolbar}>
-        <IconButton
-          color="inherit"
-          onClick={() => toggleSidebar(layoutDispatch)}
-          className={classNames(classes.headerMenuButton, classes.headerMenuButtonCollapse)}
-        >
-          {layoutState.isSidebarOpened ? (
-            <ArrowBack
-              classes={{
-                root: classNames(
-                  classes.headerIcon,
-                  classes.headerIconCollapse,
-                ),
-              }}
-            />
-          ) : (
-            <Menu
-              classes={{
-                root: classNames(
-                  classes.headerIcon,
-                  classes.headerIconCollapse,
-                ),
-              }}
-            />
-          )}
-        </IconButton>
         <Typography variant="h6" className={classes.logotype}>
-          Asset Servicing ({isCsd ? "CSD" : "BANK"})
+          Asset Servicing Portal
         </Typography>
         <div className={classes.grow} />
-        <Typography variant="h6">User: {user.party}</Typography>
+        <img alt="headerLogo" src={headerLogo} height="32px" />
+        <div className={classes.grow} />
+        <Box style={{ width: "80px" }}>
+          <Grid container direction="column">
+            <Grid item xs={12}>
+              <Typography variant="body2">User: {user.party}</Typography>
+            </Grid>
+            <Grid item xs={12}>
+              <Typography variant="body2">Role: {isCsd ? "CSD" : "BANK"}</Typography>
+            </Grid>
+          </Grid>
+        </Box>
         <IconButton
           color="inherit"
           aria-haspopup="true"

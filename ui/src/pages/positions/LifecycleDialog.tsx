@@ -1,8 +1,8 @@
 import React from "react";
-import { useExerciseByKey } from "@daml/react";
-import { AssetDeposit } from "@daml2ts/asset-servicing-0.0.1/lib/DA/Finance/Asset.js";
-import { Button, Dialog, DialogContent, DialogActions, DialogTitle, DialogContentText, Grid, Typography, CircularProgress, Chip } from "@material-ui/core";
-import { LifecycleEffects, AssetLifecycleRule } from "@daml2ts/asset-servicing-0.0.1/lib/DA/Finance/Asset/Lifecycle";
+import { useLedger } from "@daml/react";
+import { AssetDeposit } from "@daml2js/asset-servicing-0.0.1/lib/DA/Finance/Asset";
+import { Button, Dialog, DialogContent, DialogActions, DialogTitle, Grid, Typography, CircularProgress, Chip } from "@material-ui/core";
+import { LifecycleEffects, AssetLifecycleRule } from "@daml2js/asset-servicing-0.0.1/lib/DA/Finance/Asset/Lifecycle";
 import { CreateEvent } from "@daml/ledger";
 import { Forward } from "@material-ui/icons";
 import { useUserState } from "../../context/UserContext";
@@ -18,7 +18,8 @@ const LifecycleDialog : React.FC<LifecycleDialogProps> = ({ open, onClose, depos
 
   const user = useUserState();
   const [isApplyingEffect, setIsApplyingEffect] = React.useState(false);
-  const processEffects = useExerciseByKey(AssetLifecycleRule.AssetLifecycle_Process);
+
+  const ledger = useLedger();
 
   if (!deposit || !effect) return (null);
 
@@ -31,7 +32,7 @@ const LifecycleDialog : React.FC<LifecycleDialogProps> = ({ open, onClose, depos
       accountIds: null,
       ctrl: user.party
     };
-    await processEffects(deposit.payload.account.id, args);
+    await ledger.exerciseByKey(AssetLifecycleRule.AssetLifecycle_Process, deposit.payload.account.id, args);
     setIsApplyingEffect(false);
     onClose();
   }
@@ -42,14 +43,14 @@ const LifecycleDialog : React.FC<LifecycleDialogProps> = ({ open, onClose, depos
       <DialogContent dividers>
         <Grid container spacing={4}>
           <Grid item xs={5}>
-            <Typography gutterBottom variant="body2">1.0 * <Chip variant="outlined" label={deposit.payload.asset.id.label} size="small" color="primary"/> <Chip variant="outlined" label={"v" + deposit.payload.asset.id.version} size="small"/></Typography>
+            <Typography gutterBottom variant="body2">1.0 * <Chip label={deposit.payload.asset.id.label} size="small" color="primary"/> <Chip label={"v" + deposit.payload.asset.id.version} size="small" color="secondary"/></Typography>
           </Grid>
           <Grid item xs={2}>
             <Forward />
           </Grid>
           <Grid item xs={5}>
             {effect.payload.effects.map((e, i) => (
-              <Typography gutterBottom variant="body2" key={i}>{e.quantity} * <Chip variant="outlined" label={e.id.label} size="small" color="primary"/> <Chip variant="outlined" label={"v" + e.id.version} size="small"/></Typography>
+              <Typography gutterBottom variant="body2" key={i}>{e.quantity} * <Chip label={e.id.label} size="small" color="primary"/> <Chip label={"v" + e.id.version} size="small" color="secondary"/></Typography>
             ))}
           </Grid>
         </Grid>

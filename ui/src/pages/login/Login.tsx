@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Grid, CircularProgress, Typography, Button, TextField, Fade } from "@material-ui/core";
 import { withRouter, RouteComponentProps } from "react-router-dom";
 import useStyles from "./styles";
-import logo from "./logo.svg";
+import loginLogo from "../../images/loginLogo.svg";
 import { useUserDispatch, loginUser, loginDablUser } from "../../context/UserContext";
 import { isLocalDev } from "../../config";
 
@@ -21,8 +21,8 @@ function Login(props : RouteComponentProps) {
   return (
     <Grid container className={classes.container}>
       <div className={classes.logotypeContainer}>
-        <img src={logo} alt="logo" className={classes.logotypeImage} />
-        <Typography className={classes.logotypeText}>Asset Servicing</Typography>
+        <img src={loginLogo} alt="logo" className={classes.logotypeImage} />
+        <Typography className={classes.logotypeText}>Asset Servicing Portal</Typography>
       </div>
       <div className={classes.formContainer}>
         <div className={classes.form}>

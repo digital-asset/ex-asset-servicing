@@ -7,6 +7,13 @@ export default makeStyles((theme : any) => createStyles({
     paddingBottom: 6,
     fontSize: "0.75rem"
   },
+  tableCellNew: {
+    verticalAlign: "center",
+    paddingTop: 6,
+    paddingBottom: 6,
+    fontSize: "0.75rem",
+    backgroundColor: "green",
+  },
   tableCellButton: {
     verticalAlign: "center",
     paddingTop: 0,

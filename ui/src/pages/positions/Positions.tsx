@@ -1,10 +1,9 @@
 import React from "react";
 import { useStreamQuery } from "@daml/react";
-import { AssetDeposit, AssetCategorization } from "@daml2ts/asset-servicing-0.0.1/lib/DA/Finance/Asset.js";
-import { Table, TableHead, TableRow, TableCell, TableBody, IconButton, Button } from "@material-ui/core";
-import { LifecycleEffects, AssetLifecycleRule } from "@daml2ts/asset-servicing-0.0.1/lib/DA/Finance/Asset/Lifecycle";
+import { AssetDeposit, AssetCategorization } from "@daml2js/asset-servicing-0.0.1/lib/DA/Finance/Asset";
+import { Table, TableHead, TableRow, TableCell, TableBody, Button } from "@material-ui/core";
+import { LifecycleEffects } from "@daml2js/asset-servicing-0.0.1/lib/DA/Finance/Asset/Lifecycle";
 import { CreateEvent } from "@daml/ledger";
-import { KeyboardArrowRight } from "@material-ui/icons";
 import LifecycleDialog, { LifecycleDialogProps } from "./LifecycleDialog";
 import useStyles from "./styles";
 
@@ -34,7 +33,12 @@ const Positions : React.FC<PositionProps> = ({ assetClass, assetType }) => {
     const effect = effects.find(e => e.payload.id.label === deposit.payload.asset.id.label && e.payload.id.version === deposit.payload.asset.id.version);
     return { deposit, category, effect }
   });
-  const displayedEntries = entries.filter(e => (!assetClass || e.category?.payload.assetClass === assetClass) && (!assetType || e.category?.payload.assetType === assetType)).sort((a, b) => { return a.deposit.contractId < b.deposit.contractId ? -1 : 1; });
+
+  const getCid = (cid : string) => {
+    return parseFloat(cid.substring(1).replace(":", "."));
+  }
+
+  const displayedEntries = entries.filter(e => (!assetClass || e.category?.payload.assetClass === assetClass) && (!assetType || e.category?.payload.assetType === assetType)).sort((a, b) => { return getCid(a.deposit.contractId) < getCid(b.deposit.contractId) ? -1 : 1; });
 
   return (
     <>
@@ -55,7 +59,7 @@ const Positions : React.FC<PositionProps> = ({ assetClass, assetType }) => {
         <TableBody>
           {displayedEntries.map((e, i) => (
             <TableRow key={i} className={classes.tableRow}>
-              <TableCell key={0} className={classes.tableCell}>{e.deposit.contractId}</TableCell>
+              <TableCell key={0} className={classes.tableCell}>{e.deposit.contractId.substring(0, 8)}</TableCell>
               <TableCell key={1} className={classes.tableCell}>{e.deposit.payload.account.id.label}</TableCell>
               <TableCell key={2} className={classes.tableCell}>{e.category?.payload.assetClass}</TableCell>
               <TableCell key={3} className={classes.tableCell}>{e.category?.payload.assetType}</TableCell>
@@ -64,7 +68,7 @@ const Positions : React.FC<PositionProps> = ({ assetClass, assetType }) => {
               <TableCell key={6} className={classes.tableCell}>{e.deposit.payload.asset.id.version}</TableCell>
               <TableCell key={7} className={classes.tableCellButton}>
               {e.effect && (
-                <Button className={classes.lcButton} color="primary" size="small" component="span" onClick={() => openDialog(e.deposit, e.effect)}>Lifecycle</Button>
+                <Button className={classes.lcButton} color="primary" variant="contained" size="small" component="span" onClick={() => openDialog(e.deposit, e.effect)}>Lifecycle</Button>
               )}
               </TableCell>
             </TableRow>

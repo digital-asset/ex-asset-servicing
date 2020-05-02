@@ -7,7 +7,7 @@ import classnames from "classnames";
 import useStyles from "./styles";
 
 // logo
-import logo from "../login/logo.svg";
+import loginLogo from "../../images/loginLogo.svg";
 
 export default function Error() {
   var classes = useStyles();
@@ -15,9 +15,9 @@ export default function Error() {
   return (
     <Grid container className={classes.container}>
       <div className={classes.logotype}>
-        <img className={classes.logotypeIcon} src={logo} alt="logo" />
+        <img className={classes.logotypeIcon} src={loginLogo} alt="logo" />
         <Typography variant="h3" className={classes.logotypeText}>
-          App Template
+          Asset Servicing Portal
         </Typography>
       </div>
       <Paper classes={{ root: classes.paperRoot }}>

@@ -1,6 +1,6 @@
 import React from "react";
 import { useStreamQuery } from "@daml/react";
-import { Bond } from "@daml2ts/asset-servicing-0.0.1/lib/DA/Finance/Instrument/FixedIncome/Bond";
+import { Bond } from "@daml2js/asset-servicing-0.0.1/lib/DA/Finance/Instrument/FixedIncome/Bond";
 import { Table, TableBody, TableCell, TableRow, TableHead, IconButton } from "@material-ui/core";
 import { withRouter, RouteComponentProps } from "react-router-dom";
 import useStyles from "./styles";
@@ -30,7 +30,7 @@ const Bonds : React.FC<RouteComponentProps> = ({ history } : RouteComponentProps
             <TableCell key={2} className={classes.tableCell}>{d.payload.couponDates[+d.payload.couponIdx]}</TableCell>
             <TableCell key={3} className={classes.tableCell}>{(+d.payload.couponIdx === d.payload.couponDates.length - 1 ? (1 + (+d.payload.coupon)) * 100 : +d.payload.coupon * 100).toFixed(2)}%</TableCell>
             <TableCell key={4} className={classes.tableCell}>
-            <IconButton color="primary" size="small" component="span" onClick={() => history.push("/apps/lifecycling/bonds/" + d.contractId.substring(1))}>
+            <IconButton color="primary" size="small" component="span" onClick={() => history.push("/apps/lifecycling/bonds/" + d.contractId.replace("#", "_"))}>
               <KeyboardArrowRight fontSize="small"/>
             </IconButton>
             </TableCell>

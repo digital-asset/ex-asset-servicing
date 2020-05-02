@@ -1,12 +1,12 @@
 import React, { useState } from "react";
-import { useStreamQuery, useQuery, useExerciseByKey } from "@daml/react";
-import { EquityStockSplit } from "@daml2ts/asset-servicing-0.0.1/lib/DA/Finance/Instrument/Equity/StockSplit";
-import { EquityStock } from "@daml2ts/asset-servicing-0.0.1/lib/DA/Finance/Instrument/Equity/Stock";
-import { EquityStockSplitRule } from "@daml2ts/asset-servicing-0.0.1/lib/DA/Finance/Instrument/Equity/Stock/Lifecycle";
-import { EquityOption } from "@daml2ts/asset-servicing-0.0.1/lib/DA/Finance/Instrument/Equity/Option";
-import { EquityOptionStockSplitRule } from "@daml2ts/asset-servicing-0.0.1/lib/DA/Finance/Instrument/Equity/Option/Lifecycle";
-import { ACBRC } from "@daml2ts/asset-servicing-0.0.1/lib/DA/Finance/Instrument/Equity/ACBRC";
-import { ACBRCStockSplitRule } from "@daml2ts/asset-servicing-0.0.1/lib/DA/Finance/Instrument/Equity/ACBRC/Lifecycle";
+import { useStreamQuery, useQuery, useLedger } from "@daml/react";
+import { EquityStockSplit } from "@daml2js/asset-servicing-0.0.1/lib/DA/Finance/Instrument/Equity/StockSplit";
+import { EquityStock } from "@daml2js/asset-servicing-0.0.1/lib/DA/Finance/Instrument/Equity/Stock";
+import { EquityStockSplitRule } from "@daml2js/asset-servicing-0.0.1/lib/DA/Finance/Instrument/Equity/Stock/Lifecycle";
+import { EquityOption } from "@daml2js/asset-servicing-0.0.1/lib/DA/Finance/Instrument/Equity/Option";
+import { EquityOptionStockSplitRule } from "@daml2js/asset-servicing-0.0.1/lib/DA/Finance/Instrument/Equity/Option/Lifecycle";
+import { ACBRC } from "@daml2js/asset-servicing-0.0.1/lib/DA/Finance/Instrument/Equity/ACBRC";
+import { ACBRCStockSplitRule } from "@daml2js/asset-servicing-0.0.1/lib/DA/Finance/Instrument/Equity/ACBRC/Lifecycle";
 import { Typography, Grid, Table, TableBody, TableCell, TableRow, TableHead, Button, CircularProgress } from "@material-ui/core";
 import { useParams } from "react-router-dom";
 import useStyles from "./styles";
@@ -19,31 +19,27 @@ const StockSplit : React.FC = () => {
   const [isLifecyclingAcbrcs, setIsLifecyclingAcbrcs] = useState(false);
 
   const { contractId } = useParams();
-  const cid = '#' + contractId;
+  const cid = contractId.replace("_", "#");
 
+  const ledger = useLedger();
   const stockSplit = useQuery(EquityStockSplit).contracts.find(c => c.contractId === cid);
-  const lifecycleStock = useExerciseByKey(EquityStockSplitRule.EquityStockSplit_Lifecycle);
-  const lifecycleOption = useExerciseByKey(EquityOptionStockSplitRule.EquityOptionStockSplit_Lifecycle);
-  const lifecycleAcbrc = useExerciseByKey(ACBRCStockSplitRule.ACBRCStockSplit_Lifecycle);
   const stocks = useStreamQuery(EquityStock, () => { return { id: { label: stockSplit?.payload.id.label } } }, [stockSplit]).contracts.slice().sort((a, b) => { return a.contractId < b.contractId ? -1 : 1; });;
   const options = useStreamQuery(EquityOption, () => { return { underlyingId: { label: stockSplit?.payload.id.label } } }, [stockSplit]).contracts.slice().sort((a, b) => { return a.contractId < b.contractId ? -1 : 1; });;
   const acbrcs = useStreamQuery(ACBRC, () => { return { underlyingId: { label: stockSplit?.payload.id.label } } }, [stockSplit]).contracts.slice().sort((a, b) => { return a.contractId < b.contractId ? -1 : 1; });;
 
   if (!stockSplit) return (null);
 
-  console.log(acbrcs);
-
   const lifecycleStocks = async () => {
     setIsLifecyclingStocks(true);
     console.log(stockSplit.payload.id.signatories);
-    await lifecycleStock(stockSplit.payload.id.signatories, { stockSplitCid: stockSplit.contractId});
+    await ledger.exerciseByKey(EquityStockSplitRule.EquityStockSplit_Lifecycle, stockSplit.payload.id.signatories, { stockSplitCid: stockSplit.contractId});
     setIsLifecyclingStocks(false);
   }
 
   const lifecycleOptions = async () => {
     setIsLifecyclingOptions(true);
     for (var i = 0; i < options.length; i++) {
-      await lifecycleOption(stockSplit.payload.id.signatories, { optionCid: options[i].contractId, stockSplitCid: stockSplit.contractId});
+      await ledger.exerciseByKey(EquityOptionStockSplitRule.EquityOptionStockSplit_Lifecycle, stockSplit.payload.id.signatories, { optionCid: options[i].contractId, stockSplitCid: stockSplit.contractId});
     }
     // const all = Promise.all(options.map(o =>
     //   lifecycleOption(stockSplit.payload.id.signatories, { optionCid: o.contractId, stockSplitCid: stockSplit.contractId})));
@@ -54,7 +50,7 @@ const StockSplit : React.FC = () => {
   const lifecycleAcbrcs = async () => {
     setIsLifecyclingAcbrcs(true);
     const all = Promise.all(acbrcs.map(a =>
-      lifecycleAcbrc(stockSplit.payload.id.signatories, { acbrcCid: a.contractId, stockSplitCid: stockSplit.contractId})));
+      ledger.exerciseByKey(ACBRCStockSplitRule.ACBRCStockSplit_Lifecycle, stockSplit.payload.id.signatories, { acbrcCid: a.contractId, stockSplitCid: stockSplit.contractId})));
     await all;
     setIsLifecyclingAcbrcs(false);
   }
@@ -83,7 +79,7 @@ const StockSplit : React.FC = () => {
             <TableBody>
               {stocks.map((s, i) => (
                 <TableRow key={i} className={classes.tableRow}>
-                  <TableCell key={0} className={classes.tableCell}>{s.contractId}</TableCell>
+                  <TableCell key={0} className={classes.tableCell}>{s.contractId.substring(0, 8)}</TableCell>
                   <TableCell key={1} className={classes.tableCell}>{s.payload.id.label}</TableCell>
                   <TableCell key={2} className={classes.tableCell}>{s.payload.ccy.label}</TableCell>
                   <TableCell key={3} className={classes.tableCell}>
@@ -119,7 +115,7 @@ const StockSplit : React.FC = () => {
             <TableBody>
               {options.map((s, i) => (
                 <TableRow key={i} className={classes.tableRow}>
-                  <TableCell key={0} className={classes.tableCell}>{s.contractId}</TableCell>
+                  <TableCell key={0} className={classes.tableCell}>{s.contractId.substring(0, 8)}</TableCell>
                   <TableCell key={1} className={classes.tableCell}>{s.payload.id.label}</TableCell>
                   <TableCell key={2} className={classes.tableCell}>{s.payload.underlyingId.label}</TableCell>
                   <TableCell key={3} className={classes.tableCell}>{s.payload.exerciseType}</TableCell>
@@ -159,7 +155,7 @@ const StockSplit : React.FC = () => {
             <TableBody>
               {acbrcs.map((s, i) => (
                 <TableRow key={i} className={classes.tableRow}>
-                  <TableCell key={0} className={classes.tableCell}>{s.contractId}</TableCell>
+                  <TableCell key={0} className={classes.tableCell}>{s.contractId.substring(0, 8)}</TableCell>
                   <TableCell key={1} className={classes.tableCell}>{s.payload.id.label}</TableCell>
                   <TableCell key={2} className={classes.tableCell}>{s.payload.underlyingId.label}</TableCell>
                   <TableCell key={3} className={classes.tableCell}>{s.payload.initialFixing}</TableCell>

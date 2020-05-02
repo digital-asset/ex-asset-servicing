@@ -22,6 +22,12 @@ const overrides = {
     h6: {
       fontSize: "1.142rem",
     },
+    fontFamily: [
+      '"Noto Sans Condensed"',
+      'Helvetica',
+      'Arial',
+      'sans-serif',
+    ].join(','),
   },
 };
 

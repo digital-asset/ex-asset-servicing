@@ -8,7 +8,7 @@ import { useLayoutState } from "../../context/LayoutContext";
 import DamlLedger from "@daml/react";
 import { useUserState } from "../../context/UserContext";
 import { wsBaseUrl, httpBaseUrl } from "../../config";
-import { List } from "@material-ui/icons";
+import { Poll, BarChart } from "@material-ui/icons";
 import { SidebarEntry } from "../../components/Sidebar/SidebarEntry";
 import Positions from "../positions/Positions";
 
@@ -16,17 +16,17 @@ function PositionManagement() {
   const classes = useStyles();
   const user = useUserState();
   const layoutState = useLayoutState();
-
+  
   const entries : SidebarEntry[] =
-    [ { key: "positions", label: "Positions", path: "/apps/positions", render: () => (<Positions />), icon: (<List/>), children:
-      [ { key: "equities", label: "Equities", path: "/apps/positions/equities", render: () => (<Positions assetClass="Equity" />), icon: (<List/>), children:
-          [ { key: "stocks", label: "Stocks", path: "/apps/positions/equities/stocks", render: () => (<Positions assetClass="Equity" assetType="Stock" />), icon: (<List/>), children: [] },
-            { key: "options", label: "Options", path: "/apps/positions/equities/options", render: () => (<Positions assetClass="Equity" assetType="Option" />), icon: (<List/>), children: [] },
-            { key: "exotics", label: "Exotics", path: "/apps/positions/equities/exotics", render: () => (<Positions assetClass="Equity" assetType="Exotic" />), icon: (<List/>), children: [] } ] },
-        { key: "fx", label: "FX", path: "/apps/positions/fx", render: () => (<Positions assetClass="FX" />), icon: (<List/>), children:
-          [ { key: "currencies", label: "Currencies", path: "/apps/positions/fx/currencies", render: () => (<Positions assetClass="FX" assetType="Currency" />), icon: (<List/>), children: [] } ] },
-        { key: "fi", label: "FixedIncome", path: "/apps/positions/fixedincome", render: () => (<Positions assetClass="FixedIncome" />), icon: (<List/>), children:
-          [ { key: "bonds", label: "Bonds", path: "/apps/positions/fixedincome/bonds", render: () => (<Positions assetClass="FixedIncome" assetType="Bond" />), icon: (<List/>), children: [] } ] } ] } ]
+    [ { key: "positions", label: "Positions", path: "/apps/positions", render: () => (<Positions />), icon: (<Poll/>), children:
+      [ { key: "equities", label: "Equities", path: "/apps/positions/equities", render: () => (<Positions assetClass="Equity" />), icon: (<BarChart/>), children:
+          [ { key: "stocks", label: "Stocks", path: "/apps/positions/equities/stocks", render: () => (<Positions assetClass="Equity" assetType="Stock" />), icon: (<BarChart/>), children: [] },
+            { key: "options", label: "Options", path: "/apps/positions/equities/options", render: () => (<Positions assetClass="Equity" assetType="Option" />), icon: (<BarChart/>), children: [] },
+            { key: "exotics", label: "Exotics", path: "/apps/positions/equities/exotics", render: () => (<Positions assetClass="Equity" assetType="Exotic" />), icon: (<BarChart/>), children: [] } ] },
+        { key: "fx", label: "FX", path: "/apps/positions/fx", render: () => (<Positions assetClass="FX" />), icon: (<BarChart/>), children:
+          [ { key: "currencies", label: "Currencies", path: "/apps/positions/fx/currencies", render: () => (<Positions assetClass="FX" assetType="Currency" />), icon: (<BarChart/>), children: [] } ] },
+        { key: "fi", label: "FixedIncome", path: "/apps/positions/fixedincome", render: () => (<Positions assetClass="FixedIncome" />), icon: (<BarChart/>), children:
+          [ { key: "bonds", label: "Bonds", path: "/apps/positions/fixedincome/bonds", render: () => (<Positions assetClass="FixedIncome" assetType="Bond" />), icon: (<BarChart/>), children: [] } ] } ] } ]
 
   const getChildren = (e : SidebarEntry) : SidebarEntry[] => {
     return e.children.concat(e.children.flatMap(c => getChildren(c)));

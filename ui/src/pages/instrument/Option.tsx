@@ -1,7 +1,7 @@
 import React from "react";
 import Contracts from "../../components/Contracts/Contracts";
-import { useStreamQuery, useExercise, useQuery } from "@daml/react";
-import { EquityOption } from "@daml2ts/asset-servicing-0.0.1/lib/DA/Finance/Instrument/Equity/Option";
+import { useQuery } from "@daml/react";
+import { EquityOption } from "@daml2js/asset-servicing-0.0.1/lib/DA/Finance/Instrument/Equity/Option";
 import { CreateEvent } from "@daml/ledger";
 
 type OptionProps = {
@@ -11,7 +11,6 @@ type OptionProps = {
 function Option({ option } : OptionProps) {
 
   const options = useQuery(EquityOption);
-  // const exerciseGive = useExercise(Asset.Give);
 
   return (
     <>

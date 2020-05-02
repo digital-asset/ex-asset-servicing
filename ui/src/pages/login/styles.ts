@@ -22,7 +22,7 @@ export default makeStyles((theme : any) => createStyles({
     [theme.breakpoints.down("md")]: {
       width: "50%",
     },
-    [theme.breakpoints.down("md")]: {
+    [theme.breakpoints.down("xs")]: {
       display: "none",
     },
   },
@@ -31,11 +31,14 @@ export default makeStyles((theme : any) => createStyles({
     marginBottom: theme.spacing(4),
   },
   logotypeText: {
-    color: "#3a478f",
+    color: theme.palette.text.primary, //"#00565f", //"#3a478f",
     fontWeight: 500,
-    fontSize: 84,
+    fontSize: 64,
     [theme.breakpoints.down("md")]: {
       fontSize: 48,
+    },
+    [theme.breakpoints.down("sm")]: {
+      fontSize: 36,
     },
   },
   formContainer: {

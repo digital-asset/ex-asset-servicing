@@ -8,7 +8,7 @@ import { useLayoutState } from "../../context/LayoutContext";
 import DamlLedger from "@daml/react";
 import { useUserState } from "../../context/UserContext";
 import { wsBaseUrl, httpBaseUrl } from "../../config";
-import { List } from "@material-ui/icons";
+import { CallSplit, LocalAtm } from "@material-ui/icons";
 import { SidebarEntry } from "../../components/Sidebar/SidebarEntry";
 import StockSplit from "../corporateactions/StockSplit";
 import Dividend from "../corporateactions/Dividend";
@@ -21,8 +21,8 @@ function CorporateActions() {
   const layoutState = useLayoutState();
 
   const entries : SidebarEntry[] = [
-    { key: "dividends", label: "Dividends", path: "/apps/corporateactions/dividends", render: () => <Dividends />, icon: (<List/>), children: [] },
-    { key: "splits", label: "Stock Splits", path: "/apps/corporateactions/stocksplits", render: () => <StockSplits />, icon: (<List/>), children: [] },
+    { key: "dividends", label: "Dividends", path: "/apps/corporateactions/dividends", render: () => <Dividends />, icon: (<LocalAtm/>), children: [] },
+    { key: "splits", label: "Stock Splits", path: "/apps/corporateactions/stocksplits", render: () => <StockSplits />, icon: (<CallSplit/>), children: [] },
   ]
 
   const getChildren = (e : SidebarEntry) : SidebarEntry[] => {

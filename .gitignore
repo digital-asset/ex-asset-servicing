@@ -4,5 +4,5 @@ node_modules/
 build/
 .DS_Store
 .vscode
-daml2ts
+daml2js
 target/

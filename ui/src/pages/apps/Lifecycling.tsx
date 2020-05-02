@@ -8,7 +8,7 @@ import { useLayoutState } from "../../context/LayoutContext";
 import DamlLedger from "@daml/react";
 import { useUserState } from "../../context/UserContext";
 import { wsBaseUrl, httpBaseUrl } from "../../config";
-import { List } from "@material-ui/icons";
+import { TrendingUp, ConfirmationNumber } from "@material-ui/icons";
 import { SidebarEntry } from "../../components/Sidebar/SidebarEntry";
 import Bond from "../lifecycling/Bond";
 import Derivatives from "../lifecycling/Derivatives";
@@ -21,8 +21,8 @@ function Lifecycling() {
   const layoutState = useLayoutState();
 
   const entries : SidebarEntry[] = [
-    { key: "bonds", label: "Bonds", path: "/apps/lifecycling/bonds", render: () => <Bonds />, icon: (<List/>), children: [] },
-    { key: "derivatives", label: "Derivatives", path: "/apps/lifecycling/derivatives", render: () => <Derivatives />, icon: (<List/>), children: [] },
+    { key: "bonds", label: "Bonds", path: "/apps/lifecycling/bonds", render: () => <Bonds />, icon: (<ConfirmationNumber/>), children: [] },
+    { key: "derivatives", label: "Derivatives", path: "/apps/lifecycling/derivatives", render: () => <Derivatives />, icon: (<TrendingUp/>), children: [] },
   ]
 
   const getChildren = (e : SidebarEntry) : SidebarEntry[] => {

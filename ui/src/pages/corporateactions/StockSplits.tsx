@@ -1,6 +1,6 @@
 import React from "react";
 import { useStreamQuery } from "@daml/react";
-import { EquityStockSplit } from "@daml2ts/asset-servicing-0.0.1/lib/DA/Finance/Instrument/Equity/StockSplit";
+import { EquityStockSplit } from "@daml2js/asset-servicing-0.0.1/lib/DA/Finance/Instrument/Equity/StockSplit";
 import { Table, TableBody, TableCell, TableRow, TableHead, IconButton } from "@material-ui/core";
 import { withRouter, RouteComponentProps } from "react-router-dom";
 import useStyles from "./styles";
@@ -28,7 +28,7 @@ const StockSplits : React.FC<RouteComponentProps> = ({ history } : RouteComponen
             <TableCell key={1} className={classes.tableCell}>{d.payload.exDate}</TableCell>
             <TableCell key={2} className={classes.tableCell}>{d.payload.rFactor}</TableCell>
             <TableCell key={3} className={classes.tableCell}>
-              <IconButton color="primary" size="small" component="span" onClick={() => history.push("/apps/corporateactions/stocksplits/" + d.contractId.substring(1))}>
+              <IconButton color="primary" size="small" component="span" onClick={() => history.push("/apps/corporateactions/stocksplits/" + d.contractId.replace("#", "_"))}>
                 <KeyboardArrowRight fontSize="small"/>
               </IconButton>
             </TableCell>

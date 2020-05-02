@@ -1,10 +1,10 @@
 import React, { useState } from "react";
-import { useStreamQuery, useQuery, useExerciseByKey } from "@daml/react";
-import { EquityStock } from "@daml2ts/asset-servicing-0.0.1/lib/DA/Finance/Instrument/Equity/Stock";
-import { EquityStockCashDividendRule } from "@daml2ts/asset-servicing-0.0.1/lib/DA/Finance/Instrument/Equity/Stock/Lifecycle";
+import { useStreamQuery, useQuery, useLedger } from "@daml/react";
+import { EquityStock } from "@daml2js/asset-servicing-0.0.1/lib/DA/Finance/Instrument/Equity/Stock";
+import { EquityStockCashDividendRule } from "@daml2js/asset-servicing-0.0.1/lib/DA/Finance/Instrument/Equity/Stock/Lifecycle";
 import { Typography, Grid, Table, TableBody, TableCell, TableRow, TableHead, Button, CircularProgress } from "@material-ui/core";
 import { RouteComponentProps, useParams } from "react-router-dom";
-import { EquityCashDividend } from "@daml2ts/asset-servicing-0.0.1/lib/DA/Finance/Instrument/Equity/CashDividend";
+import { EquityCashDividend } from "@daml2js/asset-servicing-0.0.1/lib/DA/Finance/Instrument/Equity/CashDividend";
 import useStyles from "./styles";
 
 const Dividend : React.FC<RouteComponentProps> = ({ history } : RouteComponentProps) => {
@@ -13,10 +13,10 @@ const Dividend : React.FC<RouteComponentProps> = ({ history } : RouteComponentPr
   const [isLifecyclingStocks, setIsLifecyclingStocks] = useState(false);
 
   const { contractId } = useParams();
-  const cid = '#' + contractId;
+  const cid = contractId.replace("_", "#");
 
+  const ledger = useLedger();
   const dividend = useQuery(EquityCashDividend).contracts.find(c => c.contractId === cid);
-  const lifecycleStock = useExerciseByKey(EquityStockCashDividendRule.EquityStockCashDividend_Lifecycle);
   const stocks = useStreamQuery(EquityStock, () => { return { id: { label: dividend?.payload.id.label } } }, [dividend]);
 
   if (!dividend) return (null);
@@ -25,7 +25,7 @@ const Dividend : React.FC<RouteComponentProps> = ({ history } : RouteComponentPr
     setIsLifecyclingStocks(true);
     console.log(dividend.payload.id.signatories);
     const entitlementIdLabel = "Dividend on " + dividend.payload.id.label;
-    await lifecycleStock(dividend.payload.id.signatories, { dividendCid: dividend.contractId, entitlementIdLabel });
+    await ledger.exerciseByKey(EquityStockCashDividendRule.EquityStockCashDividend_Lifecycle, dividend.payload.id.signatories, { dividendCid: dividend.contractId, entitlementIdLabel });
     setIsLifecyclingStocks(false);
   }
 
@@ -51,7 +51,7 @@ const Dividend : React.FC<RouteComponentProps> = ({ history } : RouteComponentPr
         <TableBody>
           {stocks.contracts.map((s, i) => (
             <TableRow key={i} className={classes.tableRow}>
-              <TableCell key={0} className={classes.tableCell}>{s.contractId}</TableCell>
+              <TableCell key={0} className={classes.tableCell}>{s.contractId.substring(0, 8)}</TableCell>
               <TableCell key={1} className={classes.tableCell}>{s.payload.id.label}</TableCell>
               <TableCell key={2} className={classes.tableCell}>{s.payload.ccy.label}</TableCell>
               <TableCell key={3} className={classes.tableCell}>

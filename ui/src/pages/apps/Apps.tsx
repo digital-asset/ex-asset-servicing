@@ -2,9 +2,12 @@ import React from "react";
 import { Card, CardActionArea, CardMedia, CardContent, Typography, Grid } from "@material-ui/core";
 import { makeStyles, createStyles } from "@material-ui/styles";
 import { RouteComponentProps } from "react-router-dom";
-import caImage from "./entrepreneur-1340649_640.jpg";
-import lcImage from "./stock-1863880_640.jpg";
-import pfImage from "./business-1730089_640.jpg";
+// import caImage from "../../images/entrepreneur-1340649_640.jpg";
+// import ilImage from "../../images/stock-1863880_640.jpg";
+// import pmImage from "../../images/business-1730089_640.jpg";
+import caImage from "../../images/corporate-actions-app.jpg";
+import ilImage from "../../images/instrument-lifecycling-app.jpg";
+import pmImage from "../../images/position-management-app.jpg";
 import { useUserState } from "../../context/UserContext";
 import { getRole } from "../../config";
 
@@ -27,10 +30,10 @@ export default function Apps({ history } : RouteComponentProps) {
                     title="Corporate Action Management"
                   />
                   <CardContent>
-                    <Typography gutterBottom variant="h5" component="h2">
+                    <Typography gutterBottom variant="h5" component="h2" className={classes.cardText}>
                       Corporate Action Management
                     </Typography>
-                    <Typography variant="body2" color="textSecondary" component="p">
+                    <Typography variant="body2" color="textSecondary" component="p" className={classes.cardText}>
                       Manage various corporate actions on stocks
                     </Typography>
                   </CardContent>
@@ -44,14 +47,14 @@ export default function Apps({ history } : RouteComponentProps) {
                 <CardActionArea onClick={() => history.push("/apps/lifecycling")}>
                   <CardMedia
                     className={classes.media}
-                    image={lcImage}
+                    image={ilImage}
                     title="Lifecycle Management"
                   />
                   <CardContent>
-                    <Typography gutterBottom variant="h5" component="h2">
+                    <Typography gutterBottom variant="h5" component="h2" className={classes.cardText}>
                       Instrument Lifecycling
                     </Typography>
-                    <Typography variant="body2" color="textSecondary" component="p">
+                    <Typography variant="body2" color="textSecondary" component="p" className={classes.cardText}>
                       Lifecycle derivative and bond instruments
                     </Typography>
                   </CardContent>
@@ -65,14 +68,14 @@ export default function Apps({ history } : RouteComponentProps) {
                 <CardActionArea onClick={() => history.push("/apps/positions")}>
                   <CardMedia
                     className={classes.media}
-                    image={pfImage}
+                    image={pmImage}
                     title="Position Management"
                   />
                   <CardContent>
-                    <Typography gutterBottom variant="h5" component="h2">
+                    <Typography gutterBottom variant="h5" component="h2" className={classes.cardText}>
                       Position Management
                     </Typography>
-                    <Typography variant="body2" color="textSecondary" component="p">
+                    <Typography variant="body2" color="textSecondary" component="p" className={classes.cardText}>
                       Manage positions and lifecycle events
                     </Typography>
                   </CardContent>
@@ -91,8 +94,12 @@ const useStyles = makeStyles((theme : any) => createStyles({
     minWidth: 350,
     maxWidth: 350,
     marginTop: 200,
+    backgroundColor: theme.palette.primary.main, //"#00565f",
   },
   media: {
     height: 140,
+  },
+  cardText: {
+    color: "white",
   },
 }));

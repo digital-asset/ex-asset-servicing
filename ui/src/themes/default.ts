@@ -1,7 +1,7 @@
 import tinycolor from "tinycolor2";
 
-const primary = "#536DFE";
-const secondary = "#FF5C93";
+const primary = "#203260"; //"#00565f";//"#536DFE";
+const secondary = "#608ad8";
 const warning = "#FFC260";
 const success = "#3CD4A0";
 const info = "#9013FE";
@@ -58,13 +58,13 @@ export default {
         .toHexString(),
     },
     text: {
-      primary: "#4A4A4A",
-      secondary: "#6E6E6E",
+      primary: "#203260", //"#393939", //"#4A4A4A",
+      secondary: "#608ad8", //"#00565f", // "#393939", "#6E6E6E",
       hint: "#B9B9B9",
     },
     background: {
-      default: "#F6F7FF",
-      light: "#F3F5FF",
+      default: "#FFFFFF", //"#F6F7FF",
+      light: "#eeeeee",
     },
   },
   customShadows: {
@@ -74,5 +74,13 @@ export default {
       "0px 3px 18px 0px #4558A3B3, 0 3px 3px -2px #B2B2B21A, 0 1px 8px 0 #9A9A9A1A",
     widgetWide:
       "0px 12px 33px 0px #E8EAFC, 0 3px 3px -2px #B2B2B21A, 0 1px 8px 0 #9A9A9A1A",
+  },
+  typography: {
+    fontFamily: [
+      '"Noto Sans Condensed"',
+      'Helvetica',
+      'Arial',
+      'sans-serif',
+    ].join(','),
   },
 };
