@@ -30,9 +30,9 @@ export const getRole = (party : string) => party === "CSD" ? "CSD" : "BANK";
 
 // Temporary for allowing this app to run on DABL while providing the non-DABL party name
 export const partyMap = new Map();
-partyMap.set("BANK", "ledger-party-75f6f48d-b1fb-44bf-a7cb-5f6fe6f29463");
-partyMap.set("CSD", "ledger-party-c639bfd9-7915-4594-8eea-425b5dfa50bb");
+partyMap.set("BANK", "ledger-party-0519e276-0a9d-4620-8024-254675c033eb");
+partyMap.set("CSD", "ledger-party-53c8777f-2174-4c3e-a082-e38c17d9400f");
 
 export const nameMap = new Map();
-nameMap.set("ledger-party-75f6f48d-b1fb-44bf-a7cb-5f6fe6f29463", "BANK");
-nameMap.set("ledger-party-c639bfd9-7915-4594-8eea-425b5dfa50bb", "CSD");
+nameMap.set("ledger-party-0519e276-0a9d-4620-8024-254675c033eb", "BANK");
+nameMap.set("ledger-party-53c8777f-2174-4c3e-a082-e38c17d9400f", "CSD");
