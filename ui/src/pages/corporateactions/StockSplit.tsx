@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { useStreamQuery, useQuery, useLedger } from "@daml/react";
+import React, { useState, useContext } from "react";
+import { useStreamQuery, useQuery } from "@daml/react";
 import { EquityStockSplit } from "@daml2js/asset-servicing-0.0.1/lib/DA/Finance/Instrument/Equity/StockSplit";
 import { EquityStock } from "@daml2js/asset-servicing-0.0.1/lib/DA/Finance/Instrument/Equity/Stock";
 import { EquityStockSplitRule } from "@daml2js/asset-servicing-0.0.1/lib/DA/Finance/Instrument/Equity/Stock/Lifecycle";
@@ -10,6 +10,7 @@ import { ACBRCStockSplitRule } from "@daml2js/asset-servicing-0.0.1/lib/DA/Finan
 import { Typography, Grid, Table, TableBody, TableCell, TableRow, TableHead, Button, CircularProgress } from "@material-ui/core";
 import { useParams } from "react-router-dom";
 import useStyles from "./styles";
+import { DamlLedgerContext } from "@daml/react/context";
 
 const StockSplit : React.FC = () => {
   const classes = useStyles();
@@ -21,7 +22,7 @@ const StockSplit : React.FC = () => {
   const { contractId } = useParams();
   const cid = contractId.replace("_", "#");
 
-  const ledger = useLedger();
+  const { ledger } = useContext(DamlLedgerContext)!;
   const stockSplit = useQuery(EquityStockSplit).contracts.find(c => c.contractId === cid);
   const stocks = useStreamQuery(EquityStock, () => { return { id: { label: stockSplit?.payload.id.label } } }, [stockSplit]).contracts.slice().sort((a, b) => { return a.contractId < b.contractId ? -1 : 1; });;
   const options = useStreamQuery(EquityOption, () => { return { underlyingId: { label: stockSplit?.payload.id.label } } }, [stockSplit]).contracts.slice().sort((a, b) => { return a.contractId < b.contractId ? -1 : 1; });;

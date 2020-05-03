@@ -1,11 +1,12 @@
-import React, { useState } from "react";
-import { useStreamQuery, useLedger } from "@daml/react";
+import React, { useState, useContext } from "react";
+import { useStreamQuery } from "@daml/react";
 import { Bond as BondT } from "@daml2js/asset-servicing-0.0.1/lib/DA/Finance/Instrument/FixedIncome/Bond";
 import { BondCouponRule } from "@daml2js/asset-servicing-0.0.1/lib/DA/Finance/Instrument/FixedIncome/Bond/Lifecycle";
 import { Typography, Grid, Table, TableBody, TableCell, TableRow, Button, CircularProgress } from "@material-ui/core";
 import { useParams, RouteComponentProps } from "react-router-dom";
 import useStyles from "./styles";
 import { KeyboardArrowRight } from "@material-ui/icons";
+import { DamlLedgerContext } from "@daml/react/context";
 
 const Bond : React.FC<RouteComponentProps> = ({ history }) => {
   const classes = useStyles();
@@ -15,7 +16,7 @@ const Bond : React.FC<RouteComponentProps> = ({ history }) => {
   const { contractId } = useParams();
   const cid = contractId.replace("_", "#");
   
-  const ledger = useLedger();
+  const { ledger } = useContext(DamlLedgerContext)!;
   const bond = useStreamQuery(BondT).contracts.find(c => c.contractId === cid);
 
   if (!bond) return (null);
@@ -69,12 +70,12 @@ const Bond : React.FC<RouteComponentProps> = ({ history }) => {
                 <TableBody>
                   {bond.payload.couponDates.map((d, i) => (
                     <TableRow key={i} className={classes.tableRow}>
-                      <TableCell key={0} className={classes.tableCell} style={{ width: 1 }}>{i === +bond.payload.couponIdx ? (<KeyboardArrowRight />) : (null)}</TableCell>
+                      <TableCell key={0} className={classes.tableCellButton} style={{ width: 1 }}>{i === +bond.payload.couponIdx ? (<KeyboardArrowRight />) : (null)}</TableCell>
                       <TableCell key={1} className={classes.tableCell}>{d}</TableCell>
                       <TableCell key={2} className={classes.tableCell}>{((i === bond.payload.couponDates.length - 1 ? (1 + (+bond.payload.coupon)) : +bond.payload.coupon) * 100).toFixed(2)}%</TableCell>
-                      <TableCell key={3} className={classes.tableCell}>
+                      <TableCell key={3} className={classes.tableCellButton} style={{ width: "100px" }}>
                         {i === +bond.payload.couponIdx && (
-                          (isLifecyclingBond ? (<CircularProgress size="10px"/>) : (<Button variant="contained" color="primary" size="small" className={classes.buttonLifecycle} onClick={payCoupon}>{i === bond.payload.couponDates.length - 1 ? "Redeem" : "Pay"}</Button>))
+                          (isLifecyclingBond ? (<CircularProgress size="10px"/>) : (<Button variant="contained" color="primary" size="small" className={classes.buttonLifecycle} onClick={payCoupon} >{i === bond.payload.couponDates.length - 1 ? "Redeem" : "Pay"}</Button>))
                         )}
                       </TableCell>
                     </TableRow>

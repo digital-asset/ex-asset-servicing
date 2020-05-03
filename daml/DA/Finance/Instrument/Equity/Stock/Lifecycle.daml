@@ -36,7 +36,7 @@ template EquityStockCashDividendRule
             -- ^ A label for the entitlement instrument describing the dividend payment.
         do
           dividend <- fetch dividendCid
-          assertOnOrAfterDateMsg "expects exDate <= now" $ dividend.exDate
+          -- assertOnOrAfterDateMsg "expects exDate <= now" $ dividend.exDate
 
           (sid, stock) <- fetchByKey @EquityStock dividend.id
           archive sid
@@ -87,7 +87,7 @@ template EquityStockSplitRule
             -- ^ Stock split reference data.
         do
           stockSplit <- fetch stockSplitCid
-          assertOnOrAfterDateMsg "expects exDate <= now" $ stockSplit.exDate
+          -- assertOnOrAfterDateMsg "expects exDate <= now" $ stockSplit.exDate
 
           (scid, stock) <- fetchByKey @EquityStock stockSplit.id
           archive scid

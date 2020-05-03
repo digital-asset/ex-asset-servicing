@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { useStreamQuery, useLedger } from "@daml/react";
+import React, { useState, useContext } from "react";
+import { useStreamQuery } from "@daml/react";
 import { ACBRC } from "@daml2js/asset-servicing-0.0.1/lib/DA/Finance/Instrument/Equity/ACBRC";
 import { ACBRCFixingRule } from "@daml2js/asset-servicing-0.0.1/lib/DA/Finance/Instrument/Equity/ACBRC/Lifecycle";
 import { Typography, Grid, Table, TableBody, TableCell, TableRow, Button, CircularProgress } from "@material-ui/core";
@@ -8,6 +8,7 @@ import useStyles from "./styles";
 import { Fixing } from "@daml2js/asset-servicing-0.0.1/lib/DA/Finance/RefData/Fixing";
 import { ContractId } from "@daml/types";
 import { KeyboardArrowRight } from "@material-ui/icons";
+import { DamlLedgerContext } from "@daml/react/context";
 
 const Derivative : React.FC<RouteComponentProps> = ({ history }) => {
   const classes = useStyles();
@@ -17,9 +18,10 @@ const Derivative : React.FC<RouteComponentProps> = ({ history }) => {
   const { contractId } = useParams();
   const cid = contractId.replace("_", "#");
   
-  const ledger = useLedger();
+  const { ledger } = useContext(DamlLedgerContext)!;
   const acbrc = useStreamQuery(ACBRC).contracts.find(c => c.contractId === cid);
   const allFixings = useStreamQuery(Fixing).contracts;
+  console.log(allFixings);
   const fixings = allFixings.filter(f => acbrc && f.payload.id.label === acbrc.payload.underlyingId.label && f.payload.id.version === acbrc.payload.underlyingId.version);
   console.log(fixings);
   const fixingValues = acbrc?.payload.fixingDates.map(d => {
@@ -38,6 +40,8 @@ const Derivative : React.FC<RouteComponentProps> = ({ history }) => {
     setIsLifecyclingAcbrc(false);
   }
 
+  console.log(fixingValues);
+  
   return (
     <>
       <Grid container spacing={4}>
@@ -100,10 +104,10 @@ const Derivative : React.FC<RouteComponentProps> = ({ history }) => {
                 <TableBody>
                   {fixingValues.map((f, i) => (
                     <TableRow key={i} className={classes.tableRow}>
-                      <TableCell key={0} className={classes.tableCell} style={{ width: "10px" }}>{i === +acbrc.payload.fixingIdx ? (<KeyboardArrowRight />) : (null)}</TableCell>
+                      <TableCell key={0} className={classes.tableCellButton} style={{ width: "10px" }}>{i === +acbrc.payload.fixingIdx ? (<KeyboardArrowRight />) : (null)}</TableCell>
                       <TableCell key={1} className={classes.tableCell}>{f.date}</TableCell>
                       {i <= +acbrc.payload.fixingIdx && <TableCell key={2} className={classes.tableCell}>{f.value}</TableCell>}
-                      <TableCell key={3} className={classes.tableCell} style={{ width: "100px" }}>
+                      <TableCell key={3} className={classes.tableCellButton} style={{ width: "100px" }}>
                         {i === +acbrc.payload.fixingIdx && f.value && (
                           (isLifecyclingAcbrc ? (<CircularProgress size="10px"/>) : (<Button variant="contained" color="primary" size="small" className={classes.buttonLifecycle} onClick={() => applyFixing(f.contractId)}>Apply</Button>))
                         )}

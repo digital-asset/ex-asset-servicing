@@ -29,7 +29,7 @@ template BondCouponRule
           bond <- fetchAndArchive bondCid
 
           assertMsg "product already expired" $ bond.couponIdx < length bond.couponDates
-          assertOnOrAfterDateMsg "expects coupon date <= now" $ bond.couponDates!!bond.couponIdx
+          -- assertOnOrAfterDateMsg "expects coupon date <= now" $ bond.couponDates!!bond.couponIdx
           
           let
             isRedemption = bond.couponIdx == length bond.couponDates - 1

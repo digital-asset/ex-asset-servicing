@@ -1,25 +1,21 @@
 import React from "react";
 import { History } from 'history'; 
-import { createToken, dablLoginUrl, isLocalDev, partyMap } from "../config";
+import { createToken, dablLoginUrl, isLocalDev, getParty, getToken } from "../config";
 
-const UserStateContext = React.createContext<UserState>({ isAuthenticated: false, token: "", party: "" });
+const UserStateContext = React.createContext<UserState>({ isAuthenticated: false, name: "", party: "", token: "" });
 const UserDispatchContext = React.createContext<React.Dispatch<any>>({} as React.Dispatch<any>);
 
 type UserState = {
   isAuthenticated : boolean
-  token : string
+  name : string
   party : string
-}
-
-type LoginSuccess = {
   token : string
-  party : string
 }
 
 function userReducer(state : UserState, action : any) {
   switch (action.type) {
     case "LOGIN_SUCCESS":
-      return { ...state, isAuthenticated: true, token: action.token, party: action.party };
+      return { ...state, isAuthenticated: true, name: action.name, party: action.party, token: action.token };
     case "LOGIN_FAILURE":
       return { ...state, isAuthenticated: false };
     case "SIGN_OUT_SUCCESS":
@@ -31,13 +27,15 @@ function userReducer(state : UserState, action : any) {
 }
 
 const UserProvider : React.FC = ({ children }) => {
+  const name = localStorage.getItem("daml.name")
   const party = localStorage.getItem("daml.party")
   const token = localStorage.getItem("daml.token")
 
   var [state, dispatch] = React.useReducer(userReducer, {
     isAuthenticated: !!token,
-    token,
-    party
+    name: name || "",
+    party: party || "",
+    token: token || ""
   });
 
   return (
@@ -68,27 +66,32 @@ function useUserDispatch() {
 
 // ###########################################################
 
-function loginUser(
+async function loginUser(
     dispatch : React.Dispatch<any>,
-    party : string,
-    userToken : string,
+    name : string,
     history : History,
     setIsLoading : React.Dispatch<React.SetStateAction<boolean>>,
     setError : React.Dispatch<React.SetStateAction<boolean>>) {
   setError(false);
   setIsLoading(true);
 
-  if (!!party) {
-    const token = userToken || createToken(party)
-    const dablParty = partyMap.get(party)
+  if (!!name) {
+    
+    var party = "";
+    var token = "";
+    if (isLocalDev) {
+      party = name;
+      token = createToken(name);
+    } else {
+      party = await getParty(name);
+      token = await getToken(party);
+    }
+
+    localStorage.setItem("daml.name", name);
     localStorage.setItem("daml.party", party);
     localStorage.setItem("daml.token", token);
 
-    if (!isLocalDev && dablParty) {
-      localStorage.setItem("daml.party", dablParty);
-    }
-
-    dispatch({ type: "LOGIN_SUCCESS", token, party });
+    dispatch({ type: "LOGIN_SUCCESS", name, party, token });
     setError(false);
     setIsLoading(false);
     history.push("/apps");

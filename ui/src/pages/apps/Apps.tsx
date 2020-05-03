@@ -2,9 +2,6 @@ import React from "react";
 import { Card, CardActionArea, CardMedia, CardContent, Typography, Grid } from "@material-ui/core";
 import { makeStyles, createStyles } from "@material-ui/styles";
 import { RouteComponentProps } from "react-router-dom";
-// import caImage from "../../images/entrepreneur-1340649_640.jpg";
-// import ilImage from "../../images/stock-1863880_640.jpg";
-// import pmImage from "../../images/business-1730089_640.jpg";
 import caImage from "../../images/corporate-actions-app.jpg";
 import ilImage from "../../images/instrument-lifecycling-app.jpg";
 import pmImage from "../../images/position-management-app.jpg";
@@ -14,7 +11,7 @@ import { getRole } from "../../config";
 export default function Apps({ history } : RouteComponentProps) {
   const classes = useStyles();
   const user = useUserState();
-  const isCsd = getRole(user.party) === "CSD";
+  const isCsd = getRole(user.name) === "CSD";
 
   return (
     <Grid container direction="column" justify="center" alignItems="center" spacing={4}>

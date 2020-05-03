@@ -4,7 +4,7 @@ import { AppBar, Toolbar, IconButton, Typography, Grid, Box, CircularProgress } 
 import { ExitToApp, Apps, PlayArrow, FastRewind } from "@material-ui/icons";
 import useStyles from "./styles";
 import { useUserDispatch, signOut, useUserState } from "../../context/UserContext";
-import { getRole, isLocalDev, nameMap } from "../../config";
+import { getRole } from "../../config";
 import headerLogo from "../../images/headerLogo.png";
 
 interface HeaderProps {
@@ -18,9 +18,9 @@ function Header({ history, isInitialized, setup, teardown } : RouteComponentProp
 
   // global
   const user = useUserState();
-  const isCsd = getRole(user.party) === "CSD";
-  const userDispatch = useUserDispatch();
+  const role = getRole(user.name);
 
+  const userDispatch = useUserDispatch();
   const [isInitializing, setIsInitializing] = useState(false);
   const runScript = async () => {
     setIsInitializing(true);
@@ -43,10 +43,10 @@ function Header({ history, isInitialized, setup, teardown } : RouteComponentProp
         <Box style={{ width: "80px" }}>
           <Grid container direction="column">
             <Grid item xs={12}>
-              <Typography variant="body2">User: {isLocalDev ? user.party : nameMap.get(user.party)}</Typography>
+              <Typography variant="body2">User: {user.name}</Typography>
             </Grid>
             <Grid item xs={12}>
-              <Typography variant="body2">Role: {isCsd ? "CSD" : "BANK"}</Typography>
+              <Typography variant="body2">Role: {role}</Typography>
             </Grid>
           </Grid>
         </Box>

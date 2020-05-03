@@ -1,5 +1,6 @@
 import uuidv4 from "uuid/v4";
 import * as jwt from "jsonwebtoken";
+import { adminToken } from "./token";
 
 export const isLocalDev = process.env.NODE_ENV === 'development';
 
@@ -28,11 +29,17 @@ export const dablLoginUrl = loginUrl.join('.') + (window.location.port ? ':' + w
 
 export const getRole = (party : string) => party === "CSD" ? "CSD" : "BANK";
 
-// Temporary for allowing this app to run on DABL while providing the non-DABL party name
-export const partyMap = new Map();
-partyMap.set("BANK", "ledger-party-0519e276-0a9d-4620-8024-254675c033eb");
-partyMap.set("CSD", "ledger-party-53c8777f-2174-4c3e-a082-e38c17d9400f");
+export async function getParty(name : string) {
+  const partyUrl = "https://api.projectdabl.com/api/ledger/" + ledgerId + "/parties";
+  const res = await fetch(partyUrl, { headers: { Authorization: "Bearer " + adminToken } });
+  const json = await res.json();
+  const party = json.parties.find((p : any) => p.partyName === name);
+  return party.party as string;
+}
 
-export const nameMap = new Map();
-nameMap.set("ledger-party-0519e276-0a9d-4620-8024-254675c033eb", "BANK");
-nameMap.set("ledger-party-53c8777f-2174-4c3e-a082-e38c17d9400f", "CSD");
+export async function getToken(party : string) {
+  const tokenUrl = "https://api.projectdabl.com/api/ledger/" + ledgerId + "/party/" + party + "/token";
+  const res = await fetch(tokenUrl, { method: "POST", headers: { Authorization: "Bearer " + adminToken } });
+  const json = await res.json();
+  return json.access_token as string;
+}

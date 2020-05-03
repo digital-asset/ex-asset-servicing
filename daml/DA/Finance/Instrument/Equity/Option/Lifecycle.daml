@@ -130,7 +130,7 @@ template EquityOptionStockSplitRule
           stockSplit <- fetch stockSplitCid
 
           option.underlyingId === stockSplit.id
-          assertOnOrAfterDateMsg "expects exDate <= now" $ stockSplit.exDate
+          -- assertOnOrAfterDateMsg "expects exDate <= now" $ stockSplit.exDate
 
           let optionIdNew =  increaseVersion option.id
           optionCid <- create option with

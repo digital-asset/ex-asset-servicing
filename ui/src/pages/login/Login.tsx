@@ -9,14 +9,11 @@ import { isLocalDev } from "../../config";
 function Login(props : RouteComponentProps) {
   var classes = useStyles();
 
-  // global
   var userDispatch = useUserDispatch();
 
-  // local
   var [isLoading, setIsLoading] = useState(false);
   var [error, setError] = useState(false);
   var [loginValue, setLoginValue] = useState("");
-  var [passwordValue, setPasswordValue] = useState("");
 
   return (
     <Grid container className={classes.container}>
@@ -42,7 +39,6 @@ function Login(props : RouteComponentProps) {
                   </Typography>
                 </>}
               <TextField
-                id="email"
                 InputProps={{
                   classes: {
                     underline: classes.textFieldUnderline,
@@ -56,7 +52,6 @@ function Login(props : RouteComponentProps) {
                     loginUser(
                       userDispatch,
                       loginValue,
-                      passwordValue,
                       props.history,
                       setIsLoading,
                       setError,
@@ -65,34 +60,6 @@ function Login(props : RouteComponentProps) {
                 }}
                 margin="normal"
                 placeholder="Username"
-                type="email"
-                fullWidth
-              />
-              <TextField
-                id="password"
-                InputProps={{
-                  classes: {
-                    underline: classes.textFieldUnderline,
-                    input: classes.textField,
-                  },
-                }}
-                value={passwordValue}
-                onChange={e => setPasswordValue(e.target.value)}
-                onKeyDown={e => {
-                  if (e.key === "Enter") {
-                    loginUser(
-                      userDispatch,
-                      loginValue,
-                      passwordValue,
-                      props.history,
-                      setIsLoading,
-                      setError,
-                    )
-                  }
-                }}
-                margin="normal"
-                placeholder="Password"
-                type="password"
                 fullWidth
               />
               <div className={classes.formButtons}>
@@ -104,7 +71,6 @@ function Login(props : RouteComponentProps) {
                       loginUser(
                         userDispatch,
                         loginValue,
-                        passwordValue,
                         props.history,
                         setIsLoading,
                         setError,

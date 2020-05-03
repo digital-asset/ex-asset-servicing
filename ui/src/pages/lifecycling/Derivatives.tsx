@@ -6,7 +6,7 @@ import { withRouter, RouteComponentProps } from "react-router-dom";
 import useStyles from "./styles";
 import { KeyboardArrowRight } from "@material-ui/icons";
 
-const StockSplits : React.FC<RouteComponentProps> = ({ history } : RouteComponentProps) => {
+const Derivatives : React.FC<RouteComponentProps> = ({ history } : RouteComponentProps) => {
   const classes = useStyles();
 
   const acbrcs = useStreamQuery(ACBRC).contracts;
@@ -44,4 +44,4 @@ const StockSplits : React.FC<RouteComponentProps> = ({ history } : RouteComponen
     </Table>  );
 }
 
-export default withRouter(StockSplits);
+export default withRouter(Derivatives);

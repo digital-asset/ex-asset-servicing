@@ -38,7 +38,7 @@ template ACBRCStockSplitRule
           stockSplit <- fetch stockSplitCid
 
           acbrc.underlyingId === stockSplit.id
-          assertOnOrAfterDateMsg "expects exDate <= now" $ stockSplit.exDate
+          -- assertOnOrAfterDateMsg "expects exDate <= now" $ stockSplit.exDate
 
           let acbrcIdNew = increaseVersion acbrc.id
           acbrcCid <- create acbrc with
@@ -73,7 +73,7 @@ template ACBRCFixingRule
           acbrc <- fetchAndArchive acbrcCid
           fixing <- fetch fixingCid
 
-          assertOnOrAfterDateMsg "expects date <= now" $ fixing.date
+          -- assertOnOrAfterDateMsg "expects date <= now" $ fixing.date
           assertMsg "product already expired" $ acbrc.fixingIdx < length acbrc.fixingDates
           assertMsg "underlyings don't match" $ acbrc.underlyingId == fixing.id
           assertMsg "fixing has wrong date" $ acbrc.fixingDates!!acbrc.fixingIdx == fixing.date

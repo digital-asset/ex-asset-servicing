@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { Route, Switch, withRouter } from "react-router-dom";
 import classnames from "classnames";
 import useStyles from "./styles";
 import Header from "../../components/Header/Header";
 import Sidebar from "../../components/Sidebar/Sidebar";
 import { useLayoutState } from "../../context/LayoutContext";
-import { useLedger, useParty } from "@daml/react";
+import { DamlLedgerContext } from "@daml/react/context";
 import { CallSplit, LocalAtm } from "@material-ui/icons";
 import { SidebarEntry } from "../../components/Sidebar/SidebarEntry";
 import StockSplit from "../corporateactions/StockSplit";
@@ -18,8 +18,7 @@ import { setup, teardown } from "../../scripts/CSD";
 function CorporateActions() {
   const classes = useStyles();
   const layoutState = useLayoutState();
-  const ledger = useLedger();
-  const party = useParty();
+  const { ledger, party } = useContext(DamlLedgerContext)!;
 
   const [isInitialized, setIsInitialized] = useState(false)
   useEffect(() => {

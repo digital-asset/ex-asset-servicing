@@ -1,11 +1,11 @@
-import React from "react";
-import { useLedger } from "@daml/react";
+import React, { useContext } from "react";
 import { AssetDeposit } from "@daml2js/asset-servicing-0.0.1/lib/DA/Finance/Asset";
 import { Button, Dialog, DialogContent, DialogActions, DialogTitle, Grid, Typography, CircularProgress, Chip } from "@material-ui/core";
 import { LifecycleEffects, AssetLifecycleRule } from "@daml2js/asset-servicing-0.0.1/lib/DA/Finance/Asset/Lifecycle";
 import { CreateEvent } from "@daml/ledger";
 import { Forward } from "@material-ui/icons";
 import { useUserState } from "../../context/UserContext";
+import { DamlLedgerContext } from "@daml/react/context";
 
 export type LifecycleDialogProps = {
   open: boolean
@@ -19,7 +19,7 @@ const LifecycleDialog : React.FC<LifecycleDialogProps> = ({ open, onClose, depos
   const user = useUserState();
   const [isApplyingEffect, setIsApplyingEffect] = React.useState(false);
 
-  const ledger = useLedger();
+  const { ledger } = useContext(DamlLedgerContext)!;
 
   if (!deposit || !effect) return (null);
 
@@ -43,23 +43,21 @@ const LifecycleDialog : React.FC<LifecycleDialogProps> = ({ open, onClose, depos
       <DialogContent dividers>
         <Grid container spacing={4}>
           <Grid item xs={5}>
-            <Typography gutterBottom variant="body2">1.0 * <Chip label={deposit.payload.asset.id.label} size="small" color="primary"/> <Chip label={"v" + deposit.payload.asset.id.version} size="small" color="secondary"/></Typography>
+            <Typography gutterBottom variant="body2">1.0 * <Chip label={deposit.payload.asset.id.label} size="small" color="secondary"/> <Chip label={"v" + deposit.payload.asset.id.version} size="small" color="secondary"/></Typography>
           </Grid>
           <Grid item xs={2}>
             <Forward />
           </Grid>
           <Grid item xs={5}>
             {effect.payload.effects.map((e, i) => (
-              <Typography gutterBottom variant="body2" key={i}>{e.quantity} * <Chip label={e.id.label} size="small" color="primary"/> <Chip label={"v" + e.id.version} size="small" color="secondary"/></Typography>
+              <Typography gutterBottom variant="body2" key={i}>{e.quantity} * <Chip label={e.id.label} size="small" color="secondary"/> <Chip label={"v" + e.id.version} size="small" color="secondary"/></Typography>
             ))}
           </Grid>
         </Grid>
       </DialogContent>
       <DialogActions>
-        {!isApplyingEffect && <Button onClick={onClose} color="primary">
-          Cancel
-        </Button>}
-        {isApplyingEffect ? (<CircularProgress size="small" />) : (<Button onClick={applyEffect} color="primary" autoFocus>Apply</Button>) }
+        {!isApplyingEffect && <Button onClick={onClose} color="primary">Cancel</Button>}
+        {isApplyingEffect ? (<CircularProgress size="28px" />) : (<Button onClick={applyEffect} color="primary" autoFocus>Apply</Button>) }
       </DialogActions>
     </Dialog>
   );
