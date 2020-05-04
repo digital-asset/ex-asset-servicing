@@ -1,6 +1,6 @@
 import React from "react";
 import { History } from 'history'; 
-import { createToken, dablLoginUrl, isLocalDev, getParty, getToken } from "../config";
+import { dablLoginUrl, getParty, getToken } from "../config";
 
 const UserStateContext = React.createContext<UserState>({ isAuthenticated: false, name: "", party: "", token: "" });
 const UserDispatchContext = React.createContext<React.Dispatch<any>>({} as React.Dispatch<any>);
@@ -77,16 +77,8 @@ async function loginUser(
 
   if (!!name) {
     
-    var party = "";
-    var token = "";
-    if (isLocalDev) {
-      party = name;
-      token = createToken(name);
-    } else {
-      party = await getParty(name);
-      token = await getToken(party);
-    }
-
+    var party = await getParty(name);
+    var token = await getToken(party);
     localStorage.setItem("daml.name", name);
     localStorage.setItem("daml.party", party);
     localStorage.setItem("daml.token", token);

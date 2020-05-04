@@ -1,11 +1,10 @@
-import React, { useEffect, useState, useContext } from "react";
+import React, { useEffect, useState } from "react";
 import { Route, Switch, withRouter } from "react-router-dom";
 import classnames from "classnames";
 import useStyles from "./styles";
 import Header from "../../components/Header/Header";
 import Sidebar from "../../components/Sidebar/Sidebar";
 import { useLayoutState } from "../../context/LayoutContext";
-import { DamlLedgerContext } from "@daml/react/context";
 import { CallSplit, LocalAtm } from "@material-ui/icons";
 import { SidebarEntry } from "../../components/Sidebar/SidebarEntry";
 import StockSplit from "../corporateactions/StockSplit";
@@ -14,13 +13,15 @@ import Dividends from "../corporateactions/Dividends";
 import StockSplits from "../corporateactions/StockSplits";
 import { InitDone } from "@daml2js/asset-servicing-0.0.1/lib/Init";
 import { setup, teardown } from "../../scripts/CSD";
+import { useLedger, useParty } from "@daml/react";
 
 function CorporateActions() {
   const classes = useStyles();
   const layoutState = useLayoutState();
-  const { ledger, party } = useContext(DamlLedgerContext)!;
 
-  const [isInitialized, setIsInitialized] = useState(false)
+  const [isInitialized, setIsInitialized] = useState(false);
+  const ledger = useLedger();
+  const party = useParty();
   useEffect(() => {
     async function getInit() {
       const initDone = await ledger.fetchByKey(InitDone, party);

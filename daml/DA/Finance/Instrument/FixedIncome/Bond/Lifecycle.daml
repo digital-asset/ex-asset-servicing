@@ -4,7 +4,6 @@
 daml 1.2
 module DA.Finance.Instrument.FixedIncome.Bond.Lifecycle where
 
-import DA.List
 import DA.Next.Set
 
 import DA.Finance.Asset.Lifecycle

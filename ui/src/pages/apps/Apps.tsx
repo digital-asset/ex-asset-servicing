@@ -62,7 +62,7 @@ export default function Apps({ history } : RouteComponentProps) {
           {!isCsd && (
             <Grid item xs={12}>
               <Card className={classes.root}>
-                <CardActionArea onClick={() => history.push("/apps/positions")}>
+                <CardActionArea onClick={() => history.push("/apps/positionmanagement")}>
                   <CardMedia
                     className={classes.media}
                     image={pmImage}

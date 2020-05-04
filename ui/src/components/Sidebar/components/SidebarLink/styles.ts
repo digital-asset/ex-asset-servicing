@@ -34,6 +34,12 @@ export default makeStyles((theme : any) => createStyles({
     transition: theme.transitions.create(["opacity", "color"]),
     fontSize: 16,
   },
+  linkTextNested: {
+    padding: 0,
+    color: theme.palette.text.primary, // + "CC",
+    transition: theme.transitions.create(["opacity", "color"]),
+    fontSize: 12,
+  },
   linkTextActive: {
     color: theme.palette.text.secondary,
   },

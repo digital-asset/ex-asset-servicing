@@ -40,7 +40,7 @@ function Header({ history, isInitialized, setup, teardown } : RouteComponentProp
         <div className={classes.grow} />
         <img alt="headerLogo" src={headerLogo} height="32px" />
         <div className={classes.grow} />
-        <Box style={{ width: "80px" }}>
+        <Box style={{ width: "90px" }}>
           <Grid container direction="column">
             <Grid item xs={12}>
               <Typography variant="body2">User: {user.name}</Typography>
@@ -50,6 +50,14 @@ function Header({ history, isInitialized, setup, teardown } : RouteComponentProp
             </Grid>
           </Grid>
         </Box>
+        <IconButton
+          color="inherit"
+          aria-haspopup="true"
+          onClick={() => history.push("/apps")}
+          className={classes.headerMenuButton}
+        >
+          <Apps classes={{ root: classes.headerIcon }} />
+        </IconButton>
         {(setup || teardown) && <IconButton
           color="inherit"
           aria-haspopup="true"
@@ -61,14 +69,6 @@ function Header({ history, isInitialized, setup, teardown } : RouteComponentProp
           {isInitialized && !isInitializing && <FastRewind classes={{ root: classes.headerIcon }} />}
           {isInitializing && <CircularProgress size={28} classes={{ root: classes.headerIcon }} />}
         </IconButton>}
-        <IconButton
-          color="inherit"
-          aria-haspopup="true"
-          onClick={() => history.push("/apps")}
-          className={classes.headerMenuButton}
-        >
-          <Apps classes={{ root: classes.headerIcon }} />
-        </IconButton>
         <IconButton
           aria-haspopup="true"
           color="inherit"

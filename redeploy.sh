@@ -20,8 +20,8 @@ echo "Got project id $PROJECT_ID and ledger id $LEDGER_ID"
 TOKEN=$(dabl ledger token $LEDGER_ID)
 echo "export const adminToken = \"$TOKEN\";" > ui/src/token.ts
 echo "Injected ledger admin token"
-make incremental package > /dev/null
-echo "Rebuilt (incremental) and packaged project"
+make ui package > /dev/null
+echo "Rebuilt (ui) and packaged project"
 
 # Deploy UI
 dabl ledger upload $LEDGER_ID $UI_FILE

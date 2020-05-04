@@ -1,12 +1,11 @@
-import React, { useState, useContext } from "react";
-import { useStreamQuery, useQuery } from "@daml/react";
+import React, { useState } from "react";
+import { useStreamQuery, useQuery, useLedger } from "@daml/react";
 import { EquityStock } from "@daml2js/asset-servicing-0.0.1/lib/DA/Finance/Instrument/Equity/Stock";
 import { EquityStockCashDividendRule } from "@daml2js/asset-servicing-0.0.1/lib/DA/Finance/Instrument/Equity/Stock/Lifecycle";
 import { Typography, Grid, Table, TableBody, TableCell, TableRow, TableHead, Button, CircularProgress } from "@material-ui/core";
 import { RouteComponentProps, useParams } from "react-router-dom";
 import { EquityCashDividend } from "@daml2js/asset-servicing-0.0.1/lib/DA/Finance/Instrument/Equity/CashDividend";
 import useStyles from "./styles";
-import { DamlLedgerContext } from "@daml/react/context";
 
 const Dividend : React.FC<RouteComponentProps> = ({ history } : RouteComponentProps) => {
   const classes = useStyles();
@@ -16,7 +15,7 @@ const Dividend : React.FC<RouteComponentProps> = ({ history } : RouteComponentPr
   const { contractId } = useParams();
   const cid = contractId.replace("_", "#");
 
-  const { ledger } = useContext(DamlLedgerContext)!;
+  const ledger = useLedger();
   const dividend = useQuery(EquityCashDividend).contracts.find(c => c.contractId === cid);
   const stocks = useStreamQuery(EquityStock, () => { return { id: { label: dividend?.payload.id.label } } }, [dividend]);
 

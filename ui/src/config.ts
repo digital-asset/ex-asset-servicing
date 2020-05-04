@@ -4,32 +4,25 @@ import { adminToken } from "./token";
 
 export const isLocalDev = process.env.NODE_ENV === 'development';
 
-let host = window.location.host.split('.')
-
-export const ledgerId = isLocalDev ? "asset-servicing" : host[0];
-
-let apiUrl = host.slice(1)
-apiUrl.unshift('api')
+const host = window.location.host.split('.');
+const ledgerId = isLocalDev ? "asset-servicing" : host[0];
+const apiUrl = host.slice(1);
+apiUrl.unshift('api');
 
 export const httpBaseUrl = isLocalDev ? undefined : ('https://' + apiUrl.join('.') + (window.location.port ? ':' + window.location.port : '') + '/data/' + ledgerId + '/');
-
-// Unfortunately, the development server of `create-react-app` does not proxy
-// websockets properly. Thus, we need to bypass it and talk to the JSON API
-// directly in development mode.
 export const wsBaseUrl = isLocalDev ? 'ws://localhost:7575/' : undefined;
 
 const applicationId = uuidv4();
-
-export const createToken = (party : string) => jwt.sign({ "https://daml.com/ledger-api": { ledgerId, applicationId, admin: true, actAs: [party], readAs: [party] } }, "secret")
+const createToken = (party : string) => jwt.sign({ "https://daml.com/ledger-api": { ledgerId, applicationId, admin: true, actAs: [party], readAs: [party] } }, "secret");
 
 let loginUrl = host.slice(1)
 loginUrl.unshift('login')
-
 export const dablLoginUrl = loginUrl.join('.') + (window.location.port ? ':' + window.location.port : '') + '/auth/login?ledgerId=' + ledgerId;
 
-export const getRole = (party : string) => party === "CSD" ? "CSD" : "BANK";
+export const getRole = (name : string) => name === "CSD" ? "CSD" : (name === "BANK" ? "BANK" : "CLIENT");
 
 export async function getParty(name : string) {
+  if (isLocalDev) return name;
   const partyUrl = "https://api.projectdabl.com/api/ledger/" + ledgerId + "/parties";
   const res = await fetch(partyUrl, { headers: { Authorization: "Bearer " + adminToken } });
   const json = await res.json();
@@ -38,6 +31,7 @@ export async function getParty(name : string) {
 }
 
 export async function getToken(party : string) {
+  if (isLocalDev) return createToken(party);
   const tokenUrl = "https://api.projectdabl.com/api/ledger/" + ledgerId + "/party/" + party + "/token";
   const res = await fetch(tokenUrl, { method: "POST", headers: { Authorization: "Bearer " + adminToken } });
   const json = await res.json();

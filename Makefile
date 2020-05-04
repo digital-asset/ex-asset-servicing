@@ -3,12 +3,11 @@ build:
 	rm -rf daml2js
 	rm -rf ui/build
 	daml build
-	daml codegen ts -o daml2js -p package.json .daml/dist/*.dar
-	yarn install
-	yarn workspaces run build
+	daml codegen js -o daml2js .daml/dist/*.dar
+	cd ui && yarn install --force --frozen-lockfile
+	cd ui && yarn build
 
-incremental:
-	daml build
+ui:
 	rm -rf ui/build/
 	cd ui && yarn build
 

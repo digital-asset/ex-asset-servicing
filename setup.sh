@@ -30,6 +30,12 @@ dabl ledger party add $LEDGER_ID CSD
 echo "Allocated party CSD"
 dabl ledger party add $LEDGER_ID BANK
 echo "Allocated party BANK"
+dabl ledger party add $LEDGER_ID Yuval
+echo "Allocated party Yuval"
+dabl ledger party add $LEDGER_ID Eric
+echo "Allocated party Eric"
+dabl ledger party add $LEDGER_ID Shaul
+echo "Allocated party Shaul"
 
 # Inject ledger admin token
 TOKEN=$(dabl ledger token $LEDGER_ID)
@@ -38,7 +44,7 @@ echo "Injected ledger admin token"
 
 # Package project
 make build package > /dev/null
-echo "Rebuilt (full) and packaged project"
+echo "Rebuilt (all) and packaged project"
 
 # Deploy DAR
 dabl ledger upload $LEDGER_ID $DAR_FILE

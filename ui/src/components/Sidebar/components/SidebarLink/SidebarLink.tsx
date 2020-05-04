@@ -8,6 +8,7 @@ import { SidebarEntry } from "../../SidebarEntry";
 
 type SidebarLinkProps = {
   label : string
+  level : number
   path : string
   icon : JSX.Element
   children : SidebarEntry[]
@@ -15,7 +16,8 @@ type SidebarLinkProps = {
   isSidebarOpened : boolean
 }
 
-export default function SidebarLink({ label, path, icon, children, location, isSidebarOpened } : SidebarLinkProps) {
+export default function SidebarLink(props : SidebarLinkProps) {
+  const { label, level, path, icon, children, location, isSidebarOpened } = props;
   const classes = useStyles();
 
   const [isOpen, setIsOpen] = useState(false);
@@ -43,18 +45,19 @@ export default function SidebarLink({ label, path, icon, children, location, isS
         }}
         disableRipple
       >
-        <ListItemIcon
+        {level < 2 && <ListItemIcon
           className={classnames(classes.linkIcon, {
             [classes.linkIconActive]: isLinkActive,
           })}
         >
           {icon}
-        </ListItemIcon>
+        </ListItemIcon>}
         <ListItemText
           classes={{
             primary: classnames(classes.linkText, {
               [classes.linkTextActive]: isLinkActive,
               [classes.linkTextHidden]: !isSidebarOpened,
+              [classes.linkTextNested]: level > 1,
             }),
           }}
           primary={label}
@@ -70,6 +73,7 @@ export default function SidebarLink({ label, path, icon, children, location, isS
           <List component="div" disablePadding>
             {children.map(child => (
               <SidebarLink
+                level={level + 1}
                 location={location}
                 isSidebarOpened={isSidebarOpened}
                 {...child}

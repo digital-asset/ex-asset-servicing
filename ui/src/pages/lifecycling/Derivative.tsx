@@ -1,5 +1,5 @@
-import React, { useState, useContext } from "react";
-import { useStreamQuery } from "@daml/react";
+import React, { useState } from "react";
+import { useStreamQuery, useLedger } from "@daml/react";
 import { ACBRC } from "@daml2js/asset-servicing-0.0.1/lib/DA/Finance/Instrument/Equity/ACBRC";
 import { ACBRCFixingRule } from "@daml2js/asset-servicing-0.0.1/lib/DA/Finance/Instrument/Equity/ACBRC/Lifecycle";
 import { Typography, Grid, Table, TableBody, TableCell, TableRow, Button, CircularProgress } from "@material-ui/core";
@@ -8,7 +8,6 @@ import useStyles from "./styles";
 import { Fixing } from "@daml2js/asset-servicing-0.0.1/lib/DA/Finance/RefData/Fixing";
 import { ContractId } from "@daml/types";
 import { KeyboardArrowRight } from "@material-ui/icons";
-import { DamlLedgerContext } from "@daml/react/context";
 
 const Derivative : React.FC<RouteComponentProps> = ({ history }) => {
   const classes = useStyles();
@@ -18,12 +17,10 @@ const Derivative : React.FC<RouteComponentProps> = ({ history }) => {
   const { contractId } = useParams();
   const cid = contractId.replace("_", "#");
   
-  const { ledger } = useContext(DamlLedgerContext)!;
+  const ledger = useLedger();
   const acbrc = useStreamQuery(ACBRC).contracts.find(c => c.contractId === cid);
   const allFixings = useStreamQuery(Fixing).contracts;
-  console.log(allFixings);
   const fixings = allFixings.filter(f => acbrc && f.payload.id.label === acbrc.payload.underlyingId.label && f.payload.id.version === acbrc.payload.underlyingId.version);
-  console.log(fixings);
   const fixingValues = acbrc?.payload.fixingDates.map(d => {
     const fixing = fixings.find(f => f.payload.date === d);
     return { contractId: fixing?.contractId, date: d, value: fixing?.payload.value }
@@ -40,8 +37,6 @@ const Derivative : React.FC<RouteComponentProps> = ({ history }) => {
     setIsLifecyclingAcbrc(false);
   }
 
-  console.log(fixingValues);
-  
   return (
     <>
       <Grid container spacing={4}>

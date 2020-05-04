@@ -61,6 +61,7 @@ function Sidebar({ entries, location } : RouteComponentProps & SidebarProps) {
         {entries.map(e =>
           <SidebarLink
             key={e.label}
+            level={0}
             location={location}
             isSidebarOpened={isSidebarOpened}
             {...e}

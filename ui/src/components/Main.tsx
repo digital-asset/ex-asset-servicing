@@ -25,7 +25,7 @@ export default function Main({ defaultPath }: MainProps) {
           <PrivateRoute exact path="/apps" component={Apps} />
           <PrivateRoute path="/apps/corporateactions" component={CorporateActions} />
           <PrivateRoute path="/apps/lifecycling" component={Lifecycling} />
-          <PrivateRoute path="/apps/positions" component={PositionManagement} />
+          <PrivateRoute path="/apps/positionmanagement" component={PositionManagement} />
           <PublicRoute path="/login" component={Login} />
           <Route component={ErrorComponent} />
         </Switch>
@@ -48,10 +48,12 @@ export default function Main({ defaultPath }: MainProps) {
       if (party === null) {
         throw Error("When 'token' is passed via URL, 'party' must be passed too.");
       }
+      const name = "Georg";
+      localStorage.setItem("daml.name", name);
       localStorage.setItem("daml.party", party);
       localStorage.setItem("daml.token", token);
 
-      userDispatch({ type: "LOGIN_SUCCESS", token, party });
+      userDispatch({ type: "LOGIN_SUCCESS", name, party, token });
     })
 
     return (

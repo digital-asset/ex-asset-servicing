@@ -1,5 +1,5 @@
 import React from "react";
-import { useStreamQuery } from "@daml/react";
+import { useStreamQuery, useParty } from "@daml/react";
 import { AssetDeposit, AssetCategorization } from "@daml2js/asset-servicing-0.0.1/lib/DA/Finance/Asset";
 import { Table, TableHead, TableRow, TableCell, TableBody, Button } from "@material-ui/core";
 import { LifecycleEffects } from "@daml2js/asset-servicing-0.0.1/lib/DA/Finance/Asset/Lifecycle";
@@ -7,12 +7,12 @@ import { CreateEvent } from "@daml/ledger";
 import LifecycleDialog, { LifecycleDialogProps } from "./LifecycleDialog";
 import useStyles from "./styles";
 
-interface PositionProps {
-  assetClass? : string
-  assetType? : string
+interface AccountProps {
+  role?: string
+  account? : string
 }
 
-const Positions : React.FC<PositionProps> = ({ assetClass, assetType }) => {
+const Accounts : React.FC<AccountProps> = ({ role, account }) => {
   const classes = useStyles();
 
   const [props, setProps] = React.useState<LifecycleDialogProps>({ open: false, onClose: () => {}, deposit: undefined, effect: undefined });
@@ -25,6 +25,7 @@ const Positions : React.FC<PositionProps> = ({ assetClass, assetType }) => {
     setProps({ open: true, onClose, deposit, effect });
   }
 
+  const party = useParty();
   const deposits = useStreamQuery(AssetDeposit).contracts;
   const categories = useStreamQuery(AssetCategorization).contracts;
   const effects = useStreamQuery(LifecycleEffects).contracts;
@@ -39,8 +40,8 @@ const Positions : React.FC<PositionProps> = ({ assetClass, assetType }) => {
   }
 
   const displayedEntries = entries
-    .filter(e => (!assetClass || e.category?.payload.assetClass === assetClass))
-    .filter(e => (!assetType || e.category?.payload.assetType === assetType))
+    .filter(e => (!role || (role === "provider" && e.deposit.payload.account.provider === party) || (role === "owner" && e.deposit.payload.account.owner === party)))
+    .filter(e => (!account || (e.deposit.payload.account.id.label === account)))
     .sort((a, b) => { return getCid(a.deposit.contractId) < getCid(b.deposit.contractId) ? -1 : 1; });
 
   return (
@@ -82,4 +83,4 @@ const Positions : React.FC<PositionProps> = ({ assetClass, assetType }) => {
   );
 }
 
-export default Positions;
+export default Accounts;

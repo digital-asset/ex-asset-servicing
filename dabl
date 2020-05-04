@@ -3,7 +3,6 @@
 if [ -z ${DABL_ADMIN_TOKEN+x} ]; then
   echo "Please provide your DABL admin token (will set DABL_ADMIN_TOKEN for current shell session):";
   read -s TOKEN
-  echo $TOKEN
   export DABL_ADMIN_TOKEN=$TOKEN
 fi
 
@@ -348,8 +347,8 @@ function awaitEndpoints {
   fi
 
   T1=$(date +%s)
-  TOKEN=$(getAdminToken $1)
   printf "Awaiting endpoint availability.."
+  TOKEN=$(getAdminToken $1)
   while [ "$TOKEN" == "" ]
   do
     sleep 2s
