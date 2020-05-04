@@ -1,12 +1,15 @@
-sdk-version: 0.13.34
+sdk-version: 1.0.1
 name: asset-servicing
 source: daml
-scenario: Test:example
 parties:
-  - PrivateBank
-  - CSD
-  - InvestmentBank
+  - Alice
+  - Bob
 version: 0.0.1
+#init-script: Init:init
+sandbox-options:
+  - --ledgerid=asset-servicing
+  - -w
 dependencies:
   - daml-prim
   - daml-stdlib
+  - daml-script

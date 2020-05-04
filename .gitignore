@@ -1,3 +1,8 @@
-/.daml
-*.log
+.DS_Store
+.vscode
+.daml/
 node_modules/
+build/
+daml2js/
+deploy/
+*.log
