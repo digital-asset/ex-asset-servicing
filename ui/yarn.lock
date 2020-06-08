@@ -1114,10 +1114,10 @@
 "@daml2js/asset-servicing-0.0.1@file:../daml2js/asset-servicing-0.0.1":
   version "1.0.1"
   dependencies:
-    "@daml.js/40f452260bef3f29dede136108fc08a88d5a5250310281067087da6f0baddff7" "file:../../../Library/Caches/Yarn/v4/npm-@daml2js-asset-servicing-0-0-1-1.0.1-81064bb7-d768-469d-b0fd-f4963fee610c-1588346428577/node_modules/@daml2js/40f452260bef3f29dede136108fc08a88d5a5250310281067087da6f0baddff7"
-    "@daml.js/af229a118107d2574f87b269743662935551d75881b400109d92736443e5d71f" "file:../../../Library/Caches/Yarn/v4/npm-@daml2js-asset-servicing-0-0-1-1.0.1-81064bb7-d768-469d-b0fd-f4963fee610c-1588346428577/node_modules/@daml2js/af229a118107d2574f87b269743662935551d75881b400109d92736443e5d71f"
-    "@daml.js/bfcd37bd6b84768e86e432f5f6c33e25d9e7724a9d42e33875ff74f6348e733f" "file:../../../Library/Caches/Yarn/v4/npm-@daml2js-asset-servicing-0-0-1-1.0.1-81064bb7-d768-469d-b0fd-f4963fee610c-1588346428577/node_modules/@daml2js/bfcd37bd6b84768e86e432f5f6c33e25d9e7724a9d42e33875ff74f6348e733f"
-    "@daml.js/d14e08374fc7197d6a0de468c968ae8ba3aadbf9315476fd39071831f5923662" "file:../../../Library/Caches/Yarn/v4/npm-@daml2js-asset-servicing-0-0-1-1.0.1-81064bb7-d768-469d-b0fd-f4963fee610c-1588346428577/node_modules/@daml2js/d14e08374fc7197d6a0de468c968ae8ba3aadbf9315476fd39071831f5923662"
+    "@daml.js/40f452260bef3f29dede136108fc08a88d5a5250310281067087da6f0baddff7" "file:../daml2js/40f452260bef3f29dede136108fc08a88d5a5250310281067087da6f0baddff7"
+    "@daml.js/af229a118107d2574f87b269743662935551d75881b400109d92736443e5d71f" "file:../daml2js/af229a118107d2574f87b269743662935551d75881b400109d92736443e5d71f"
+    "@daml.js/bfcd37bd6b84768e86e432f5f6c33e25d9e7724a9d42e33875ff74f6348e733f" "file:../daml2js/bfcd37bd6b84768e86e432f5f6c33e25d9e7724a9d42e33875ff74f6348e733f"
+    "@daml.js/d14e08374fc7197d6a0de468c968ae8ba3aadbf9315476fd39071831f5923662" "file:../daml2js/d14e08374fc7197d6a0de468c968ae8ba3aadbf9315476fd39071831f5923662"
     "@daml/types" "1.0.1"
     "@mojotech/json-type-validation" "^3.1.0"
 
@@ -11016,9 +11016,9 @@ websocket-driver@>=0.5.1:
     websocket-extensions ">=0.1.1"
 
 websocket-extensions@>=0.1.1:
-  version "0.1.3"
-  resolved "https://registry.yarnpkg.com/websocket-extensions/-/websocket-extensions-0.1.3.tgz#5d2ff22977003ec687a4b87073dfbbac146ccf29"
-  integrity sha512-nqHUnMXmBzT0w570r2JpJxfiSD1IzoI+HGVdd3aZ0yNi3ngvQ4jv1dtHt5VGxfI2yj5yqImPhOK4vmIh2xMbGg==
+  version "0.1.4"
+  resolved "https://registry.yarnpkg.com/websocket-extensions/-/websocket-extensions-0.1.4.tgz#7f8473bc839dfd87608adb95d7eb075211578a42"
+  integrity sha512-OqedPIGOfsDlo31UNwYbCFMSaO9m9G/0faIHj5/dZFDMFqPTcx6UwqyOy3COEaEOg/9VsGIpdqn62W5KhoKSpg==
 
 whatwg-encoding@^1.0.1, whatwg-encoding@^1.0.3, whatwg-encoding@^1.0.5:
   version "1.0.5"
