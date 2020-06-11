@@ -31,7 +31,7 @@ function main {
       project $@
       ;;
     l|ledger)
-      ledger $@
+      ledger "$@"
       ;;
     *)
       echo "dabl <command>"
@@ -187,7 +187,7 @@ function ledger {
       upload $@
       ;;
     party)
-      party $@
+      party "$@"
       ;;
     models)
       getModels $@
@@ -249,7 +249,7 @@ function getAdminToken {
     exit 1
   fi
 
-  curl -s -H "$AUTH_HEADER" -X POST https://api.projectdabl.com/api/ledger/$1/admin/user_grants | jq -r '.access_token' 2> /dev/null
+  curl -s -H "$AUTH_HEADER" -X POST https://login.projectdabl.com/auth/ledger/$1/user_grants | jq -r '.accessToken' 2> /dev/null
 }
 
 function getModels {
@@ -414,10 +414,10 @@ function party {
       getParties $@
       ;;
     add)
-      addParty $@
+      addParty "$@"
       ;;
     id)
-      getPartyId $@
+      getPartyId "$@"
       ;;
     token)
       getPartyToken $@
@@ -439,7 +439,7 @@ function getParties {
   fi
 
   HEADER="Authorization: Bearer $(getAdminToken $1)"
-  curl -s -H "$HEADER" https://api.projectdabl.com/api/ledger/$1/parties | jq 2> /dev/null
+  curl -s -H "$HEADER" https://login.projectdabl.com/auth/ledger/$1/parties | jq 2> /dev/null
 }
 
 function getPartyId {
@@ -450,7 +450,7 @@ function getPartyId {
   fi
 
   HEADER="Authorization: Bearer $(getAdminToken $1)"
-  curl -s -H "$HEADER" https://api.projectdabl.com/api/ledger/$1/parties | jq -r '.parties[] | select(.partyName == "'$2'").party'
+  curl -s -H "$HEADER" https://login.projectdabl.com/auth/ledger/$1/parties | jq -r '.parties[] | select(.partyName == "'"$2"'").party'
 }
 
 function addParty {
@@ -462,7 +462,15 @@ function addParty {
 
   REQUEST='{ "partyName": "'$2'" }'
   HEADER="Authorization: Bearer $(getAdminToken $1)"
-  curl -s -H "$HEADER" -d "$REQUEST" https://api.projectdabl.com/api/ledger/$1/parties | jq
+  curl -s -H "$HEADER" -H "Content-Type: application/json" -d "$REQUEST" https://login.projectdabl.com/auth/ledger/$1/parties > /dev/null
+
+  PARTYID=$(getPartyId "$@")
+  while [ "$PARTYID" == "" ]
+  do
+    sleep 1s
+    PARTYID=$(getPartyId "$@")
+  done
+  echo $PARTYID
 }
 
 function getPartyToken {
@@ -473,7 +481,7 @@ function getPartyToken {
   fi
 
   HEADER="Authorization: Bearer $(getAdminToken $1)"
-  curl -s -H "$HEADER" -X POST https://api.projectdabl.com/api/ledger/$1/party/$2/token | jq
+  curl -s -H "$HEADER" -X POST https://login.projectdabl.com/auth/ledger/$1/party/$2/token | jq -r '.accessToken'
 }
 
-main $@
+main "$@"

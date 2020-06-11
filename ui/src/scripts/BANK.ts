@@ -7,11 +7,11 @@ import { InitDone } from "@daml2js/asset-servicing-0.0.1/lib/Init";
 import { getAccount, getAsset, empty } from "./Util";
 
 export const setup = async (ledger : Ledger, bank : Party) => {
-  const csd = isLocalDev ? "CSD" : await getParty("CSD");
-  const c1 = isLocalDev ? "Georg" : await getParty("Georg Schneider");
-  const c2 = isLocalDev ? "Eric" : await getParty("Eric");
-  const c3 = isLocalDev ? "Shaul" : await getParty("Shaul");
-  const c4 = isLocalDev ? "Yuval" : await getParty("Yuval");
+  const csd = isLocalDev ? "CSD" : getParty("CSD");
+  const c1 = isLocalDev ? "Georg" : getParty("Georg Schneider");
+  const c2 = isLocalDev ? "Eric" : getParty("Eric");
+  const c3 = isLocalDev ? "Shaul" : getParty("Shaul");
+  const c4 = isLocalDev ? "Yuval" : getParty("Yuval");
 
   // 0> Initial setup
   const [ , c1Acc ] = getAccount(bank, c1, "Georg@BANK");

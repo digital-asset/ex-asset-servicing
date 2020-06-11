@@ -1,6 +1,8 @@
 import uuidv4 from "uuid/v4";
 import * as jwt from "jsonwebtoken";
-import { adminToken } from "./token";
+import { parties } from "./parties";
+import { names } from "./names";
+import { tokens } from "./tokens";
 
 export const isLocalDev = process.env.NODE_ENV === 'development';
 
@@ -21,19 +23,14 @@ export const dablLoginUrl = loginUrl.join('.') + (window.location.port ? ':' + w
 
 export const getRole = (name : string) => name === "CSD" ? "CSD" : (name === "BANK" ? "BANK" : "CLIENT");
 
-export async function getParty(name : string) {
-  if (isLocalDev) return name;
-  const partyUrl = "https://api.projectdabl.com/api/ledger/" + ledgerId + "/parties";
-  const res = await fetch(partyUrl, { headers: { Authorization: "Bearer " + adminToken } });
-  const json = await res.json();
-  const party = json.parties.find((p : any) => p.partyName === name);
-  return party.party as string;
+export function getParty(name : string) {
+  return isLocalDev ? name : (parties.get(name) || "");
 }
 
-export async function getToken(party : string) {
-  if (isLocalDev) return createToken(party);
-  const tokenUrl = "https://api.projectdabl.com/api/ledger/" + ledgerId + "/party/" + party + "/token";
-  const res = await fetch(tokenUrl, { method: "POST", headers: { Authorization: "Bearer " + adminToken } });
-  const json = await res.json();
-  return json.access_token as string;
+export function getName(party : string) {
+  return isLocalDev ? party : (names.get(party) || "");
+}
+
+export function getToken(party : string) {
+  return isLocalDev ? createToken(party) : (tokens.get(party) || "");
 }

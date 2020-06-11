@@ -19,11 +19,11 @@ import { InitDone } from "@daml2js/asset-servicing-0.0.1/lib/Init";
 import { getAsset, getAccount, getOptionEuropeanCash, getId } from "./Util";
 
 export const setup = async (ledger : Ledger, csd : Party) => {
-  const bank = isLocalDev ? "BANK" : await getParty("BANK");
-  const c1 = isLocalDev ? "Yuval" : await getParty("Yuval");
-  const c2 = isLocalDev ? "Eric" : await getParty("Eric");
-  const c3 = isLocalDev ? "Shaul" : await getParty("Shaul");
-  const c4 = isLocalDev ? "Georg" : await getParty("Georg Schneider");
+  const bank = isLocalDev ? "BANK" : getParty("BANK");
+  const c1 = isLocalDev ? "Yuval" : getParty("Yuval");
+  const c2 = isLocalDev ? "Eric" : getParty("Eric");
+  const c3 = isLocalDev ? "Shaul" : getParty("Shaul");
+  const c4 = isLocalDev ? "Georg" : getParty("Georg Schneider");
 
   // 0> Initial setup
   const [ , stkAcc ]       = getAccount(csd, bank, "BANK@CSD[STOCK]");
@@ -33,8 +33,8 @@ export const setup = async (ledger : Ledger, csd : Party) => {
   const [ usdId, usd ]            = getAsset(csd, "USD", "1000000.0");
   const [ eurId, eur ]            = getAsset(csd, "EUR", "5000000.0");
   const [ chfId, chf ]            = getAsset(csd, "CHF", "10000000.0");
-  const [ csgnId, csgn ]          = getAsset(csd, "CSGN.S", "25000.0");
-  const [ ubsgId, ubsg ]          = getAsset(csd, "UBSG.S", "10000.0");
+  const [ csgnId, csgn ]          = getAsset(csd, "CSGN.S", "250000.0");
+  const [ ubsgId, ubsg ]          = getAsset(csd, "UBSG.S", "100000.0");
   const [ csgnCallId, csgnCall ]  = getAsset(csd, "CSGN-CALL-Sep19", "10000.0");
   const [ ubsgPutId, ubsgPut ]    = getAsset(csd, "UBSG-PUT-Jul19", "1000.0");
   const [ acbrcId, acbrc ]        = getAsset(csd, "UBSG-ACBRC-Dec19", "1000000.0");
@@ -102,12 +102,12 @@ export const setup = async (ledger : Ledger, csd : Party) => {
     ledger.create(EquityOption, getOptionEuropeanCash(getId(csd, "UBSG-PUT-Jan20"), ubsgId, OptionType.PUT, "10.0", "100.0", "2020-01-21", bank))
   ]);
 
-  await ledger.create(ACBRC, { id: acbrcId, underlyingId: ubsgId, currencyId: chfId, knockInBarrier: "0.8", knockInBarrierHit: false, callBarrier: "1.0", callBarrierHit: false, fixingDates: ["2019-06-15", "2019-09-15", "2019-12-15"], fixingIdx: "1", coupon: "0.05", initialFixing: "10.0", observers: { textMap: { [bank]: {} } } });
+  await ledger.create(ACBRC, { id: acbrcId, underlyingId: ubsgId, currencyId: chfId, knockInBarrier: "0.8", knockInBarrierHit: false, callBarrier: "1.0", callBarrierHit: false, fixingDates: ["2019-06-15", "2019-09-15", "2019-12-15", "2020-03-15"], fixingIdx: "1", coupon: "0.05", initialFixing: "10.0", observers: { textMap: { [bank]: {} } } });
   await ledger.create(Bond, { id: bondId, currencyId: chfId, couponDates: ["2018-01-12", "2019-01-12", "2020-01-12"], couponIdx: "1", coupon: "0.025", observers: { textMap: { [bank]: {} } } });
 
   // 5> Events
   console.log("Creating events");
-  await ledger.create(EquityCashDividend, { id: csgnId, exDate: "2019-05-03", settlementDate: "2019-05-05", perShare: "0.26", observers: { textMap: { [bank]: {} } } });
+  await ledger.create(EquityCashDividend, { id: csgnId, exDate: "2019-05-03", settlementDate: "2019-05-05", perShare: "0.08", observers: { textMap: { [bank]: {} } } });
   await ledger.create(EquityStockSplit, { id: ubsgId, exDate: "2019-08-15", rFactor: "0.5", observers: { textMap: { [bank]: {} } } });
   await Promise.all([
     ledger.create(Fixing, { id: ubsgId, currency: chfId, date: "2019-06-15", value: "9.0", observers: { textMap: { [bank]: {} } } }),

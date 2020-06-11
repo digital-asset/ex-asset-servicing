@@ -5,7 +5,7 @@ parties:
   - Alice
   - Bob
 version: 0.0.1
-#init-script: Init:init
+start-navigator: false
 sandbox-options:
   - --ledgerid=asset-servicing
   - -w

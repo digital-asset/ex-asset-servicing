@@ -1,0 +1,35 @@
+-- Copyright (c) 2019, Digital Asset (Switzerland) GmbH and/or its affiliates. All rights reserved.
+-- SPDX-License-Identifier: Apache-2.0
+
+daml 1.2
+module DA.Finance.Instrument.Loan where
+
+import DA.Next.Set
+
+import DA.Finance.Types
+
+-- | Reference data describing a loan.
+template Loan
+  with
+    id : Id
+      -- ^ The repo asset id.
+    assetId : Id
+     -- ^ The id of the asset to be borrowed.
+    collateral : Asset
+     -- ^ The collateral per unit of asset.
+    fee : Asset
+     -- ^ The fee per unit of asset to be transferred upon settlement.
+    settlementDate : Date
+     -- ^ The date of settlement.
+    observers : Set Party
+  where
+    signatory id.signatories
+    observer observers
+
+    key id : Id
+    maintainer key.signatories
+
+    controller id.signatories can
+      Repo_SetObservers : ContractId Loan
+        with newObservers : Set Party
+        do create this with observers = newObservers

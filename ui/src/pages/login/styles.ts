@@ -40,6 +40,7 @@ export default makeStyles((theme : any) => createStyles({
     [theme.breakpoints.down("sm")]: {
       fontSize: 36,
     },
+    marginBottom: theme.spacing(4),
   },
   formContainer: {
     width: "40%",

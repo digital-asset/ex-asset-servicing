@@ -28,7 +28,7 @@ const StockSplits : React.FC<RouteComponentProps> = ({ history } : RouteComponen
             <TableCell key={1} className={classes.tableCell}>{d.payload.exDate}</TableCell>
             <TableCell key={2} className={classes.tableCell}>{d.payload.rFactor}</TableCell>
             <TableCell key={3} className={classes.tableCell}>
-              <IconButton color="primary" size="small" component="span" onClick={() => history.push("/apps/corporateactions/stocksplits/" + d.contractId.replace("#", "_"))}>
+              <IconButton color="secondary" size="small" component="span" onClick={() => history.push("/apps/corporateactions/stocksplits/" + d.contractId.replace("#", "_"))}>
                 <KeyboardArrowRight fontSize="small"/>
               </IconButton>
             </TableCell>

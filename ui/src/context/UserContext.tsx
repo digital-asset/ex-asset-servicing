@@ -77,8 +77,8 @@ async function loginUser(
 
   if (!!name) {
     
-    var party = await getParty(name);
-    var token = await getToken(party);
+    var party = getParty(name);
+    var token = getToken(party);
     localStorage.setItem("daml.name", name);
     localStorage.setItem("daml.party", party);
     localStorage.setItem("daml.token", token);
