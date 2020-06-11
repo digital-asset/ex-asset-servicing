@@ -1,6 +1,6 @@
 import React from "react";
 import { useStreamQuery, useParty } from "@daml/react";
-import { AssetDeposit, AssetCategorization } from "@daml2js/asset-servicing-0.0.1/lib/DA/Finance/Asset";
+import { AssetDeposit, AssetCategorization } from "@daml.js/asset-servicing-0.0.1/lib/DA/Finance/Asset";
 import { Table, TableHead, TableRow, TableCell, TableBody } from "@material-ui/core";
 import { CreateEvent } from "@daml/ledger";
 import useStyles from "./styles";

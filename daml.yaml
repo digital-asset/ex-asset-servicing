@@ -1,4 +1,4 @@
-sdk-version: 1.0.1
+sdk-version: 1.2.0
 name: asset-servicing
 source: daml
 parties:

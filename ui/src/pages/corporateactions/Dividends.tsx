@@ -1,6 +1,6 @@
 import React from "react";
 import { useStreamQuery } from "@daml/react";
-import { EquityCashDividend } from "@daml2js/asset-servicing-0.0.1/lib/DA/Finance/Instrument/Equity/CashDividend";
+import { EquityCashDividend } from "@daml.js/asset-servicing-0.0.1/lib/DA/Finance/Instrument/Equity/CashDividend";
 import { Table, TableBody, TableCell, TableRow, TableHead, IconButton } from "@material-ui/core";
 import { withRouter, RouteComponentProps } from "react-router-dom";
 import useStyles from "./styles";

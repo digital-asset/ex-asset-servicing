@@ -1,8 +1,8 @@
 import React from "react";
 import { useStreamQuery } from "@daml/react";
-import { AssetDeposit, AssetCategorization } from "@daml2js/asset-servicing-0.0.1/lib/DA/Finance/Asset";
+import { AssetDeposit, AssetCategorization } from "@daml.js/asset-servicing-0.0.1/lib/DA/Finance/Asset";
 import { Table, TableHead, TableRow, TableCell, TableBody, Button } from "@material-ui/core";
-import { LifecycleEffects } from "@daml2js/asset-servicing-0.0.1/lib/DA/Finance/Asset/Lifecycle";
+import { LifecycleEffects } from "@daml.js/asset-servicing-0.0.1/lib/DA/Finance/Asset/Lifecycle";
 import { CreateEvent } from "@daml/ledger";
 import LifecycleDialog, { LifecycleDialogProps } from "./LifecycleDialog";
 import useStyles from "./styles";

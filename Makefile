@@ -1,11 +1,14 @@
 build:
+	daml build
+	daml codegen js -o daml.js .daml/dist/*.dar
+	cd ui && yarn install --force --frozen-lockfile
+	cd ui && yarn build
+
+clean:
 	rm -rf .daml
 	rm -rf daml2js
 	rm -rf ui/build
-	daml build
-	daml codegen js -o daml2js .daml/dist/*.dar
-	cd ui && yarn install --force --frozen-lockfile
-	cd ui && yarn build
+	rm -rf ui/node_modules
 
 ui:
 	rm -rf ui/build/

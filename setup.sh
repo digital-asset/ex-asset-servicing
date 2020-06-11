@@ -56,8 +56,8 @@ echo "]);" >> ui/src/names.ts
 echo "Allocated all parties"
 
 # Package project
-make build package > /dev/null
-echo "Rebuilt (all) and packaged project"
+make clean build package > /dev/null
+echo "Rebuilt and packaged project"
 
 # Deploy DAR
 dabl ledger upload $LEDGER_ID $DAR_FILE

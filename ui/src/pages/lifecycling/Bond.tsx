@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useStreamQuery, useLedger } from "@daml/react";
-import { Bond as BondT } from "@daml2js/asset-servicing-0.0.1/lib/DA/Finance/Instrument/FixedIncome/Bond";
-import { BondCouponRule } from "@daml2js/asset-servicing-0.0.1/lib/DA/Finance/Instrument/FixedIncome/Bond/Lifecycle";
+import { Bond as BondT } from "@daml.js/asset-servicing-0.0.1/lib/DA/Finance/Instrument/FixedIncome/Bond";
+import { BondCouponRule } from "@daml.js/asset-servicing-0.0.1/lib/DA/Finance/Instrument/FixedIncome/Bond/Lifecycle";
 import { Typography, Grid, Table, TableBody, TableCell, TableRow, Button, CircularProgress } from "@material-ui/core";
 import { useParams, RouteComponentProps } from "react-router-dom";
 import useStyles from "./styles";

@@ -1,4 +1,3 @@
-import uuidv4 from "uuid/v4";
 import * as jwt from "jsonwebtoken";
 import { parties } from "./parties";
 import { names } from "./names";
@@ -14,7 +13,7 @@ apiUrl.unshift('api');
 export const httpBaseUrl = isLocalDev ? undefined : ('https://' + apiUrl.join('.') + (window.location.port ? ':' + window.location.port : '') + '/data/' + ledgerId + '/');
 export const wsBaseUrl = isLocalDev ? 'ws://localhost:7575/' : undefined;
 
-const applicationId = uuidv4();
+const applicationId = "asset-servicing";
 const createToken = (party : string) => jwt.sign({ "https://daml.com/ledger-api": { ledgerId, applicationId, admin: true, actAs: [party], readAs: [party] } }, "secret");
 
 let loginUrl = host.slice(1)

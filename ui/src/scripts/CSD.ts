@@ -1,21 +1,21 @@
-import { AssetCategorization, AssetDeposit } from "@daml2js/asset-servicing-0.0.1/lib/DA/Finance/Asset";
-import { AssetLifecycleRule, LifecycleEffects } from "@daml2js/asset-servicing-0.0.1/lib/DA/Finance/Asset/Lifecycle";
-import { Currency } from "@daml2js/asset-servicing-0.0.1/lib/DA/Finance/Instrument/Currency";
-import { ACBRC } from "@daml2js/asset-servicing-0.0.1/lib/DA/Finance/Instrument/Equity/ACBRC";
-import { ACBRCFixingRule, ACBRCStockSplitRule } from "@daml2js/asset-servicing-0.0.1/lib/DA/Finance/Instrument/Equity/ACBRC/Lifecycle";
-import { EquityCashDividend } from "@daml2js/asset-servicing-0.0.1/lib/DA/Finance/Instrument/Equity/CashDividend";
-import { EquityOption, OptionType } from "@daml2js/asset-servicing-0.0.1/lib/DA/Finance/Instrument/Equity/Option";
-import { EquityOptionStockSplitRule } from "@daml2js/asset-servicing-0.0.1/lib/DA/Finance/Instrument/Equity/Option/Lifecycle";
-import { EquityStock } from "@daml2js/asset-servicing-0.0.1/lib/DA/Finance/Instrument/Equity/Stock";
-import { EquityStockCashDividendRule, EquityStockSplitRule } from "@daml2js/asset-servicing-0.0.1/lib/DA/Finance/Instrument/Equity/Stock/Lifecycle";
-import { EquityStockSplit } from "@daml2js/asset-servicing-0.0.1/lib/DA/Finance/Instrument/Equity/StockSplit";
-import { Bond } from "@daml2js/asset-servicing-0.0.1/lib/DA/Finance/Instrument/FixedIncome/Bond";
-import { BondCouponRule } from "@daml2js/asset-servicing-0.0.1/lib/DA/Finance/Instrument/FixedIncome/Bond/Lifecycle";
-import { Fixing } from "@daml2js/asset-servicing-0.0.1/lib/DA/Finance/RefData/Fixing";
+import { AssetCategorization, AssetDeposit } from "@daml.js/asset-servicing-0.0.1/lib/DA/Finance/Asset";
+import { AssetLifecycleRule, LifecycleEffects } from "@daml.js/asset-servicing-0.0.1/lib/DA/Finance/Asset/Lifecycle";
+import { Currency } from "@daml.js/asset-servicing-0.0.1/lib/DA/Finance/Instrument/Currency";
+import { ACBRC } from "@daml.js/asset-servicing-0.0.1/lib/DA/Finance/Instrument/Equity/ACBRC";
+import { ACBRCFixingRule, ACBRCStockSplitRule } from "@daml.js/asset-servicing-0.0.1/lib/DA/Finance/Instrument/Equity/ACBRC/Lifecycle";
+import { EquityCashDividend } from "@daml.js/asset-servicing-0.0.1/lib/DA/Finance/Instrument/Equity/CashDividend";
+import { EquityOption, OptionType } from "@daml.js/asset-servicing-0.0.1/lib/DA/Finance/Instrument/Equity/Option";
+import { EquityOptionStockSplitRule } from "@daml.js/asset-servicing-0.0.1/lib/DA/Finance/Instrument/Equity/Option/Lifecycle";
+import { EquityStock } from "@daml.js/asset-servicing-0.0.1/lib/DA/Finance/Instrument/Equity/Stock";
+import { EquityStockCashDividendRule, EquityStockSplitRule } from "@daml.js/asset-servicing-0.0.1/lib/DA/Finance/Instrument/Equity/Stock/Lifecycle";
+import { EquityStockSplit } from "@daml.js/asset-servicing-0.0.1/lib/DA/Finance/Instrument/Equity/StockSplit";
+import { Bond } from "@daml.js/asset-servicing-0.0.1/lib/DA/Finance/Instrument/FixedIncome/Bond";
+import { BondCouponRule } from "@daml.js/asset-servicing-0.0.1/lib/DA/Finance/Instrument/FixedIncome/Bond/Lifecycle";
+import { Fixing } from "@daml.js/asset-servicing-0.0.1/lib/DA/Finance/RefData/Fixing";
 import { isLocalDev, getParty } from "../config";
 import Ledger from "@daml/ledger";
 import { Party } from "@daml/types";
-import { InitDone } from "@daml2js/asset-servicing-0.0.1/lib/Init";
+import { InitDone } from "@daml.js/asset-servicing-0.0.1/lib/Init";
 import { getAsset, getAccount, getOptionEuropeanCash, getId } from "./Util";
 
 export const setup = async (ledger : Ledger, csd : Party) => {
@@ -33,8 +33,8 @@ export const setup = async (ledger : Ledger, csd : Party) => {
   const [ usdId, usd ]            = getAsset(csd, "USD", "1000000.0");
   const [ eurId, eur ]            = getAsset(csd, "EUR", "5000000.0");
   const [ chfId, chf ]            = getAsset(csd, "CHF", "10000000.0");
-  const [ csgnId, csgn ]          = getAsset(csd, "CSGN.S", "250000.0");
-  const [ ubsgId, ubsg ]          = getAsset(csd, "UBSG.S", "100000.0");
+  const [ csgnId, csgn ]          = getAsset(csd, "CSGN.S", "25000.0");
+  const [ ubsgId, ubsg ]          = getAsset(csd, "UBSG.S", "10000.0");
   const [ csgnCallId, csgnCall ]  = getAsset(csd, "CSGN-CALL-Sep19", "10000.0");
   const [ ubsgPutId, ubsgPut ]    = getAsset(csd, "UBSG-PUT-Jul19", "1000.0");
   const [ acbrcId, acbrc ]        = getAsset(csd, "UBSG-ACBRC-Dec19", "1000000.0");
@@ -107,7 +107,7 @@ export const setup = async (ledger : Ledger, csd : Party) => {
 
   // 5> Events
   console.log("Creating events");
-  await ledger.create(EquityCashDividend, { id: csgnId, exDate: "2019-05-03", settlementDate: "2019-05-05", perShare: "0.08", observers: { textMap: { [bank]: {} } } });
+  await ledger.create(EquityCashDividend, { id: csgnId, exDate: "2019-05-03", settlementDate: "2019-05-05", perShare: "0.26", observers: { textMap: { [bank]: {} } } });
   await ledger.create(EquityStockSplit, { id: ubsgId, exDate: "2019-08-15", rFactor: "0.5", observers: { textMap: { [bank]: {} } } });
   await Promise.all([
     ledger.create(Fixing, { id: ubsgId, currency: chfId, date: "2019-06-15", value: "9.0", observers: { textMap: { [bank]: {} } } }),

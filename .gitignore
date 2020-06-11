@@ -3,6 +3,6 @@
 .daml/
 node_modules/
 build/
-daml2js/
+daml.js/
 deploy/
 *.log

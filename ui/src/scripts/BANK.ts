@@ -1,9 +1,9 @@
-import { AssetDeposit } from "@daml2js/asset-servicing-0.0.1/lib/DA/Finance/Asset";
-import { AssetLifecycleRule, LifecycleEffects } from "@daml2js/asset-servicing-0.0.1/lib/DA/Finance/Asset/Lifecycle";
+import { AssetDeposit } from "@daml.js/asset-servicing-0.0.1/lib/DA/Finance/Asset";
+import { AssetLifecycleRule, LifecycleEffects } from "@daml.js/asset-servicing-0.0.1/lib/DA/Finance/Asset/Lifecycle";
 import { isLocalDev, getParty } from "../config";
 import Ledger from "@daml/ledger";
 import { Party } from "@daml/types";
-import { InitDone } from "@daml2js/asset-servicing-0.0.1/lib/Init";
+import { InitDone } from "@daml.js/asset-servicing-0.0.1/lib/Init";
 import { getAccount, getAsset, empty } from "./Util";
 
 export const setup = async (ledger : Ledger, bank : Party) => {
