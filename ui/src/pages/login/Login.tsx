@@ -3,6 +3,7 @@ import { Grid, CircularProgress, Typography, Button, TextField, Fade } from "@ma
 import { withRouter, RouteComponentProps } from "react-router-dom";
 import useStyles from "./styles";
 import loginLogo from "../../images/loginLogo.svg";
+import headerLogo from "../../images/headerLogo.png";
 import { useUserDispatch, loginUser, loginDablUser } from "../../context/UserContext";
 import { isLocalDev } from "../../config";
 
@@ -20,6 +21,7 @@ function Login(props : RouteComponentProps) {
       <div className={classes.logotypeContainer}>
         <img src={loginLogo} alt="logo" className={classes.logotypeImage} />
         <Typography className={classes.logotypeText}>Asset Servicing Portal</Typography>
+        <img src={headerLogo} alt="logo" className={classes.logotypeImage} />
       </div>
       <div className={classes.formContainer}>
         <div className={classes.form}>

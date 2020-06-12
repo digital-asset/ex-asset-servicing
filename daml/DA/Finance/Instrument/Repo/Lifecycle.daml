@@ -1,0 +1,52 @@
+-- Copyright (c) 2019, Digital Asset (Switzerland) GmbH and/or its affiliates. All rights reserved.
+-- SPDX-License-Identifier: Apache-2.0
+
+daml 1.2
+module DA.Finance.Instrument.Repo.Lifecycle where
+
+import DA.Next.Set
+import DA.Optional (whenSome)
+
+import DA.Finance.Asset.Lifecycle
+import DA.Finance.Instrument.Repo
+import DA.Finance.Types
+import DA.Finance.Utils
+
+-- | Rule for repurchase agreements.
+template RepoRule
+  with
+    signatories : Set Party
+      -- ^ Publishers of the repo reference data.
+    observers : Set Party
+  where
+    signatory signatories
+    observer observers
+
+    key signatories : Set Party
+    maintainer key
+
+    controller signatories can
+      nonconsuming Repo_Lifecycle : ContractId LifecycleEffects
+        -- ^ Allows the signatories to process the repurchase agreement reference data.
+        with
+          repoCid : ContractId Repo
+            -- ^ Repurchase agreement reference data.
+        do
+          repo <- fetch repoCid
+          whenSome repo.settlementDate (assertOnOrAfterDateMsg "expects settlementDate <= now")
+
+          create LifecycleEffects with
+            id = repo.id
+            label = "Repurchase agreement " <> repo.id.label
+            consuming =
+              [ repo.payment
+              , repo.fee ]
+            effects =
+              [ Asset with id = repo.assetId; quantity = 1.0 ]
+            observers = repo.observers
+
+      Repo_AddObserver : ContractId RepoRule
+        with
+          newObserver : Party
+        do
+          create this with observers = insert newObserver observers

@@ -11,7 +11,7 @@ import StockSplit from "../corporateactions/StockSplit";
 import Dividend from "../corporateactions/Dividend";
 import Dividends from "../corporateactions/Dividends";
 import StockSplits from "../corporateactions/StockSplits";
-import { InitDone } from "@daml2js/asset-servicing-0.0.1/lib/Init";
+import { InitDone } from "@daml.js/asset-servicing-0.0.1/lib/Init";
 import { setup, teardown } from "../../scripts/CSD";
 import { useLedger, useParty } from "@daml/react";
 
@@ -37,8 +37,8 @@ function CorporateActions() {
   const teardownScript = async () => { await teardown(ledger, party); setIsInitialized(false); };
 
   const entries : SidebarEntry[] = [
-    { key: "dividends", label: "Dividends", path: "/apps/corporateactions/dividends", render: () => <Dividends />, icon: (<LocalAtm/>), children: [] },
-    { key: "splits", label: "Stock Splits", path: "/apps/corporateactions/stocksplits", render: () => <StockSplits />, icon: (<CallSplit/>), children: [] },
+    { label: "Dividends", path: "/apps/corporateactions/dividends", render: () => <Dividends />, icon: (<LocalAtm/>), children: [] },
+    { label: "Stock Splits", path: "/apps/corporateactions/stocksplits", render: () => <StockSplits />, icon: (<CallSplit/>), children: [] },
   ]
 
   const getChildren = (e : SidebarEntry) : SidebarEntry[] => {

@@ -1,6 +1,6 @@
 import tinycolor from "tinycolor2";
 
-const primary = "#203260"; //"#00565f";//"#536DFE";
+const primary = "#203260"; //"#E5E6E7"
 const secondary = "#608ad8";
 const warning = "#FFC260";
 const success = "#3CD4A0";
@@ -60,7 +60,7 @@ export default {
     text: {
       primary: "#203260", //"#393939", //"#4A4A4A",
       secondary: "#608ad8", //"#00565f", // "#393939", "#6E6E6E",
-      hint: "#B9B9B9",
+      hint: "#929497",
     },
     background: {
       default: "#FFFFFF", //"#F6F7FF",

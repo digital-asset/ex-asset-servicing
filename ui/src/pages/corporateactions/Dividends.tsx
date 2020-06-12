@@ -1,6 +1,6 @@
 import React from "react";
 import { useStreamQuery } from "@daml/react";
-import { EquityCashDividend } from "@daml2js/asset-servicing-0.0.1/lib/DA/Finance/Instrument/Equity/CashDividend";
+import { EquityCashDividend } from "@daml.js/asset-servicing-0.0.1/lib/DA/Finance/Instrument/Equity/CashDividend";
 import { Table, TableBody, TableCell, TableRow, TableHead, IconButton } from "@material-ui/core";
 import { withRouter, RouteComponentProps } from "react-router-dom";
 import useStyles from "./styles";
@@ -30,7 +30,7 @@ const Dividends : React.FC<RouteComponentProps> = ({ history } : RouteComponentP
             <TableCell key={2} className={classes.tableCell}>{d.payload.settlementDate}</TableCell>
             <TableCell key={3} className={classes.tableCell}>{d.payload.perShare}</TableCell>
             <TableCell key={4} className={classes.tableCell}>
-            <IconButton color="primary" size="small" component="span" onClick={() => history.push("/apps/corporateactions/dividends/" + d.contractId.replace("#", "_"))}>
+            <IconButton color="secondary" size="small" component="span" onClick={() => history.push("/apps/corporateactions/dividends/" + d.contractId.replace("#", "_"))}>
               <KeyboardArrowRight fontSize="small"/>
             </IconButton>
             </TableCell>

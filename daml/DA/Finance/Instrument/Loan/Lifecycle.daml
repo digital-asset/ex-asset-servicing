@@ -1,0 +1,51 @@
+-- Copyright (c) 2019, Digital Asset (Switzerland) GmbH and/or its affiliates. All rights reserved.
+-- SPDX-License-Identifier: Apache-2.0
+
+daml 1.2
+module DA.Finance.Instrument.Loan.Lifecycle where
+
+import DA.Next.Set
+
+import DA.Finance.Asset.Lifecycle
+import DA.Finance.Instrument.Loan
+import DA.Finance.Types
+import DA.Finance.Utils
+
+-- | Rule for repurchase agreements.
+template LoanRule
+  with
+    signatories : Set Party
+      -- ^ Publishers of the dividend reference data.
+    observers : Set Party
+  where
+    signatory signatories
+    observer observers
+    
+    key signatories : Set Party
+    maintainer key
+
+    controller signatories can
+      nonconsuming Loan_Lifecycle : ContractId LifecycleEffects
+        -- ^ Lifecycle the loan reference data.
+        with
+          loanCid : ContractId Loan
+            -- ^ Loan reference data.
+        do
+          loan <- fetch loanCid
+          assertOnOrAfterDateMsg "expects settlementDate <= now" $ loan.settlementDate
+
+          create LifecycleEffects with
+            id = loan.id
+            label = "Loan " <> loan.id.label
+            consuming =
+              [ Asset with id = loan.assetId; quantity = 1.0
+              , loan.fee ]
+            effects =
+              [ loan.collateral ]
+            observers = loan.observers
+
+      Loan_AddObserver : ContractId LoanRule
+        with
+          newObserver : Party
+        do
+          create this with observers = insert newObserver observers

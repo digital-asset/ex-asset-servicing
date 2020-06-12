@@ -1,11 +1,11 @@
 import React, { useState } from "react";
 import { useStreamQuery, useLedger } from "@daml/react";
-import { ACBRC } from "@daml2js/asset-servicing-0.0.1/lib/DA/Finance/Instrument/Equity/ACBRC";
-import { ACBRCFixingRule } from "@daml2js/asset-servicing-0.0.1/lib/DA/Finance/Instrument/Equity/ACBRC/Lifecycle";
+import { ACBRC } from "@daml.js/asset-servicing-0.0.1/lib/DA/Finance/Instrument/Equity/ACBRC";
+import { ACBRCFixingRule } from "@daml.js/asset-servicing-0.0.1/lib/DA/Finance/Instrument/Equity/ACBRC/Lifecycle";
 import { Typography, Grid, Table, TableBody, TableCell, TableRow, Button, CircularProgress } from "@material-ui/core";
 import { useParams, RouteComponentProps } from "react-router-dom";
 import useStyles from "./styles";
-import { Fixing } from "@daml2js/asset-servicing-0.0.1/lib/DA/Finance/RefData/Fixing";
+import { Fixing } from "@daml.js/asset-servicing-0.0.1/lib/DA/Finance/RefData/Fixing";
 import { ContractId } from "@daml/types";
 import { KeyboardArrowRight } from "@material-ui/icons";
 
