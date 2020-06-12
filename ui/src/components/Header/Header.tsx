@@ -6,6 +6,7 @@ import useStyles from "./styles";
 import { useUserDispatch, signOut, useUserState } from "../../context/UserContext";
 import { getRole } from "../../config";
 import headerLogo from "../../images/headerLogo.png";
+import loginLogo from "../../images/loginLogo.svg";
 
 interface HeaderProps {
   isInitialized : boolean
@@ -34,11 +35,12 @@ function Header({ history, isInitialized, setup, teardown } : RouteComponentProp
   return (
     <AppBar position="fixed" className={classes.appBar}>
       <Toolbar className={classes.toolbar}>
+        <img alt="loginLogo" src={loginLogo} height="16px" />
         <Typography variant="h6" className={classes.logotype}>
           Asset Servicing Portal
         </Typography>
         <div className={classes.grow} />
-        <img alt="headerLogo" src={headerLogo} height="32px" />
+        <img alt="headerLogo" src={headerLogo} height="48px" />
         <div className={classes.grow} />
         <Box style={{ width: "90px" }}>
           <Grid container direction="column">

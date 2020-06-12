@@ -97,6 +97,6 @@ const useStyles = makeStyles((theme : any) => createStyles({
     height: 140,
   },
   cardText: {
-    color: "white",
+    color: theme.palette.text.primary,
   },
 }));

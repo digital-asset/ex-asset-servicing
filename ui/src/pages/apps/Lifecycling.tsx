@@ -17,8 +17,8 @@ function Lifecycling() {
   const layoutState = useLayoutState();
 
   const entries : SidebarEntry[] = [
-    { key: "bonds", label: "Bonds", path: "/apps/lifecycling/bonds", render: () => <Bonds />, icon: (<ConfirmationNumber/>), children: [] },
-    { key: "derivatives", label: "Derivatives", path: "/apps/lifecycling/derivatives", render: () => <Derivatives />, icon: (<TrendingUp/>), children: [] },
+    { label: "Bonds", path: "/apps/lifecycling/bonds", render: () => <Bonds />, icon: (<ConfirmationNumber/>), children: [] },
+    { label: "Derivatives", path: "/apps/lifecycling/derivatives", render: () => <Derivatives />, icon: (<TrendingUp/>), children: [] },
   ]
 
   const getChildren = (e : SidebarEntry) : SidebarEntry[] => {

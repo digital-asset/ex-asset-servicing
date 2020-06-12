@@ -1,7 +1,7 @@
 import React from "react";
-import { AssetDeposit } from "@daml2js/asset-servicing-0.0.1/lib/DA/Finance/Asset";
+import { AssetDeposit } from "@daml.js/asset-servicing-0.0.1/lib/DA/Finance/Asset";
 import { Button, Dialog, DialogContent, DialogActions, DialogTitle, Grid, Typography, CircularProgress, Chip } from "@material-ui/core";
-import { LifecycleEffects, AssetLifecycleRule } from "@daml2js/asset-servicing-0.0.1/lib/DA/Finance/Asset/Lifecycle";
+import { LifecycleEffects, AssetLifecycleRule } from "@daml.js/asset-servicing-0.0.1/lib/DA/Finance/Asset/Lifecycle";
 import { CreateEvent } from "@daml/ledger";
 import { Forward } from "@material-ui/icons";
 import { useUserState } from "../../context/UserContext";
@@ -56,8 +56,8 @@ const LifecycleDialog : React.FC<LifecycleDialogProps> = ({ open, onClose, depos
         </Grid>
       </DialogContent>
       <DialogActions>
-        {!isApplyingEffect && <Button onClick={onClose} color="primary">Cancel</Button>}
-        {isApplyingEffect ? (<CircularProgress size="32px" />) : (<Button onClick={applyEffect} color="primary" autoFocus>Apply</Button>) }
+        {!isApplyingEffect && <Button onClick={onClose} color="primary" variant="contained" >Cancel</Button>}
+        {isApplyingEffect ? (<CircularProgress size="32px" />) : (<Button onClick={applyEffect} color="primary" variant="contained"  autoFocus>Apply</Button>) }
       </DialogActions>
     </Dialog>
   );
