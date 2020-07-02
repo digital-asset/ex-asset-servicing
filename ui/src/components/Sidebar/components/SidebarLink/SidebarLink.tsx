@@ -73,6 +73,7 @@ export default function SidebarLink(props : SidebarLinkProps) {
           <List component="div" disablePadding>
             {children.map(child => (
               <SidebarLink
+                key={child.label}
                 level={level + 1}
                 location={location}
                 isSidebarOpened={isSidebarOpened}

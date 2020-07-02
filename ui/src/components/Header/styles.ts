@@ -2,7 +2,7 @@ import { makeStyles, createStyles } from "@material-ui/styles";
 
 export default makeStyles((theme : any) => createStyles({
   logotype: {
-    color: theme.palette.text.primary,
+    color: "white",
     marginLeft: theme.spacing(2.5),
     marginRight: theme.spacing(2.5),
     fontWeight: 500,
@@ -54,7 +54,7 @@ export default makeStyles((theme : any) => createStyles({
   headerMenuItem: {
     "&:hover, &:focus": {
       backgroundColor: theme.palette.primary.main,
-      color: theme.palette.text.primary,
+      color: "white",
     },
   },
   headerMenuButton: {
@@ -66,7 +66,7 @@ export default makeStyles((theme : any) => createStyles({
   },
   headerIcon: {
     fontSize: 28,
-    color: theme.palette.text.primary, //"rgba(255, 255, 255, 0.35)",
+    color: "white", //"rgba(255, 255, 255, 0.35)",
   },
   headerIconCollapse: {
     color: "white",

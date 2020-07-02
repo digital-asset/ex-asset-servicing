@@ -6,7 +6,8 @@ build:
 
 clean:
 	rm -rf .daml
-	rm -rf daml2js
+	rm -rf daml.js
+	rm -rf deploy
 	rm -rf ui/build
 	rm -rf ui/node_modules
 

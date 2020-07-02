@@ -79,7 +79,7 @@ const StockSplit : React.FC = () => {
             <TableBody>
               {stocks.map((s, i) => (
                 <TableRow key={i} className={classes.tableRow}>
-                  <TableCell key={0} className={classes.tableCell}>{s.contractId.substring(0, 8)}</TableCell>
+                  <TableCell key={0} className={classes.tableCell}>{s.contractId.slice(-8)}</TableCell>
                   <TableCell key={1} className={classes.tableCell}>{s.payload.id.label}</TableCell>
                   <TableCell key={2} className={classes.tableCell}>{s.payload.ccy.label}</TableCell>
                   <TableCell key={3} className={classes.tableCell}>
@@ -115,7 +115,7 @@ const StockSplit : React.FC = () => {
             <TableBody>
               {options.map((s, i) => (
                 <TableRow key={i} className={classes.tableRow}>
-                  <TableCell key={0} className={classes.tableCell}>{s.contractId.substring(0, 8)}</TableCell>
+                  <TableCell key={0} className={classes.tableCell}>{s.contractId.slice(-8)}</TableCell>
                   <TableCell key={1} className={classes.tableCell}>{s.payload.id.label}</TableCell>
                   <TableCell key={2} className={classes.tableCell}>{s.payload.underlyingId.label}</TableCell>
                   <TableCell key={3} className={classes.tableCell}>{s.payload.exerciseType}</TableCell>
@@ -155,7 +155,7 @@ const StockSplit : React.FC = () => {
             <TableBody>
               {acbrcs.map((s, i) => (
                 <TableRow key={i} className={classes.tableRow}>
-                  <TableCell key={0} className={classes.tableCell}>{s.contractId.substring(0, 8)}</TableCell>
+                  <TableCell key={0} className={classes.tableCell}>{s.contractId.slice(-8)}</TableCell>
                   <TableCell key={1} className={classes.tableCell}>{s.payload.id.label}</TableCell>
                   <TableCell key={2} className={classes.tableCell}>{s.payload.underlyingId.label}</TableCell>
                   <TableCell key={3} className={classes.tableCell}>{s.payload.initialFixing}</TableCell>

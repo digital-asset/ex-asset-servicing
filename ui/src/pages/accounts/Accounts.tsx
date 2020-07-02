@@ -63,7 +63,7 @@ const Accounts : React.FC<AccountProps> = ({ role, account }) => {
         <TableBody>
           {displayedEntries.map((e, i) => (
             <TableRow key={i} className={classes.tableRow}>
-              <TableCell key={0} className={classes.tableCell}>{e.deposit.contractId.substring(0, 8)}</TableCell>
+              <TableCell key={0} className={classes.tableCell}>{e.deposit.contractId.slice(-8)}</TableCell>
               <TableCell key={1} className={classes.tableCell}>{e.deposit.payload.account.id.label}</TableCell>
               <TableCell key={2} className={classes.tableCell}>{e.category?.payload.assetClass}</TableCell>
               <TableCell key={3} className={classes.tableCell}>{e.category?.payload.assetType}</TableCell>
