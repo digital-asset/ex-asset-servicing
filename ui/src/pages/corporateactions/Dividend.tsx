@@ -50,7 +50,7 @@ const Dividend : React.FC<RouteComponentProps> = ({ history } : RouteComponentPr
         <TableBody>
           {stocks.contracts.map((s, i) => (
             <TableRow key={i} className={classes.tableRow}>
-              <TableCell key={0} className={classes.tableCell}>{s.contractId.substring(0, 8)}</TableCell>
+              <TableCell key={0} className={classes.tableCell}>{s.contractId.slice(-8)}</TableCell>
               <TableCell key={1} className={classes.tableCell}>{s.payload.id.label}</TableCell>
               <TableCell key={2} className={classes.tableCell}>{s.payload.ccy.label}</TableCell>
               <TableCell key={3} className={classes.tableCell}>

@@ -56,8 +56,8 @@ const LifecycleDialog : React.FC<LifecycleDialogProps> = ({ open, onClose, depos
         </Grid>
       </DialogContent>
       <DialogActions>
-        {!isApplyingEffect && <Button onClick={onClose} color="primary" variant="contained" >Cancel</Button>}
-        {isApplyingEffect ? (<CircularProgress size="32px" />) : (<Button onClick={applyEffect} color="primary" variant="contained"  autoFocus>Apply</Button>) }
+        {!isApplyingEffect && <Button onClick={onClose} color="primary" variant="contained">Cancel</Button>}
+        {isApplyingEffect ? (<CircularProgress size="32px" />) : (<Button onClick={applyEffect} color="primary" variant="contained" autoFocus>Apply</Button>) }
       </DialogActions>
     </Dialog>
   );
