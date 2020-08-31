@@ -66,14 +66,14 @@ export default function Apps({ history } : RouteComponentProps) {
                   <CardMedia
                     className={classes.media}
                     image={pmImage}
-                    title="Position Management"
+                    title="Asset Explorer"
                   />
                   <CardContent>
                     <Typography gutterBottom variant="h5" component="h2" className={classes.cardText}>
-                      Position Management
+                      Asset Explorer
                     </Typography>
                     <Typography variant="body2" color="textSecondary" component="p" className={classes.cardText}>
-                      Manage positions and lifecycle events
+                      Manage assets and lifecycle events
                     </Typography>
                   </CardContent>
                 </CardActionArea>

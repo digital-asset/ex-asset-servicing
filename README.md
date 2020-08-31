@@ -17,11 +17,11 @@ Build the DAML project:
 
 Start the sandbox ledger:
 
-    daml start --start-navigator='no'
+    daml start
 
 Generate the Typescript code:
 
-    daml codegen js -o daml2js .daml/dist/*.dar
+    daml codegen js -o daml.js .daml/dist/*.dar
 
 Install the Javascript dependencies:
 
@@ -32,6 +32,27 @@ Start up the development server:
     cd ui && yarn start
 
 This opens a browser page pointing to `http://localhost:3000/#/login`.
+
+## SDK Upgrade
+
+Change the version in `daml.yaml`:
+
+    sdk-version: <sdk-version>
+    ..
+
+Change the version in `package.json`:
+
+    ..
+    "@daml/ledger": "<sdk-version>",
+    "@daml/react": "<sdk-version>",
+    "@daml/types": "<sdk-version>",
+    ..
+
+Clean all build artifacts:
+
+    make clean
+
+Now rerun the above quickstart steps
 
 ## Contributing
 
