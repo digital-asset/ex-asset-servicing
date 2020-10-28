@@ -4,7 +4,6 @@ import { AppBar, Toolbar, IconButton, Typography, Grid, Box, CircularProgress } 
 import { ExitToApp, Apps, PlayArrow, FastRewind } from "@material-ui/icons";
 import useStyles from "./styles";
 import { useUserDispatch, signOut, useUserState } from "../../context/UserContext";
-import { getRole } from "../../config";
 import headerLogo from "../../images/headerLogo.png";
 
 interface HeaderProps {
@@ -18,7 +17,7 @@ function Header({ history, isInitialized, setup, teardown } : RouteComponentProp
 
   // global
   const user = useUserState();
-  const role = getRole(user.name);
+  const role = "";
 
   const userDispatch = useUserDispatch();
   const [isInitializing, setIsInitializing] = useState(false);

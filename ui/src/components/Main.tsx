@@ -4,11 +4,10 @@ import ErrorComponent from "../pages/error/Error";
 import { useUserState, useUserDispatch } from "../context/UserContext";
 import Login from "../pages/login/Login";
 import Apps from "../pages/apps/Apps";
-import CorporateActions from "../pages/apps/CorporateActions";
-import Lifecycling from "../pages/apps/Lifecycling";
-import PositionManagement from "../pages/apps/PositionManagement";
 import DamlLedger from "@daml/react";
 import { httpBaseUrl, wsBaseUrl } from "../config";
+import Issuance from "../pages/apps/Issuance";
+import AssetExplorer from "../pages/apps/AssetExplorer";
 
 type MainProps = {
   defaultPath: string
@@ -23,9 +22,8 @@ export default function Main({ defaultPath }: MainProps) {
         <Switch>
           <Route exact path="/" component={RootRoute} />
           <PrivateRoute exact path="/apps" component={Apps} />
-          <PrivateRoute path="/apps/corporateactions" component={CorporateActions} />
-          <PrivateRoute path="/apps/lifecycling" component={Lifecycling} />
-          <PrivateRoute path="/apps/positionmanagement" component={PositionManagement} />
+          <PrivateRoute path="/apps/issuance" component={Issuance} />
+          <PrivateRoute path="/apps/assetexplorer" component={AssetExplorer} />
           <PublicRoute path="/login" component={Login} />
           <Route component={ErrorComponent} />
         </Switch>

@@ -1,0 +1,264 @@
+module DA.Finance.Issuance.Issuance where
+
+import DA.Finance.Asset
+import DA.Finance.Instrument.Equity.Option
+import DA.Finance.Types
+import DA.Next.Set (fromList)
+
+data AdmissionCheck = AdmissionCheck
+  with
+    parties : Bool
+    product : Bool
+    legalDocs : Bool
+  deriving (Eq, Show)
+
+data WarrantTerms = WarrantTerms
+  with
+    underlying : Id
+    optionType : OptionType
+    exerciseType : ExerciseType
+    strike : Decimal
+    contractSize : Decimal
+    maturity : Date
+    settlementType : SettlementType
+  deriving (Eq, Show)
+
+data WarrantIssuanceData = WarrantIssuanceData
+  with
+    label : Text
+    terms : WarrantTerms
+    notional : Decimal
+    minimumDenomination : Decimal
+  deriving (Eq, Show)
+
+template Issuer
+  with
+    depository : Party
+    issuer : Party
+    account : Account
+  where
+    signatory depository
+    observer issuer
+
+    controller issuer can
+      nonconsuming RequestWarrantIssuance : ContractId WarrantIssuanceRequest
+        with
+          agent : Party
+          issuanceData : WarrantIssuanceData
+        do
+          create WarrantIssuanceRequest with issuanceAccount = account; ..
+
+template Agent
+  with
+    depository : Party
+    agent : Party
+  where
+    signatory depository
+
+    controller agent can
+      nonconsuming RequestAdmissionCheck : ContractId AdmissionCheckRequest
+        with
+          issuanceRequestCid : ContractId WarrantIssuanceRequest
+        do
+          ir <- fetch issuanceRequestCid
+          create AdmissionCheckRequest with issuer = ir.issuer; issuanceData = ir.issuanceData; ..
+
+      nonconsuming RequestCodeAllocation : ContractId CodeAllocationRequest
+        with
+          issuanceRequestCid : ContractId WarrantIssuanceRequest
+          admissionCheckResponseCid : ContractId AdmissionCheckResponse
+        do
+          ir <- fetch issuanceRequestCid
+          acr <- fetch admissionCheckResponseCid
+          assert $ acr.issuanceData == ir.issuanceData
+          assert $ acr.admissionCheck.parties && acr.admissionCheck.product && acr.admissionCheck.legalDocs
+          create CodeAllocationRequest with issuer = ir.issuer; issuanceData = ir.issuanceData; admissionCheck = acr.admissionCheck; ..
+
+      nonconsuming RequestGlobalNotes : ContractId GlobalNotesRequest
+        with
+          issuanceRequestCid : ContractId WarrantIssuanceRequest
+          admissionCheckResponseCid : ContractId AdmissionCheckResponse
+          codeAllocationResponseCid : ContractId CodeAllocationResponse
+        do
+          ir <- fetch issuanceRequestCid
+          acr <- fetch admissionCheckResponseCid
+          car <- fetch codeAllocationResponseCid
+          assert $ acr.issuanceData == ir.issuanceData
+          assert $ acr.admissionCheck.parties && acr.admissionCheck.product && acr.admissionCheck.legalDocs
+          assert $ car.issuanceData == ir.issuanceData
+          create GlobalNotesRequest with issuer = ir.issuer; issuanceData = ir.issuanceData; admissionCheck = acr.admissionCheck; allocatedCode = car.allocatedCode; ..
+
+template Depository
+  with
+    depository : Party
+  where
+    signatory depository
+
+    controller depository can
+      nonconsuming HandleAdmissionCheck : ContractId AdmissionCheckResponse
+        with
+          admissionCheckRequestCid : ContractId AdmissionCheckRequest
+          admissionCheck : AdmissionCheck
+        do
+          exercise admissionCheckRequestCid RespondAdmissionCheck with ..
+        
+      nonconsuming HandleCodeAllocation : ContractId CodeAllocationResponse
+        with
+          codeAllocationRequestCid : ContractId CodeAllocationRequest
+          allocatedCode : Text
+        do
+          exercise codeAllocationRequestCid RespondCodeAllocation with ..
+        
+      nonconsuming HandleGlobalNotes : ContractId GlobalNotesResponse
+        with
+          globalNotesRequestCid : ContractId GlobalNotesRequest
+          success : Bool
+        do
+          exercise globalNotesRequestCid RespondGlobalNotes with ..
+        
+      nonconsuming HandleIssuanceRequest : ContractId DepositInstruction
+        with
+          issuanceRequestCid : ContractId WarrantIssuanceRequest
+          admissionCheckResponseCid : ContractId AdmissionCheckResponse
+          codeAllocationResponseCid : ContractId CodeAllocationResponse
+          globalNotesResponseCid : ContractId GlobalNotesResponse
+        do
+          exercise issuanceRequestCid DispatchDepositInstruction with ..
+
+template WarrantIssuanceRequest
+  with
+    depository : Party
+    issuer : Party
+    agent : Party
+    issuanceAccount : Account
+    issuanceData : WarrantIssuanceData
+  where
+    signatory depository, issuer
+    observer agent
+
+    controller depository can
+      DispatchDepositInstruction : ContractId DepositInstruction
+        with
+          admissionCheckResponseCid : ContractId AdmissionCheckResponse
+          codeAllocationResponseCid : ContractId CodeAllocationResponse
+          globalNotesResponseCid : ContractId GlobalNotesResponse
+        do
+          acr <- fetch admissionCheckResponseCid
+          car <- fetch codeAllocationResponseCid
+          gnr <- fetch globalNotesResponseCid
+          archive admissionCheckResponseCid
+          archive codeAllocationResponseCid
+          archive globalNotesResponseCid
+          assert $ acr.issuanceData == issuanceData
+          assert $ acr.admissionCheck.parties && acr.admissionCheck.product && acr.admissionCheck.legalDocs
+          assert $ car.issuanceData == issuanceData
+          assert $ gnr.issuanceData == issuanceData
+          assert $ gnr.success
+          let
+            id = Id with signatories = fromList [ depository ]; label = car.allocatedCode; version = 0
+            asset = Asset with quantity = issuanceData.notional; ..
+          create DepositInstruction with account = issuanceAccount; ..
+
+template AdmissionCheckRequest
+  with
+    depository : Party
+    issuer : Party
+    agent : Party
+    issuanceData : WarrantIssuanceData
+  where
+    signatory depository, agent
+    observer issuer
+
+    controller depository can
+      RespondAdmissionCheck : ContractId AdmissionCheckResponse
+        with
+          admissionCheck : AdmissionCheck
+        do
+          create AdmissionCheckResponse with ..
+
+template AdmissionCheckResponse
+  with
+    depository : Party
+    issuer : Party
+    agent : Party
+    issuanceData : WarrantIssuanceData
+    admissionCheck : AdmissionCheck
+  where
+    signatory depository, agent
+    observer issuer
+
+template CodeAllocationRequest
+  with
+    depository : Party
+    issuer : Party
+    agent : Party
+    issuanceData : WarrantIssuanceData
+    admissionCheck : AdmissionCheck
+  where
+    signatory depository, agent
+    observer issuer
+
+    controller depository can
+      RespondCodeAllocation : ContractId CodeAllocationResponse
+        with
+          allocatedCode : Text
+        do
+          create CodeAllocationResponse with ..
+
+template CodeAllocationResponse
+  with
+    depository : Party
+    issuer : Party
+    agent : Party
+    issuanceData : WarrantIssuanceData
+    allocatedCode : Text
+  where
+    signatory depository, agent
+    observer issuer
+
+template GlobalNotesRequest
+  with
+    depository : Party
+    issuer : Party
+    agent : Party
+    issuanceData : WarrantIssuanceData
+    admissionCheck : AdmissionCheck
+    allocatedCode : Text
+  where
+    signatory depository, agent
+    observer issuer
+
+    controller depository can
+      RespondGlobalNotes : ContractId GlobalNotesResponse
+        with
+          success : Bool
+        do
+          create GlobalNotesResponse with ..
+
+template GlobalNotesResponse
+  with
+    depository : Party
+    issuer : Party
+    agent : Party
+    issuanceData : WarrantIssuanceData
+    success : Bool
+  where
+    signatory depository, agent
+    observer issuer
+
+template DepositInstruction
+  with
+    depository : Party
+    issuer : Party
+    issuanceData : WarrantIssuanceData
+    account : Account
+    asset : Asset
+  where
+    signatory depository, issuer
+
+    controller depository can
+      Settle : ContractId AssetDeposit
+        do
+          let observers = fromList [ account.provider, account.owner ]
+          create AssetDeposit with ..
+

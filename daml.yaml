@@ -1,4 +1,4 @@
-sdk-version: 1.4.0
+sdk-version: 1.7.0-snapshot.20201027.5530.0.bdbf8977
 name: asset-servicing
 source: daml
 parties:
@@ -6,6 +6,7 @@ parties:
   - Bob
 version: 0.0.1
 start-navigator: false
+init-script: Init:init
 sandbox-options:
   - --ledgerid=asset-servicing
   - -w

@@ -12,7 +12,7 @@ import Dividend from "../corporateactions/Dividend";
 import Dividends from "../corporateactions/Dividends";
 import StockSplits from "../corporateactions/StockSplits";
 import { InitDone } from "@daml.js/asset-servicing-0.0.1/lib/Init";
-import { setup, teardown } from "../../scripts/CSD";
+import { setup, teardown } from "../../scripts/Depository";
 import { useLedger, useParty } from "@daml/react";
 
 function CorporateActions() {

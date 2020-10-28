@@ -11,17 +11,15 @@ import Positions from "../positions/Positions";
 import Balance from "../balance/Balance";
 import { useLedger, useParty, useStreamQuery } from "@daml/react";
 import { InitDone } from "@daml.js/asset-servicing-0.0.1/lib/Init";
-import { setup, teardown } from "../../scripts/BANK";
+import { setup, teardown } from "../../scripts/Agent";
 import Accounts from "../accounts/Accounts";
 import { AssetDeposit } from "@daml.js/asset-servicing-0.0.1/lib/DA/Finance/Asset";
 import { useUserState } from "../../context/UserContext";
-import { getRole } from "../../config";
 
-function PositionManagement() {
+function AssetExplorer() {
   const classes = useStyles();
   const layoutState = useLayoutState();
   const user = useUserState();
-  const role = getRole(user.name);
 
   const ledger = useLedger();
   const party = useParty();
@@ -37,35 +35,33 @@ function PositionManagement() {
     getInit();
   }, [ledger, party]);
 
-  const setupScript = role === "BANK" ? async () => { await setup(ledger, party); setIsInitialized(true); } : undefined;
-  const teardownScript = role === "BANK" ? async () => { await teardown(ledger, party); setIsInitialized(false); } : undefined;
+  const setupScript = async () => { await setup(ledger, party); setIsInitialized(true); };
+  const teardownScript = async () => { await teardown(ledger, party); setIsInitialized(false); };
 
   const deposits = useStreamQuery(AssetDeposit).contracts;
   const own = deposits.filter(d => d.payload.account.owner === party).map(d => d.payload.account.id.label).filter((v, i, a) => a.indexOf(v) === i).sort();
   const clients = deposits.filter(d => d.payload.account.provider === party).map(d => d.payload.account.id.label).filter((v, i, a) => a.indexOf(v) === i).sort();
   const ownEntries = own.map(label => {
-    return { key: label, label, path: "/apps/positionmanagement/accounts/own/" + label, render: () => (<Accounts role="owner" account={label}/>), icon: (<></>), children: [] }; });
+    return { key: label, label, path: "/apps/assetexplorer/accounts/own/" + label, render: () => (<Accounts role="owner" account={label}/>), icon: (<></>), children: [] }; });
   const clientEntries = clients.map(label => {
-    return { key: label, label, path: "/apps/positionmanagement/accounts/clients/" + label, render: () => (<Accounts role="provider" account={label}/>), icon: (<></>), children: [] }; });
+    return { key: label, label, path: "/apps/assetexplorer/accounts/clients/" + label, render: () => (<Accounts role="provider" account={label}/>), icon: (<></>), children: [] }; });
   
   const entries : SidebarEntry[] = [
-    { label: "Positions", path: "/apps/positionmanagement/positions", render: () => (<Positions />), icon: (<Poll/>), children: [
-      { label: "Equities", path: "/apps/positionmanagement/positions/equities", render: () => (<Positions assetClass="Equity" />), icon: (<BarChart/>), children: [
-        { label: "Stocks", path: "/apps/positionmanagement/positions/equities/stocks", render: () => (<Positions assetClass="Equity" assetType="Stock" />), icon: (<BarChart/>), children: [] },
-        { label: "Options", path: "/apps/positionmanagement/positions/equities/options", render: () => (<Positions assetClass="Equity" assetType="Option" />), icon: (<BarChart/>), children: [] },
-        { label: "Exotics", path: "/apps/positionmanagement/positions/equities/exotics", render: () => (<Positions assetClass="Equity" assetType="Exotic" />), icon: (<BarChart/>), children: [] } ] },
-      { label: "FX", path: "/apps/positionmanagement/positions/fx", render: () => (<Positions assetClass="FX" />), icon: (<BarChart/>), children: [
-        { label: "Currencies", path: "/apps/positionmanagement/positions/fx/currencies", render: () => (<Positions assetClass="FX" assetType="Currency" />), icon: (<BarChart/>), children: [] } ] },
-      { label: "FixedIncome", path: "/apps/positionmanagement/positions/fixedincome", render: () => (<Positions assetClass="FixedIncome" />), icon: (<BarChart/>), children: [
-        { label: "Bonds", path: "/apps/positionmanagement/positions/fixedincome/bonds", render: () => (<Positions assetClass="FixedIncome" assetType="Bond" />), icon: (<BarChart/>), children: [] } ] } ] } ];
-  if (role === "BANK") {
-    entries.push(
-      { label: "Accounts", path: "/apps/positionmanagement/accounts", render: () => (<Accounts />), icon: (<AccountBalanceWallet/>), children: [
-        { label: "Own", path: "/apps/positionmanagement/accounts/own", render: () => (<Accounts role="owner" />), icon: (<SubdirectoryArrowRight/>), children: ownEntries },
-        { label: "Clients", path: "/apps/positionmanagement/accounts/clients", render: () => (<Accounts role="provider" />), icon: (<SubdirectoryArrowRight/>), children: clientEntries } ] },
-      { label: "Balance", path: "/apps/positionmanagement/balance", render: () => (<Balance />), icon: (<AccountBalance/>), children: [] }
-    );
-  }
+    { label: "Positions", path: "/apps/assetexplorer/positions", render: () => (<Positions />), icon: (<Poll/>), children: [
+      { label: "Equities", path: "/apps/assetexplorer/positions/equities", render: () => (<Positions assetClass="Equity" />), icon: (<BarChart/>), children: [
+        { label: "Stocks", path: "/apps/assetexplorer/positions/equities/stocks", render: () => (<Positions assetClass="Equity" assetType="Stock" />), icon: (<BarChart/>), children: [] },
+        { label: "Options", path: "/apps/assetexplorer/positions/equities/options", render: () => (<Positions assetClass="Equity" assetType="Option" />), icon: (<BarChart/>), children: [] },
+        { label: "Exotics", path: "/apps/assetexplorer/positions/equities/exotics", render: () => (<Positions assetClass="Equity" assetType="Exotic" />), icon: (<BarChart/>), children: [] } ] },
+      { label: "FX", path: "/apps/assetexplorer/positions/fx", render: () => (<Positions assetClass="FX" />), icon: (<BarChart/>), children: [
+        { label: "Currencies", path: "/apps/assetexplorer/positions/fx/currencies", render: () => (<Positions assetClass="FX" assetType="Currency" />), icon: (<BarChart/>), children: [] } ] },
+      { label: "FixedIncome", path: "/apps/assetexplorer/positions/fixedincome", render: () => (<Positions assetClass="FixedIncome" />), icon: (<BarChart/>), children: [
+        { label: "Bonds", path: "/apps/assetexplorer/positions/fixedincome/bonds", render: () => (<Positions assetClass="FixedIncome" assetType="Bond" />), icon: (<BarChart/>), children: [] } ] } ] },
+    { label: "Accounts", path: "/apps/assetexplorer/accounts", render: () => (<Accounts />), icon: (<AccountBalanceWallet/>), children: [
+      { label: "Own", path: "/apps/assetexplorer/accounts/own", render: () => (<Accounts role="owner" />), icon: (<SubdirectoryArrowRight/>), children: ownEntries },
+      { label: "Clients", path: "/apps/assetexplorer/accounts/clients", render: () => (<Accounts role="provider" />), icon: (<SubdirectoryArrowRight/>), children: clientEntries } ] },
+    { label: "Balance", path: "/apps/assetexplorer/balance", render: () => (<Balance />), icon: (<AccountBalance/>), children: [] }
+  ];
+  
 
   const getChildren = (e : SidebarEntry) : SidebarEntry[] => {
     return e.children.concat(e.children.flatMap(c => getChildren(c)));
@@ -99,4 +95,4 @@ function PositionManagement() {
   );
 }
 
-export default withRouter(PositionManagement);
+export default withRouter(AssetExplorer);

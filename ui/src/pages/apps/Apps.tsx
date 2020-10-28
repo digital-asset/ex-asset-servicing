@@ -6,39 +6,56 @@ import caImage from "../../images/corporate-actions-app.jpg";
 import ilImage from "../../images/instrument-lifecycling-app.jpg";
 import pmImage from "../../images/position-management-app.jpg";
 import { useUserState } from "../../context/UserContext";
-import { getRole } from "../../config";
 
 export default function Apps({ history } : RouteComponentProps) {
   const classes = useStyles();
-  const user = useUserState();
-  const isCsd = getRole(user.name) === "CSD";
+  // const user = useUserState();
+  // const ledger = useLedger();
+  // const depositoryRole
 
   return (
     <Grid container direction="column" justify="center" alignItems="center" spacing={4}>
       <Grid item xs={12}>
         <Grid container justify="center" alignItems="center" spacing={4}>
-          {isCsd && (
-            <Grid item xs={6}>
-              <Card className={classes.root}>
-                <CardActionArea onClick={() => history.push("/apps/corporateactions")}>
-                  <CardMedia
-                    className={classes.media}
-                    image={caImage}
-                    title="Corporate Action Management"
-                  />
-                  <CardContent>
-                    <Typography gutterBottom variant="h5" component="h2" className={classes.cardText}>
-                      Corporate Action Management
-                    </Typography>
-                    <Typography variant="body2" color="textSecondary" component="p" className={classes.cardText}>
-                      Manage various corporate actions on stocks
-                    </Typography>
-                  </CardContent>
-                </CardActionArea>
-              </Card>
-            </Grid>
-          )}
-          {isCsd && (
+          <Grid item xs={6}>
+            <Card className={classes.root}>
+              <CardActionArea onClick={() => history.push("/apps/issuance")}>
+                <CardMedia
+                  className={classes.media}
+                  image={caImage}
+                  title="Issuance"
+                />
+                <CardContent>
+                  <Typography gutterBottom variant="h5" component="h2" className={classes.cardText}>
+                    Issuance
+                  </Typography>
+                  <Typography variant="body2" color="textSecondary" component="p" className={classes.cardText}>
+                    Manage the issuance workflow for securities
+                  </Typography>
+                </CardContent>
+              </CardActionArea>
+            </Card>
+          </Grid>
+          <Grid item xs={6}>
+            <Card className={classes.root}>
+              <CardActionArea onClick={() => history.push("/apps/assetexplorer")}>
+                <CardMedia
+                  className={classes.media}
+                  image={pmImage}
+                  title="Asset Explorer"
+                />
+                <CardContent>
+                  <Typography gutterBottom variant="h5" component="h2" className={classes.cardText}>
+                    Asset Explorer
+                  </Typography>
+                  <Typography variant="body2" color="textSecondary" component="p" className={classes.cardText}>
+                    Manage assets and lifecycle events
+                  </Typography>
+                </CardContent>
+              </CardActionArea>
+            </Card>
+          </Grid>
+          {/* {role === "BANK" && (
             <Grid item xs={6}>
               <Card className={classes.root}>
                 <CardActionArea onClick={() => history.push("/apps/lifecycling")}>
@@ -58,28 +75,7 @@ export default function Apps({ history } : RouteComponentProps) {
                 </CardActionArea>
               </Card>
             </Grid>
-          )}
-          {!isCsd && (
-            <Grid item xs={12}>
-              <Card className={classes.root}>
-                <CardActionArea onClick={() => history.push("/apps/positionmanagement")}>
-                  <CardMedia
-                    className={classes.media}
-                    image={pmImage}
-                    title="Asset Explorer"
-                  />
-                  <CardContent>
-                    <Typography gutterBottom variant="h5" component="h2" className={classes.cardText}>
-                      Asset Explorer
-                    </Typography>
-                    <Typography variant="body2" color="textSecondary" component="p" className={classes.cardText}>
-                      Manage assets and lifecycle events
-                    </Typography>
-                  </CardContent>
-                </CardActionArea>
-              </Card>
-            </Grid>
-          )}
+          )} */}
         </Grid>
       </Grid>
     </Grid>
