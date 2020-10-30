@@ -1,5 +1,5 @@
 import React from "react";
-import { useStreamQuery } from "@daml/react";
+import { useStreamQueries } from "@daml/react";
 import { EquityStockSplit } from "@daml.js/asset-servicing-0.0.1/lib/DA/Finance/Instrument/Equity/StockSplit";
 import { Table, TableBody, TableCell, TableRow, TableHead, IconButton } from "@material-ui/core";
 import { withRouter, RouteComponentProps } from "react-router-dom";
@@ -9,7 +9,7 @@ import { KeyboardArrowRight } from "@material-ui/icons";
 const StockSplits : React.FC<RouteComponentProps> = ({ history } : RouteComponentProps) => {
   const classes = useStyles();
 
-  const stockSplits = useStreamQuery(EquityStockSplit).contracts;
+  const stockSplits = useStreamQueries(EquityStockSplit).contracts;
 
   return (
     <Table size="small">

@@ -31,3 +31,5 @@ export function getName(party : string) {
 export function getToken(party : string) {
   return isLocalDev ? createToken(party) : (tokens.get(party) || "");
 }
+
+export const underlyings = [ "DAIGn.DE", "DBKGn.DE", "DB1Gn.DE", "DTEGn.DE", "SIEGn.DE", "VOWG_p.DE" ];

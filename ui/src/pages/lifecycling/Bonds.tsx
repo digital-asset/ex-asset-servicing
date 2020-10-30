@@ -1,5 +1,5 @@
 import React from "react";
-import { useStreamQuery } from "@daml/react";
+import { useStreamQueries } from "@daml/react";
 import { Bond } from "@daml.js/asset-servicing-0.0.1/lib/DA/Finance/Instrument/FixedIncome/Bond";
 import { Table, TableBody, TableCell, TableRow, TableHead, IconButton } from "@material-ui/core";
 import { withRouter, RouteComponentProps } from "react-router-dom";
@@ -8,7 +8,7 @@ import { KeyboardArrowRight } from "@material-ui/icons";
 
 const Bonds : React.FC<RouteComponentProps> = ({ history } : RouteComponentProps) => {
 
-  const bonds = useStreamQuery(Bond).contracts;
+  const bonds = useStreamQueries(Bond).contracts;
 
   const classes = useStyles();
   return (

@@ -1,5 +1,5 @@
 import React from "react";
-import { useStreamQuery, useParty } from "@daml/react";
+import { useStreamQueries, useParty } from "@daml/react";
 import { AssetDeposit, AssetCategorization } from "@daml.js/asset-servicing-0.0.1/lib/DA/Finance/Asset";
 import { Table, TableHead, TableRow, TableCell, TableBody } from "@material-ui/core";
 import { CreateEvent } from "@daml/ledger";
@@ -9,8 +9,8 @@ const Balance : React.FC = () => {
   const classes = useStyles();
 
   const party = useParty();
-  const categories = useStreamQuery(AssetCategorization).contracts;
-  const deposits = useStreamQuery(AssetDeposit).contracts;
+  const categories = useStreamQueries(AssetCategorization).contracts;
+  const deposits = useStreamQueries(AssetDeposit).contracts;
   const assets = deposits.filter(d => d.payload.account.owner === party);
   const liabilities = deposits.filter(d => d.payload.account.provider === party);
 

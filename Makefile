@@ -10,10 +10,11 @@ clean:
 	rm -rf ui/build
 	rm -rf ui/node_modules
 
+.PHONY: ui
 ui:
-	rm -rf ui/build/
-	cd ui && yarn build
-
+	daml codegen js -o daml.js .daml/dist/*.dar
+	cd ui && yarn install --force --frozen-lockfile
+	
 package:
 	rm -rf deploy/	
 	mkdir deploy

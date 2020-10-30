@@ -1,0 +1,113 @@
+module Roles where
+
+import DA.Finance.Issuance.Issuance
+import DA.Finance.Distribution.Distribution
+import DA.Finance.Types
+
+template Depository
+  with
+    depository : Party
+  where
+    signatory depository
+
+    controller depository can
+      nonconsuming HandleAdmissionCheck : ContractId AdmissionCheckResponse
+        with
+          admissionCheckRequestCid : ContractId AdmissionCheckRequest
+          admissionCheck : AdmissionCheck
+        do
+          exercise admissionCheckRequestCid RespondAdmissionCheck with ..
+        
+      nonconsuming HandleCodeAllocation : ContractId CodeAllocationResponse
+        with
+          codeAllocationRequestCid : ContractId CodeAllocationRequest
+          allocatedCode : Text
+        do
+          exercise codeAllocationRequestCid RespondCodeAllocation with ..
+        
+      nonconsuming HandleGlobalNotes : ContractId GlobalNotesResponse
+        with
+          globalNotesRequestCid : ContractId GlobalNotesRequest
+          success : Bool
+        do
+          exercise globalNotesRequestCid RespondGlobalNotes with ..
+        
+      nonconsuming HandleIssuanceRequest : ContractId DepositInstruction
+        with
+          issuanceRequestCid : ContractId WarrantIssuanceRequest
+          admissionCheckResponseCid : ContractId AdmissionCheckResponse
+          codeAllocationResponseCid : ContractId CodeAllocationResponse
+          globalNotesResponseCid : ContractId GlobalNotesResponse
+          issuanceAccount : Account
+          distributionAccount : Account
+        do
+          exercise issuanceRequestCid DispatchDepositInstruction with ..
+
+template Agent
+  with
+    depository : Party
+    agent : Party
+    investors : [Party]
+    issuanceAccount : Account
+    distributionAccount : Account
+  where
+    signatory depository
+
+    controller agent can
+      nonconsuming RequestAdmissionCheck : ContractId AdmissionCheckRequest
+        with
+          issuanceRequestCid : ContractId WarrantIssuanceRequest
+        do
+          ir <- fetch issuanceRequestCid
+          create AdmissionCheckRequest with issuer = ir.issuer; issuanceData = ir.issuanceData; ..
+
+      nonconsuming RequestCodeAllocation : ContractId CodeAllocationRequest
+        with
+          issuanceRequestCid : ContractId WarrantIssuanceRequest
+          admissionCheckResponseCid : ContractId AdmissionCheckResponse
+        do
+          ir <- fetch issuanceRequestCid
+          acr <- fetch admissionCheckResponseCid
+          assert $ acr.issuanceData == ir.issuanceData
+          assert $ acr.admissionCheck.parties && acr.admissionCheck.product && acr.admissionCheck.legalDocs
+          create CodeAllocationRequest with issuer = ir.issuer; issuanceData = ir.issuanceData; admissionCheck = acr.admissionCheck; ..
+
+      nonconsuming RequestGlobalNotes : ContractId GlobalNotesRequest
+        with
+          issuanceRequestCid : ContractId WarrantIssuanceRequest
+          admissionCheckResponseCid : ContractId AdmissionCheckResponse
+          codeAllocationResponseCid : ContractId CodeAllocationResponse
+        do
+          ir <- fetch issuanceRequestCid
+          acr <- fetch admissionCheckResponseCid
+          car <- fetch codeAllocationResponseCid
+          assert $ acr.issuanceData == ir.issuanceData
+          assert $ acr.admissionCheck.parties && acr.admissionCheck.product && acr.admissionCheck.legalDocs
+          assert $ car.issuanceData == ir.issuanceData
+          create GlobalNotesRequest with issuer = ir.issuer; issuanceData = ir.issuanceData; admissionCheck = acr.admissionCheck; allocatedCode = car.allocatedCode; ..
+
+template Issuer
+  with
+    depository : Party
+    issuer : Party
+    assetId : Id
+  where
+    signatory depository
+    observer issuer
+
+    controller issuer can
+      nonconsuming RequestWarrantIssuance : ContractId WarrantIssuanceRequest
+        with
+          agent : Party
+          issuanceData : WarrantIssuanceData
+        do
+          create WarrantIssuanceRequest with ..
+
+      nonconsuming RequestDistribution : ContractId DistributionRequest
+        with
+          label : Text
+          agent : Party
+          asset : Asset
+        do
+          create DistributionRequest with ..
+

@@ -1,5 +1,5 @@
 import React from "react";
-import { useStreamQuery } from "@daml/react";
+import { useStreamQueries } from "@daml/react";
 import { EquityCashDividend } from "@daml.js/asset-servicing-0.0.1/lib/DA/Finance/Instrument/Equity/CashDividend";
 import { Table, TableBody, TableCell, TableRow, TableHead, IconButton } from "@material-ui/core";
 import { withRouter, RouteComponentProps } from "react-router-dom";
@@ -9,7 +9,7 @@ import { KeyboardArrowRight } from "@material-ui/icons";
 const Dividends : React.FC<RouteComponentProps> = ({ history } : RouteComponentProps) => {
   const classes = useStyles();
 
-  const dividends = useStreamQuery(EquityCashDividend).contracts;
+  const dividends = useStreamQueries(EquityCashDividend).contracts;
   
   return (
     <Table size="small">

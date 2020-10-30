@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useStreamQuery, useQuery, useLedger } from "@daml/react";
+import { useStreamQueries, useQuery, useLedger } from "@daml/react";
 import { EquityStockSplit } from "@daml.js/asset-servicing-0.0.1/lib/DA/Finance/Instrument/Equity/StockSplit";
 import { EquityStock } from "@daml.js/asset-servicing-0.0.1/lib/DA/Finance/Instrument/Equity/Stock";
 import { EquityStockSplitRule } from "@daml.js/asset-servicing-0.0.1/lib/DA/Finance/Instrument/Equity/Stock/Lifecycle";
@@ -18,14 +18,14 @@ const StockSplit : React.FC = () => {
   const [isLifecyclingOptions, setIsLifecyclingOptions] = useState(false);
   const [isLifecyclingAcbrcs, setIsLifecyclingAcbrcs] = useState(false);
 
-  const { contractId } = useParams();
+  const { contractId } = useParams<any>();
   const cid = contractId.replace("_", "#");
 
   const ledger = useLedger();
   const stockSplit = useQuery(EquityStockSplit).contracts.find(c => c.contractId === cid);
-  const stocks = useStreamQuery(EquityStock, () => { return { id: { label: stockSplit?.payload.id.label } } }, [stockSplit]).contracts.slice().sort((a, b) => { return a.contractId < b.contractId ? -1 : 1; });;
-  const options = useStreamQuery(EquityOption, () => { return { underlyingId: { label: stockSplit?.payload.id.label } } }, [stockSplit]).contracts.slice().sort((a, b) => { return a.contractId < b.contractId ? -1 : 1; });;
-  const acbrcs = useStreamQuery(ACBRC, () => { return { underlyingId: { label: stockSplit?.payload.id.label } } }, [stockSplit]).contracts.slice().sort((a, b) => { return a.contractId < b.contractId ? -1 : 1; });;
+  const stocks = useStreamQueries(EquityStock, () => { return [{ id: { label: stockSplit?.payload.id.label } }]; }, [stockSplit]).contracts.slice().sort((a, b) => { return a.contractId < b.contractId ? -1 : 1; });;
+  const options = useStreamQueries(EquityOption, () => { return [{ underlyingId: { label: stockSplit?.payload.id.label } }]; }, [stockSplit]).contracts.slice().sort((a, b) => { return a.contractId < b.contractId ? -1 : 1; });;
+  const acbrcs = useStreamQueries(ACBRC, () => { return [{ underlyingId: { label: stockSplit?.payload.id.label } }]; }, [stockSplit]).contracts.slice().sort((a, b) => { return a.contractId < b.contractId ? -1 : 1; });;
 
   if (!stockSplit) return (null);
 

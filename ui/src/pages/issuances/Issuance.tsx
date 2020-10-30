@@ -1,30 +1,28 @@
-import React, { useState } from "react";
-import { useStreamQuery, useLedger } from "@daml/react";
-import { Typography, Grid, Table, TableBody, TableCell, TableRow, Button, CircularProgress } from "@material-ui/core";
+import React from "react";
+import { useStreamQueries } from "@daml/react";
+import { Typography, Grid, Table, TableBody, TableCell, TableRow } from "@material-ui/core";
 import { useParams, RouteComponentProps } from "react-router-dom";
-import useStyles from "./styles";
-import { ContractId } from "@daml/types";
-import { KeyboardArrowRight } from "@material-ui/icons";
-import { AdmissionCheckRequest, AdmissionCheckResponse, CodeAllocationRequest, CodeAllocationResponse, DepositInstruction, GlobalNotesRequest, GlobalNotesResponse, WarrantIssuanceRequest } from "@daml.js/asset-servicing-0.0.1/lib/DA/Finance/Issuance/Issuance";
+import useStyles from "../styles";
+import { AdmissionCheckResponse, CodeAllocationResponse, DepositInstruction, GlobalNotesResponse, WarrantIssuanceRequest } from "@daml.js/asset-servicing-0.0.1/lib/DA/Finance/Issuance/Issuance";
 
 const Warrant : React.FC<RouteComponentProps> = ({ history }) => {
   const classes = useStyles();
-
-  const [isLifecyclingAcbrc, setIsLifecyclingAcbrc] = useState(false);
+  console.log("Hello");
 
   const { contractId } = useParams<any>();
   const cid = contractId.replace("_", "#");
   
-  const ledger = useLedger();
-  const ir = useStreamQuery(WarrantIssuanceRequest).contracts.find(c => c.contractId === cid);
-  const acreq = useStreamQuery(AdmissionCheckRequest).contracts.find(c => c.payload.issuanceData.label === ir?.payload.issuanceData.label);
-  const acres = useStreamQuery(AdmissionCheckResponse).contracts.find(c => c.payload.issuanceData.label === ir?.payload.issuanceData.label);
-  const careq = useStreamQuery(CodeAllocationRequest).contracts.find(c => c.payload.issuanceData.label === ir?.payload.issuanceData.label);
-  const cares = useStreamQuery(CodeAllocationResponse).contracts.find(c => c.payload.issuanceData.label === ir?.payload.issuanceData.label);
-  const gnreq = useStreamQuery(GlobalNotesRequest).contracts.find(c => c.payload.issuanceData.label === ir?.payload.issuanceData.label);
-  const gnres = useStreamQuery(GlobalNotesResponse).contracts.find(c => c.payload.issuanceData.label === ir?.payload.issuanceData.label);
-  const di = useStreamQuery(DepositInstruction).contracts.find(c => c.payload.issuanceData.label === ir?.payload.issuanceData.label);
-  if (!ir) return (null);
+  const irs = useStreamQueries(WarrantIssuanceRequest).contracts;
+  console.log(irs);
+  const ir = irs.find(c => c.contractId === cid);
+  const acres = useStreamQueries(AdmissionCheckResponse).contracts.find(c => c.payload.issuanceData.label === ir?.payload.issuanceData.label);
+  const cares = useStreamQueries(CodeAllocationResponse).contracts.find(c => c.payload.issuanceData.label === ir?.payload.issuanceData.label);
+  const gnres = useStreamQueries(GlobalNotesResponse).contracts.find(c => c.payload.issuanceData.label === ir?.payload.issuanceData.label);
+  const di = useStreamQueries(DepositInstruction).contracts.find(c => c.payload.issuanceData.label === ir?.payload.issuanceData.label);
+  if (!ir) {
+    console.log(irs);
+    return (null);
+  }
 
   return (
     <>

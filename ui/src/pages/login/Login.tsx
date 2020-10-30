@@ -19,7 +19,7 @@ function Login(props : RouteComponentProps) {
     <Grid container className={classes.container}>
       <div className={classes.logotypeContainer}>
         <img src={loginLogo} alt="logo" className={classes.logotypeImage} />
-        <Typography className={classes.logotypeText}>Asset Servicing Portal</Typography>
+        <Typography className={classes.logotypeText}>Digital Securities Depository</Typography>
       </div>
       <div className={classes.formContainer}>
         <div className={classes.form}>

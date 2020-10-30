@@ -3,21 +3,28 @@ import { withRouter, RouteComponentProps } from "react-router-dom";
 import { AppBar, Toolbar, IconButton, Typography, Grid, Box, CircularProgress } from "@material-ui/core";
 import { ExitToApp, Apps, PlayArrow, FastRewind } from "@material-ui/icons";
 import useStyles from "./styles";
-import { useUserDispatch, signOut, useUserState } from "../../context/UserContext";
+import { useUserDispatch, signOut } from "../../context/UserContext";
 import headerLogo from "../../images/headerLogo.png";
+import { useParty, useQuery } from "@daml/react";
+import { Agent, Depository, Issuer } from "@daml.js/asset-servicing-0.0.1/lib/Roles";
 
 interface HeaderProps {
+  app : string
   isInitialized : boolean
   setup? : () => Promise<void>
   teardown? : () => Promise<void>
 }
 
-function Header({ history, isInitialized, setup, teardown } : RouteComponentProps & HeaderProps) {
+function Header({ history, app, isInitialized, setup, teardown } : RouteComponentProps & HeaderProps) {
   const classes = useStyles();
-
-  // global
-  const user = useUserState();
-  const role = "";
+  const party = useParty();
+  const depositoryRoles = useQuery(Depository).contracts;
+  const isDepository = depositoryRoles.length > 0 && depositoryRoles[0].payload.depository === party;
+  const agentRoles = useQuery(Agent).contracts;
+  const isAgent = agentRoles.length > 0 && agentRoles[0].payload.agent === party;
+  const issuerRoles = useQuery(Issuer).contracts;
+  const isIssuer = issuerRoles.length > 0 && issuerRoles[0].payload.issuer === party;
+  const role = isDepository ? "Depository" : (isAgent ? "Agent" : (isIssuer ? "Issuer" : ""));
 
   const userDispatch = useUserDispatch();
   const [isInitializing, setIsInitializing] = useState(false);
@@ -33,20 +40,17 @@ function Header({ history, isInitialized, setup, teardown } : RouteComponentProp
   return (
     <AppBar position="fixed" className={classes.appBar}>
       <Toolbar className={classes.toolbar}>
-        <Typography variant="h6" className={classes.logotype}>
-          Asset Servicing Portal
-        </Typography>
-        <div className={classes.grow} />
         <img alt="headerLogo" src={headerLogo} height="48px" />
         <div className={classes.grow} />
-        <Box style={{ width: "90px" }}>
+        <Typography variant="h1" className={classes.logotype}>
+          DIGITAL SECURITIES DEPOSITORY
+        </Typography>
+        <div className={classes.grow} />
+        <Box style={{ width: "150px" }}>
           <Grid container direction="column">
-            <Grid item xs={12}>
-              <Typography variant="body2">User: {user.name}</Typography>
-            </Grid>
-            <Grid item xs={12}>
-              <Typography variant="body2">Role: {role}</Typography>
-            </Grid>
+            <Grid item xs={12}><Typography variant="caption">APP:  {app}</Typography></Grid>
+            <Grid item xs={12}><Typography variant="caption">USER: {party}</Typography></Grid>
+            <Grid item xs={12}><Typography variant="caption">ROLE: {role}</Typography></Grid>
           </Grid>
         </Box>
         <IconButton

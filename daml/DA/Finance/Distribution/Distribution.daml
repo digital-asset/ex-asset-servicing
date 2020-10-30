@@ -1,0 +1,113 @@
+module DA.Finance.Distribution.Distribution where
+
+import DA.Finance.Asset
+import DA.Finance.Types
+import DA.Foldable (forA_)
+import DA.Next.Set (fromList)
+
+template DistributionRequest
+  with
+    depository : Party
+    issuer : Party
+    agent : Party
+    label : Text
+    asset : Asset
+  where
+    signatory depository, issuer
+    observer agent
+
+    controller agent can
+      RequestSubscription : [ContractId SubscriptionRequest]
+        with
+          investors : [Party]
+          price : Asset
+        do
+          mapA (\investor -> create SubscriptionRequest with ..) investors
+
+    controller agent can
+      InstructDistribution : [ContractId SettlementInstruction]
+        with
+          subscriptionResponseCids : [ContractId SubscriptionResponse]
+          distributionAccount : Account
+          cashAccount : Account
+        do
+          subscriptionResponses <- mapA fetch subscriptionResponseCids
+          forA_ subscriptionResponseCids (`exercise` DeleteSubscriptionResponse)
+
+          let
+            quantities = map (.quantity) subscriptionResponses
+            investors = map (.investor) subscriptionResponses
+          depositCid <- create AssetDeposit with account = distributionAccount; observers = fromList investors; asset
+          agentDepositCids <- exercise depositCid AssetDeposit_Split with quantities
+          let
+            responseDepositPairs = zip subscriptionResponses agentDepositCids
+            createSettlementInstructions ((sr, agentDepositCid) : (SubscriptionResponse, ContractId AssetDeposit)) =
+              do
+                investorDeposit <- fetch sr.depositCid
+                assert $ investorDeposit.asset.id == sr.price.id
+                assert $ investorDeposit.asset.quantity == sr.quantity * sr.price.quantity
+                let
+                  delivery = SettlementInstruction with fromAccount = distributionAccount; fromDepositCid = agentDepositCid; toAccount = sr.account; ..
+                  payment = SettlementInstruction with fromAccount = sr.account; fromDepositCid = sr.depositCid; toAccount = cashAccount; ..
+                pure [ delivery, payment ]
+          settlementInstructions <- concat <$> mapA createSettlementInstructions responseDepositPairs
+          mapA create settlementInstructions
+
+template SubscriptionRequest
+  with
+    depository : Party
+    issuer : Party
+    agent : Party
+    investor : Party
+    label : Text
+    asset : Asset
+    price : Asset
+  where
+    signatory depository, issuer, agent
+    observer investor
+
+    controller investor can
+      RespondSubscription : ContractId SubscriptionResponse
+        with
+          quantity : Decimal
+          depositCid : ContractId AssetDeposit
+          account : Account
+        do
+          create SubscriptionResponse with ..
+
+template SubscriptionResponse
+  with
+    depository : Party
+    issuer : Party
+    agent : Party
+    investor : Party
+    label : Text
+    asset : Asset
+    price : Asset
+    quantity : Decimal
+    depositCid : ContractId AssetDeposit
+    account : Account
+  where
+    signatory depository, issuer, agent, investor
+
+    controller depository, agent can
+      DeleteSubscriptionResponse : ()
+        do pure ()
+
+template SettlementInstruction
+  with
+    depository : Party
+    issuer : Party
+    agent : Party
+    fromAccount : Account
+    fromDepositCid : ContractId AssetDeposit
+    toAccount : Account
+  where
+    signatory depository, issuer, agent
+
+    controller depository can
+      Settle : ContractId AssetDeposit
+        do
+          fromDeposit <- fetch fromDepositCid
+          archive fromDepositCid
+          create fromDeposit with account = toAccount

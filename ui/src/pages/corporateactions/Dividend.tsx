@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useStreamQuery, useQuery, useLedger } from "@daml/react";
+import { useStreamQueries, useQuery, useLedger } from "@daml/react";
 import { EquityStock } from "@daml.js/asset-servicing-0.0.1/lib/DA/Finance/Instrument/Equity/Stock";
 import { EquityStockCashDividendRule } from "@daml.js/asset-servicing-0.0.1/lib/DA/Finance/Instrument/Equity/Stock/Lifecycle";
 import { Typography, Grid, Table, TableBody, TableCell, TableRow, TableHead, Button, CircularProgress } from "@material-ui/core";
@@ -12,12 +12,12 @@ const Dividend : React.FC<RouteComponentProps> = ({ history } : RouteComponentPr
 
   const [isLifecyclingStocks, setIsLifecyclingStocks] = useState(false);
 
-  const { contractId } = useParams();
+  const { contractId } = useParams<any>();
   const cid = contractId.replace("_", "#");
 
   const ledger = useLedger();
   const dividend = useQuery(EquityCashDividend).contracts.find(c => c.contractId === cid);
-  const stocks = useStreamQuery(EquityStock, () => { return { id: { label: dividend?.payload.id.label } } }, [dividend]);
+  const stocks = useStreamQueries(EquityStock, () => { return [{ id: { label: dividend?.payload.id.label } }]; }, [dividend]);
 
   if (!dividend) return (null);
 

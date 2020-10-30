@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useStreamQuery, useLedger } from "@daml/react";
+import { useStreamQueries, useLedger } from "@daml/react";
 import { Bond as BondT } from "@daml.js/asset-servicing-0.0.1/lib/DA/Finance/Instrument/FixedIncome/Bond";
 import { BondCouponRule } from "@daml.js/asset-servicing-0.0.1/lib/DA/Finance/Instrument/FixedIncome/Bond/Lifecycle";
 import { Typography, Grid, Table, TableBody, TableCell, TableRow, Button, CircularProgress } from "@material-ui/core";
@@ -16,7 +16,7 @@ const Bond : React.FC<RouteComponentProps> = ({ history }) => {
   const cid = contractId.replace("_", "#");
   
   const ledger = useLedger();
-  const bond = useStreamQuery(BondT).contracts.find(c => c.contractId === cid);
+  const bond = useStreamQueries(BondT).contracts.find(c => c.contractId === cid);
 
   if (!bond) return (null);
 

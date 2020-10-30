@@ -4,7 +4,7 @@ import { ThemeProvider } from "@material-ui/styles";
 import { CssBaseline } from "@material-ui/core";
 
 import Themes from "./themes";
-import Main from "./components/Main";
+import Main from "./Main";
 import { LayoutProvider } from "./context/LayoutContext";
 import { UserProvider } from "./context/UserContext";
 

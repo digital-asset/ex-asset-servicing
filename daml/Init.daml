@@ -1,9 +1,13 @@
 module Init where
 
 import Daml.Script
+import DA.Date
 import DA.Next.Set
+import DA.Finance.Asset
+import DA.Finance.Instrument.Equity.Option
 import DA.Finance.Issuance.Issuance
 import DA.Finance.Types
+import Roles
 
 template InitDone
   with
@@ -27,14 +31,47 @@ getAccount sig label provider owner =
 
 init : Script ()
 init = do
+
   -- Parties
-  depository <- allocatePartyWithHint "CSD" $ PartyIdHint with partyIdHint = "CSD"
-  agent <- allocatePartyWithHint "BANK" $ PartyIdHint with partyIdHint = "BANK"
-  issuer <- allocatePartyWithHint "CORP" $ PartyIdHint with partyIdHint = "CORP"
+  depository <- allocatePartyWithHint "CLEARSTREAM" $ PartyIdHint with partyIdHint = "CLEARSTREAM"
+  agent <- allocatePartyWithHint "DB" $ PartyIdHint with partyIdHint = "DB"
+  issuer <- allocatePartyWithHint "BMW" $ PartyIdHint with partyIdHint = "BMW"
+  investor1 <- allocatePartyWithHint "INVESTOR1" $ PartyIdHint with partyIdHint = "INVESTOR1"
+  investor2 <- allocatePartyWithHint "INVESTOR2" $ PartyIdHint with partyIdHint = "INVESTOR2"
+  investor3 <- allocatePartyWithHint "INVESTOR3" $ PartyIdHint with partyIdHint = "INVESTOR3"
+  
+  -- Roles
+  let
+    assetId = Id with signatories = fromList [ depository ]; label = "BMWG.DE"; version = 0
+    investors = [ investor1, investor2, investor3 ]
+    issuanceAccount = getAccount depository "BMW@CLEARSTREAM" depository issuer
+    distributionAccount = getAccount agent "DB@DB" depository issuer
 
-  let account = getAccount depository "CORP@CSD" depository issuer
-  submit depository do createCmd Depository with ..
-  submit depository do createCmd Issuer with ..
-  submit depository do createCmd Agent with ..
+  depositoryCid <- submit depository do createCmd Depository with ..
+  issuerCid <- submit depository do createCmd Issuer with ..
+  agentCid <- submit depository do createCmd Agent with ..
 
+  -- Issuances
+  let
+    label = "BMWG.DE-CALL-50.0-20210321"
+    underlying = Id with signatories = fromList [ depository ]; label = "BMWG.DE"; version = 0
+    optionType = CALL
+    strike = 50.0
+    exerciseType = EUROPEAN
+    expiry = date 2021 Mar 21
+    contractSize = 100.0
+    terms = WarrantTerms with ..
+    issueSize = 10000000.0
+    minimumDenomination = 1000.0
+    issuanceData = WarrantIssuanceData with ..
+  submit issuer do exerciseCmd issuerCid RequestWarrantIssuance with ..
+
+  -- Assets
+  let
+    assetId = Id with signatories = fromList [ depository ]; label = "XS150688702214"; version = 0
+    asset = Asset with id = assetId; quantity = 10_000_000.0
+    accountId = Id with signatories = fromList [ depository ]; label = "BMW@CLEARSTREAM"; version = 0
+    account = Account with id = accountId; provider = depository; owner = issuer
+    deposit = AssetDeposit with asset; account; observers = empty
+  submit depository do createCmd deposit
   pure ()

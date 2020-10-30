@@ -1,18 +1,18 @@
 import React from "react";
-import { useStreamQuery, useParty } from "@daml/react";
+import { useStreamQueries, useParty } from "@daml/react";
 import { AssetDeposit, AssetCategorization } from "@daml.js/asset-servicing-0.0.1/lib/DA/Finance/Asset";
 import { Table, TableHead, TableRow, TableCell, TableBody, Button } from "@material-ui/core";
 import { LifecycleEffects } from "@daml.js/asset-servicing-0.0.1/lib/DA/Finance/Asset/Lifecycle";
 import { CreateEvent } from "@daml/ledger";
-import LifecycleDialog, { LifecycleDialogProps } from "./LifecycleDialog";
+import LifecycleDialog, { LifecycleDialogProps } from "../../components/LifecycleDialog/LifecycleDialog";
 import useStyles from "./styles";
 
-interface AccountProps {
+interface AssetDepositsProps {
   role?: string
   account? : string
 }
 
-const Accounts : React.FC<AccountProps> = ({ role, account }) => {
+const AssetDeposits : React.FC<AssetDepositsProps> = ({ role, account }) => {
   const classes = useStyles();
 
   const [props, setProps] = React.useState<LifecycleDialogProps>({ open: false, onClose: () => {}, deposit: undefined, effect: undefined });
@@ -26,9 +26,9 @@ const Accounts : React.FC<AccountProps> = ({ role, account }) => {
   }
 
   const party = useParty();
-  const deposits = useStreamQuery(AssetDeposit).contracts;
-  const categories = useStreamQuery(AssetCategorization).contracts;
-  const effects = useStreamQuery(LifecycleEffects).contracts;
+  const deposits = useStreamQueries(AssetDeposit).contracts;
+  const categories = useStreamQueries(AssetCategorization).contracts;
+  const effects = useStreamQueries(LifecycleEffects).contracts;
   const entries = deposits.map(deposit => {
     const category = categories.find(c => c.payload.id.label === deposit.payload.asset.id.label);
     const effect = effects.find(e => e.payload.id.label === deposit.payload.asset.id.label && e.payload.id.version === deposit.payload.asset.id.version);
@@ -83,4 +83,4 @@ const Accounts : React.FC<AccountProps> = ({ role, account }) => {
   );
 }
 
-export default Accounts;
+export default AssetDeposits;
