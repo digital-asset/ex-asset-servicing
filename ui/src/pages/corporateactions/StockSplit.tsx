@@ -31,7 +31,6 @@ const StockSplit : React.FC = () => {
 
   const lifecycleStocks = async () => {
     setIsLifecyclingStocks(true);
-    console.log(stockSplit.payload.id.signatories);
     await ledger.exerciseByKey(EquityStockSplitRule.EquityStockSplit_Lifecycle, stockSplit.payload.id.signatories, { stockSplitCid: stockSplit.contractId});
     setIsLifecyclingStocks(false);
   }

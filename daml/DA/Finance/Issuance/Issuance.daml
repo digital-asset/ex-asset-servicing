@@ -36,34 +36,23 @@ template WarrantIssuanceRequest
     issuer : Party
     agent : Party
     issuanceData : WarrantIssuanceData
+    issuanceAccount : Account
+    settled : Bool
   where
     signatory depository, issuer
     observer agent
 
     controller depository can
-      DispatchDepositInstruction : ContractId DepositInstruction
+      SettleIssuanceRequest : ContractId AssetDeposit
         with
-          admissionCheckResponseCid : ContractId AdmissionCheckResponse
-          codeAllocationResponseCid : ContractId CodeAllocationResponse
-          globalNotesResponseCid : ContractId GlobalNotesResponse
-          issuanceAccount : Account
-          distributionAccount : Account
+          depositInstructionCid : ContractId DepositInstruction
         do
-          acr <- fetch admissionCheckResponseCid
-          car <- fetch codeAllocationResponseCid
-          gnr <- fetch globalNotesResponseCid
-          exercise admissionCheckResponseCid DeleteAdmissionCheckResponse
-          exercise codeAllocationResponseCid DeleteCodeAllocationResponse
-          exercise globalNotesResponseCid DeleteGlobalNotesResponse
-          assert $ acr.issuanceData == issuanceData
-          assert $ acr.admissionCheck.parties && acr.admissionCheck.product && acr.admissionCheck.legalDocs
-          assert $ car.issuanceData == issuanceData
-          assert $ gnr.issuanceData == issuanceData
-          assert $ gnr.success
-          let
-            id = Id with signatories = fromList [ depository ]; label = car.allocatedCode; version = 0
-            asset = Asset with quantity = issuanceData.issueSize; ..
-          create DepositInstruction with account = issuanceAccount; ..
+          assert $ not settled
+          di <- fetch depositInstructionCid
+          archive depositInstructionCid
+          let observers = fromList [ di.account.provider, di.account.owner ]
+          create this with settled = True
+          create AssetDeposit with asset = di.asset; account = di.account; ..
 
 template AdmissionCheckRequest
   with
@@ -93,7 +82,7 @@ template AdmissionCheckResponse
     signatory depository, agent
     observer issuer
 
-    controller depository, issuer can
+    controller depository can
       DeleteAdmissionCheckResponse : ()
         do pure ()
 
@@ -126,7 +115,7 @@ template CodeAllocationResponse
     signatory depository, agent
     observer issuer
 
-    controller depository, issuer can
+    controller depository can
       DeleteCodeAllocationResponse : ()
         do pure ()
         
@@ -161,10 +150,9 @@ template GlobalNotesResponse
     signatory depository, agent
     observer issuer
 
-    controller depository, issuer can
+    controller depository can
       DeleteGlobalNotesResponse : ()
         do pure ()
-        
 
 template DepositInstruction
   with
@@ -174,11 +162,5 @@ template DepositInstruction
     account : Account
     asset : Asset
   where
-    signatory depository, issuer
-
-    controller depository can
-      Settle : ContractId AssetDeposit
-        do
-          let observers = fromList [ account.provider, account.owner ]
-          create AssetDeposit with ..
+    signatory depository
 

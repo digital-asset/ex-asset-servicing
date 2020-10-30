@@ -46,7 +46,7 @@ const Issuances : React.FC<RouteComponentProps> = ({ history } : RouteComponentP
               : (!!acreq
                 ? "Admission check requested"
                 : "Product configuration completed")))));
-    return { contractId: ir.contractId, type: "Warrant", data, status, acreq, acres, careq, cares, gnreq, gnres, }
+    return { contractId: ir.contractId, type: "Warrant", data, settled: ir.payload.settled, status, acreq, acres, careq, cares, gnreq, gnres, }
   });
 
   const requestAdmissionCheck = async (issuanceRequestCid : ContractId<WarrantIssuanceRequest>) => {
@@ -70,11 +70,9 @@ const Issuances : React.FC<RouteComponentProps> = ({ history } : RouteComponentP
       issuanceRequestCid,
       admissionCheckResponseCid,
       codeAllocationResponseCid,
-      globalNotesResponseCid,
-      issuanceAccount: agentRoles[0].payload.issuanceAccount,
-      distributionAccount: agentRoles[0].payload.distributionAccount
+      globalNotesResponseCid
     };
-    await ledger.exercise(Depository.HandleIssuanceRequest, depositoryRoles[0].contractId, args);
+    await ledger.exercise(Depository.HandleDepositInstruction, depositoryRoles[0].contractId, args);
   };
 
   return (
@@ -112,7 +110,7 @@ const Issuances : React.FC<RouteComponentProps> = ({ history } : RouteComponentP
               {!e.acreq && !e.acres && isAgent && <Button color="secondary" size="small" className={classes.choiceButton} variant="contained" onClick={() => requestAdmissionCheck(e.contractId)}>Admission Check</Button>}
               {!e.careq && !e.cares && e.acres && isAgent && <Button color="secondary" size="small" className={classes.choiceButton} variant="contained" onClick={() => requestCodeAllocation(e.contractId, e.acres!.contractId)}>Code Allocation</Button>}
               {!e.gnreq && !e.gnres && e.cares && isAgent && <Button color="secondary" size="small" className={classes.choiceButton} variant="contained" onClick={() => requestGlobalNotes(e.contractId, e.acres!.contractId, e.cares!.contractId)}>Global Notes Setup</Button>}
-              {isDepository && <Button color="secondary" size="small" className={classes.choiceButton} variant="contained" disabled={!e.acres || !e.cares || !e.gnres || !e.gnres.payload.success} onClick={() => dispatchDepositInstruction(e.contractId, e.acres!.contractId, e.cares!.contractId, e.gnres!.contractId)}>Issue</Button>}
+              {isDepository && !e.settled && <Button color="secondary" size="small" className={classes.choiceButton} variant="contained" disabled={!e.acres || !e.cares || !e.gnres || !e.gnres.payload.success} onClick={() => dispatchDepositInstruction(e.contractId, e.acres!.contractId, e.cares!.contractId, e.gnres!.contractId)}>Deposit Instruction</Button>}
             </TableCell>
             <TableCell key={5} className={classes.tableCell} align="center">
               <IconButton color="primary" size="small" component="span" onClick={() => history.push("/apps/assetissuance/issuances/" + e.contractId.replace("#", "_"))}>

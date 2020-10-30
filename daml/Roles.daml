@@ -1,8 +1,10 @@
 module Roles where
 
+import DA.Finance.Asset
 import DA.Finance.Issuance.Issuance
 import DA.Finance.Distribution.Distribution
 import DA.Finance.Types
+import DA.Next.Set (fromList)
 
 template Depository
   with
@@ -32,24 +34,41 @@ template Depository
         do
           exercise globalNotesRequestCid RespondGlobalNotes with ..
         
-      nonconsuming HandleIssuanceRequest : ContractId DepositInstruction
+      nonconsuming HandleDepositInstruction : ContractId DepositInstruction
         with
           issuanceRequestCid : ContractId WarrantIssuanceRequest
           admissionCheckResponseCid : ContractId AdmissionCheckResponse
           codeAllocationResponseCid : ContractId CodeAllocationResponse
           globalNotesResponseCid : ContractId GlobalNotesResponse
-          issuanceAccount : Account
-          distributionAccount : Account
         do
-          exercise issuanceRequestCid DispatchDepositInstruction with ..
+          ir <- fetch issuanceRequestCid
+          acr <- fetch admissionCheckResponseCid
+          car <- fetch codeAllocationResponseCid
+          gnr <- fetch globalNotesResponseCid
+          assert $ acr.issuanceData == ir.issuanceData
+          assert $ acr.admissionCheck.parties && acr.admissionCheck.product && acr.admissionCheck.legalDocs
+          assert $ car.issuanceData == ir.issuanceData
+          assert $ gnr.issuanceData == ir.issuanceData
+          assert $ gnr.success
+          let
+            id = Id with signatories = fromList [ depository ]; label = car.allocatedCode; version = 0
+            asset = Asset with quantity = ir.issuanceData.issueSize; ..
+          create DepositInstruction with issuer = ir.issuer; issuanceData = ir.issuanceData; account = ir.issuanceAccount; ..
+
+      nonconsuming SettleDepositInstruction : ContractId AssetDeposit
+        with
+          issuanceRequestCid : ContractId WarrantIssuanceRequest
+          depositInstructionCid : ContractId DepositInstruction
+        do
+          exercise issuanceRequestCid SettleIssuanceRequest with ..
 
 template Agent
   with
     depository : Party
     agent : Party
     investors : [Party]
-    issuanceAccount : Account
-    distributionAccount : Account
+    ownAccount : Account
+    depositoryAccount : Account
   where
     signatory depository
 
@@ -91,6 +110,7 @@ template Issuer
     depository : Party
     issuer : Party
     assetId : Id
+    depositoryAccount : Account
   where
     signatory depository
     observer issuer
@@ -101,13 +121,14 @@ template Issuer
           agent : Party
           issuanceData : WarrantIssuanceData
         do
-          create WarrantIssuanceRequest with ..
+          create WarrantIssuanceRequest with settled = False; issuanceAccount = depositoryAccount; ..
 
       nonconsuming RequestDistribution : ContractId DistributionRequest
         with
           label : Text
           agent : Party
+          agentAccount : Account
           asset : Asset
         do
-          create DistributionRequest with ..
+          create DistributionRequest with issuerAccountAtAgent = agentAccount; ..
 

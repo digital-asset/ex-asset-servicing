@@ -3,7 +3,8 @@ module DA.Finance.Distribution.Distribution where
 import DA.Finance.Asset
 import DA.Finance.Types
 import DA.Foldable (forA_)
-import DA.Next.Set (fromList)
+import DA.List (head)
+import DA.Next.Set (empty)
 
 template DistributionRequest
   with
@@ -12,12 +13,13 @@ template DistributionRequest
     agent : Party
     label : Text
     asset : Asset
+    issuerAccountAtAgent : Account
   where
     signatory depository, issuer
     observer agent
 
     controller agent can
-      RequestSubscription : [ContractId SubscriptionRequest]
+      nonconsuming RequestSubscription : [ContractId SubscriptionRequest]
         with
           investors : [Party]
           price : Asset
@@ -25,33 +27,39 @@ template DistributionRequest
           mapA (\investor -> create SubscriptionRequest with ..) investors
 
     controller agent can
-      InstructDistribution : [ContractId SettlementInstruction]
+      nonconsuming InstructDistribution : [ContractId SettlementInstruction]
         with
           subscriptionResponseCids : [ContractId SubscriptionResponse]
-          distributionAccount : Account
-          cashAccount : Account
+          issuanceDepositCid : ContractId AssetDeposit
+          agentAccountAtAgent : Account
+          agentAccountAtDepository : Account
         do
           subscriptionResponses <- mapA fetch subscriptionResponseCids
           forA_ subscriptionResponseCids (`exercise` DeleteSubscriptionResponse)
 
           let
             quantities = map (.quantity) subscriptionResponses
+            totalQuantity = sum quantities
             investors = map (.investor) subscriptionResponses
-          depositCid <- create AssetDeposit with account = distributionAccount; observers = fromList investors; asset
+          depositCid <- create AssetDeposit with account = agentAccountAtAgent; observers = empty; asset = asset with quantity = totalQuantity
+          subscribedDepositCid <- head <$> exercise issuanceDepositCid AssetDeposit_Split with quantities = [ totalQuantity ]
+          subscribedDeposit <- fetch subscribedDepositCid
           agentDepositCids <- exercise depositCid AssetDeposit_Split with quantities
           let
             responseDepositPairs = zip subscriptionResponses agentDepositCids
             createSettlementInstructions ((sr, agentDepositCid) : (SubscriptionResponse, ContractId AssetDeposit)) =
               do
                 investorDeposit <- fetch sr.depositCid
-                assert $ investorDeposit.asset.id == sr.price.id
-                assert $ investorDeposit.asset.quantity == sr.quantity * sr.price.quantity
+                agentDeposit <- fetch agentDepositCid
+                assertMsg "Investor deposit doesn't match price asset" $ investorDeposit.asset.id == sr.price.id
+                assertMsg "Investor deposit doesn't match cost" $ investorDeposit.asset.quantity == sr.quantity * sr.price.quantity
                 let
-                  delivery = SettlementInstruction with fromAccount = distributionAccount; fromDepositCid = agentDepositCid; toAccount = sr.account; ..
-                  payment = SettlementInstruction with fromAccount = sr.account; fromDepositCid = sr.depositCid; toAccount = cashAccount; ..
+                  delivery = SettlementInstruction with fromDeposit = agentDeposit; fromDepositCid = agentDepositCid; toAccount = investorDeposit.account; ..
+                  payment = SettlementInstruction with fromDeposit = investorDeposit; fromDepositCid = sr.depositCid; toAccount = issuerAccountAtAgent; ..
                 pure [ delivery, payment ]
+            distributionInstruction = SettlementInstruction with fromDeposit = subscribedDeposit; fromDepositCid = subscribedDepositCid; toAccount = agentAccountAtDepository; ..
           settlementInstructions <- concat <$> mapA createSettlementInstructions responseDepositPairs
-          mapA create settlementInstructions
+          mapA create (distributionInstruction :: settlementInstructions)
 
 template SubscriptionRequest
   with
@@ -71,7 +79,6 @@ template SubscriptionRequest
         with
           quantity : Decimal
           depositCid : ContractId AssetDeposit
-          account : Account
         do
           create SubscriptionResponse with ..
 
@@ -86,7 +93,6 @@ template SubscriptionResponse
     price : Asset
     quantity : Decimal
     depositCid : ContractId AssetDeposit
-    account : Account
   where
     signatory depository, issuer, agent, investor
 
@@ -99,7 +105,8 @@ template SettlementInstruction
     depository : Party
     issuer : Party
     agent : Party
-    fromAccount : Account
+    label : Text
+    fromDeposit : AssetDeposit
     fromDepositCid : ContractId AssetDeposit
     toAccount : Account
   where

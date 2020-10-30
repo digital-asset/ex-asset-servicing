@@ -8,7 +8,7 @@ import { useLayoutState } from "../context/LayoutContext";
 import { Poll } from "@material-ui/icons";
 import { SidebarEntry } from "../components/Sidebar/SidebarEntry";
 import { useParty, useQuery } from "@daml/react";
-import { Depository, Issuer } from "@daml.js/asset-servicing-0.0.1/lib/Roles";
+import { Agent, Depository, Issuer } from "@daml.js/asset-servicing-0.0.1/lib/Roles";
 import AdmissionChecks from "../pages/admissionchecks/AdmissionChecks";
 import CodeAllocations from "../pages/codeallocations/CodeAllocations";
 import GlobalNotes from "../pages/globalnotes/GlobalNotes";
@@ -17,6 +17,7 @@ import NewWarrant from "../pages/newissuance/newwarrant/NewWarrant";
 import NewIssuance from "../pages/newissuance/NewIssuance";
 import Issuance from "../pages/issuances/Issuance";
 import Issuances from "../pages/issuances/Issuances";
+import AssetDeposits from "../pages/assetdeposits/AssetDeposits";
 
 function AssetIssuance() {
   const classes = useStyles();
@@ -24,6 +25,8 @@ function AssetIssuance() {
   const party = useParty();
   const depositories = useQuery(Depository).contracts;
   const isDepository = depositories.length > 0 && depositories[0].payload.depository === party;
+  const agents = useQuery(Agent).contracts;
+  const isAgent = agents.length > 0 && agents[0].payload.agent === party;
   const issuers = useQuery(Issuer).contracts;
   const isIssuer = issuers.length > 0 && issuers[0].payload.issuer === party;
 
@@ -31,13 +34,17 @@ function AssetIssuance() {
 
   if (isIssuer) {
     entries.push({ label: "New Issuance", path: "/apps/assetissuance/newissuance", render: () => (<NewIssuance />), icon: (<Poll/>), children: [] });
-  }
-  entries.push({ label: "Issuances", path: "/apps/assetissuance/issuances", render: () => (<Issuances />), icon: (<Poll/>), children: [] });
-  if (isDepository) {
+    entries.push({ label: "Issuances", path: "/apps/assetissuance/issuances", render: () => (<Issuances />), icon: (<Poll/>), children: [] });
+    entries.push({ label: "Assets", path: "/apps/assetissuance/assets", render: () => (<AssetDeposits />), icon: (<Poll/>), children: [] });
+  } else if (isAgent) {
+    entries.push({ label: "Issuances", path: "/apps/assetissuance/issuances", render: () => (<Issuances />), icon: (<Poll/>), children: [] });
+  } else if (isDepository) {
+    entries.push({ label: "Issuances", path: "/apps/assetissuance/issuances", render: () => (<Issuances />), icon: (<Poll/>), children: [] });
     entries.push({ label: "Security Admission", path: "/apps/assetissuance/admissionchecks", render: () => (<AdmissionChecks />), icon: (<Poll/>), children: [] });
     entries.push({ label: "Code Allocation", path: "/apps/assetissuance/codeallocations", render: () => (<CodeAllocations />), icon: (<Poll/>), children: [] });
     entries.push({ label: "Global Notes", path: "/apps/assetissuance/globalnotes", render: () => (<GlobalNotes />), icon: (<Poll/>), children: [] });
     entries.push({ label: "Deposit Instructions", path: "/apps/assetissuance/depositinstructions", render: () => (<DepositInstructions />), icon: (<Poll/>), children: [] });
+    entries.push({ label: "Assets", path: "/apps/assetissuance/assets", render: () => (<AssetDeposits />), icon: (<Poll/>), children: [] });
   }
 
   return (

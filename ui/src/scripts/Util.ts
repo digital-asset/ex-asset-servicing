@@ -8,15 +8,14 @@ export const getId = (signatory : Party, label : string) : Id => {
   return { signatories: { textMap: { [signatory]: {} } }, label, version: "0" }
 }
 
-export const getAccount = (provider : Party, owner : Party, label : string) : [Id, Account] => {
+export const getAccount = (provider : Party, owner : Party, label : string) : Account => {
   const id = getId(provider, label);
-  return [ id, { id, provider, owner } ];
+  return { id, provider, owner };
 }
 
-export const getAsset = (signatory : Party, label: string, quantity: string) : [Id, Asset] => {
+export const getAsset = (signatory : Party, label: string, quantity: string) : Asset => {
   const id = getId (signatory, label);
-  const asset : Asset = { id, quantity };
-  return [id, asset];
+  return { id, quantity };
 }
 
 export const getOptionEuropeanCash = (id : Id, underlyingId : Id, optionType : OptionType, strike : string, contractSize : string, maturity : string, observer : Party) : EquityOption => {

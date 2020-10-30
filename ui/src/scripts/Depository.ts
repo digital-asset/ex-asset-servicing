@@ -10,11 +10,12 @@ export const setup = async (ledger : Ledger, depository : Party) => {
   const agent = isLocalDev ? "DB" : getParty("DB");
   const investors = isLocalDev ? [ "INVESTOR1", "INVESTOR2", "INVESTOR3" ] : [ getParty("INVESTOR1"), getParty("INVESTOR2"), getParty("INVESTOR3") ];
   const assetId = getId(depository, "BMWG.DE");
-  const [ , issuanceAccount ] = getAccount(depository, agent, "BMW@CLEARSTREAM");
-  const [ , distributionAccount ] = getAccount(agent, agent, "DB@DB");
+  const issuerAccountAtDepository = getAccount(depository, agent, "BMW@CLEARSTREAM");
+  const agentAccountAtAgent = getAccount(agent, agent, "DB@DB");
+  const agentAccountAtDepository = getAccount(agent, agent, "DB@CLEARSTREAM");
   await ledger.create(Depository, { depository });
-  await ledger.create(Issuer, { depository, issuer, assetId });
-  await ledger.create(Agent, { depository, agent, investors, issuanceAccount, distributionAccount });
+  await ledger.create(Issuer, { depository, issuer, assetId, depositoryAccount: issuerAccountAtDepository });
+  await ledger.create(Agent, { depository, agent, investors, ownAccount: agentAccountAtAgent, depositoryAccount: agentAccountAtDepository });
   await ledger.create(InitDone, { sender: depository, receiver: depository });
 };
 

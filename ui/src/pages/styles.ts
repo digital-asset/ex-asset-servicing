@@ -40,13 +40,18 @@ export default makeStyles((theme : any) => createStyles({
   default: {
   },
   green: {
-    fill: "#009900"
+    fill: "#009900",
   },
   yellow: {
     fill: "#999900"
   },
   red: {
     fill: "#990000"
+  },
+  chip: {
+    color: "white",
+    backgroundColor: "#009900",
+    verticalAlign: "top",
   }
 
 }));

@@ -1,18 +1,17 @@
 import React from "react";
 import { useStreamQueries } from "@daml/react";
 import { Typography, Grid, Table, TableBody, TableCell, TableRow } from "@material-ui/core";
-import { useParams, RouteComponentProps } from "react-router-dom";
+import { RouteComponentProps, useParams } from "react-router-dom";
 import useStyles from "../styles";
 import { AdmissionCheckResponse, CodeAllocationResponse, DepositInstruction, GlobalNotesResponse, WarrantIssuanceRequest } from "@daml.js/asset-servicing-0.0.1/lib/DA/Finance/Issuance/Issuance";
 
-const Warrant : React.FC<RouteComponentProps> = ({ history }) => {
+const Subscription : React.FC<RouteComponentProps> = ({ history }) => {
   const classes = useStyles();
 
   const { contractId } = useParams<any>();
   const cid = contractId.replace("_", "#");
-  
-  const irs = useStreamQueries(WarrantIssuanceRequest).contracts;
-  const ir = irs.find(c => c.contractId === cid);
+
+  const ir = useStreamQueries(WarrantIssuanceRequest).contracts.find(c => c.contractId === cid);
   const acres = useStreamQueries(AdmissionCheckResponse).contracts.find(c => c.payload.issuanceData.label === ir?.payload.issuanceData.label);
   const cares = useStreamQueries(CodeAllocationResponse).contracts.find(c => c.payload.issuanceData.label === ir?.payload.issuanceData.label);
   const gnres = useStreamQueries(GlobalNotesResponse).contracts.find(c => c.payload.issuanceData.label === ir?.payload.issuanceData.label);
@@ -56,4 +55,4 @@ const Warrant : React.FC<RouteComponentProps> = ({ history }) => {
   );
 }
 
-export default Warrant;
+export default Subscription;

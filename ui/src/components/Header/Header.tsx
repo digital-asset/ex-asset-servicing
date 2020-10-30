@@ -24,7 +24,7 @@ function Header({ history, app, isInitialized, setup, teardown } : RouteComponen
   const isAgent = agentRoles.length > 0 && agentRoles[0].payload.agent === party;
   const issuerRoles = useQuery(Issuer).contracts;
   const isIssuer = issuerRoles.length > 0 && issuerRoles[0].payload.issuer === party;
-  const role = isDepository ? "Depository" : (isAgent ? "Agent" : (isIssuer ? "Issuer" : ""));
+  const role = isDepository ? "Depository" : (isAgent ? "Agent" : (isIssuer ? "Issuer" : "Investor"));
 
   const userDispatch = useUserDispatch();
   const [isInitializing, setIsInitializing] = useState(false);

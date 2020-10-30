@@ -1,6 +1,6 @@
 import React from "react";
 import { useStreamQueries, useParty } from "@daml/react";
-import { AssetDeposit, AssetCategorization } from "@daml.js/asset-servicing-0.0.1/lib/DA/Finance/Asset";
+import { AssetDeposit } from "@daml.js/asset-servicing-0.0.1/lib/DA/Finance/Asset";
 import { Table, TableHead, TableRow, TableCell, TableBody, Button } from "@material-ui/core";
 import { LifecycleEffects } from "@daml.js/asset-servicing-0.0.1/lib/DA/Finance/Asset/Lifecycle";
 import { CreateEvent } from "@daml/ledger";
@@ -26,13 +26,11 @@ const AssetDeposits : React.FC<AssetDepositsProps> = ({ role, account }) => {
   }
 
   const party = useParty();
-  const deposits = useStreamQueries(AssetDeposit).contracts;
-  const categories = useStreamQueries(AssetCategorization).contracts;
+  const deposits = useStreamQueries(AssetDeposit).contracts;//.filter(ad => ad.payload.account.provider === party || ad.payload.account.owner === party);
   const effects = useStreamQueries(LifecycleEffects).contracts;
   const entries = deposits.map(deposit => {
-    const category = categories.find(c => c.payload.id.label === deposit.payload.asset.id.label);
     const effect = effects.find(e => e.payload.id.label === deposit.payload.asset.id.label && e.payload.id.version === deposit.payload.asset.id.version);
-    return { deposit, category, effect }
+    return { deposit, effect }
   });
 
   const getCid = (cid : string) => {
@@ -50,26 +48,26 @@ const AssetDeposits : React.FC<AssetDepositsProps> = ({ role, account }) => {
       <Table>
         <TableHead>
           <TableRow className={classes.tableRow}>
-            <TableCell key={0} className={classes.tableCell}>Contract</TableCell>
-            <TableCell key={1} className={classes.tableCell}>Account</TableCell>
-            <TableCell key={2} className={classes.tableCell}>Asset Class</TableCell>
-            <TableCell key={3} className={classes.tableCell}>Instrument</TableCell>
-            <TableCell key={4} className={classes.tableCell}>Name</TableCell>
-            <TableCell key={5} className={classes.tableCell}>Quantity</TableCell>
-            <TableCell key={6} className={classes.tableCell}>Version</TableCell>
+            <TableCell key={0} className={classes.tableCell} align="center"><b>Contract</b></TableCell>
+            <TableCell key={1} className={classes.tableCell} align="center"><b>Account</b></TableCell>
+            <TableCell key={2} className={classes.tableCell} align="center"><b>Provider</b></TableCell>
+            <TableCell key={3} className={classes.tableCell} align="center"><b>Owner</b></TableCell>
+            <TableCell key={4} className={classes.tableCell} align="center"><b>Asset</b></TableCell>
+            <TableCell key={5} className={classes.tableCell} align="right"><b>Quantity</b></TableCell>
+            <TableCell key={6} className={classes.tableCell} align="center"><b>Version</b></TableCell>
             <TableCell key={7} className={classes.tableCell} style={{ width: "120px" }}></TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
           {displayedEntries.map((e, i) => (
             <TableRow key={i} className={classes.tableRow}>
-              <TableCell key={0} className={classes.tableCell}>{e.deposit.contractId.slice(-8)}</TableCell>
-              <TableCell key={1} className={classes.tableCell}>{e.deposit.payload.account.id.label}</TableCell>
-              <TableCell key={2} className={classes.tableCell}>{e.category?.payload.assetClass}</TableCell>
-              <TableCell key={3} className={classes.tableCell}>{e.category?.payload.assetType}</TableCell>
-              <TableCell key={4} className={classes.tableCell}>{e.deposit.payload.asset.id.label}</TableCell>
+              <TableCell key={0} className={classes.tableCell} align="center">{e.deposit.contractId.slice(-8)}</TableCell>
+              <TableCell key={1} className={classes.tableCell} align="center">{e.deposit.payload.account.id.label}</TableCell>
+              <TableCell key={2} className={classes.tableCell} align="center">{e.deposit.payload.account.provider}</TableCell>
+              <TableCell key={3} className={classes.tableCell} align="center">{e.deposit.payload.account.owner}</TableCell>
+              <TableCell key={4} className={classes.tableCell} align="center">{e.deposit.payload.asset.id.label}</TableCell>
               <TableCell key={5} className={classes.tableCell} align={"right"}>{e.deposit.payload.asset.quantity}</TableCell>
-              <TableCell key={6} className={classes.tableCell}>{e.deposit.payload.asset.id.version}</TableCell>
+              <TableCell key={6} className={classes.tableCell} align="center">{e.deposit.payload.asset.id.version}</TableCell>
               <TableCell key={7} className={classes.tableCellButton}>
               {e.effect && (
                 <Button className={classes.lcButton} color="primary" variant="contained" size="small" component="span" onClick={() => openDialog(e.deposit, e.effect)}>Lifecycle</Button>

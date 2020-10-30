@@ -28,7 +28,7 @@ const NewWarrant : React.FC<RouteComponentProps> = ({ history }) => {
     const part2 = !!strike ? "-" + strike : "";
     const part3 = !!expiry && expiry.toString() !== "Invalid Date" ? "-" + expiry.getFullYear() + (expiry.getMonth() < 9 ? "0" + (expiry.getMonth() + 1) : expiry.getMonth() + 1) + (expiry.getDate() < 9 ? "0" + expiry.getDate() : expiry.getDate()) : "";
     const part4 = !!exerciseType ? "-" + exerciseType[0] : ""
-    return issuers[0]?.payload.assetId.label + part1 + part2 + part3 + part4;
+    return "ISS-" + issuers[0]?.payload.assetId.label + part1 + part2 + part3 + part4;
   }
 
   const requestWarrantIssuance = async () => {
@@ -75,7 +75,7 @@ const NewWarrant : React.FC<RouteComponentProps> = ({ history }) => {
             <TextField key={7} className={classes.inputField} fullWidth label="Issue Size" type="text" onChange={e => setIssueSize(e.target.value as string)}/>
             <TextField key={8} className={classes.inputField} fullWidth label="Minimum Denomination" type="text" onChange={e => setMinimumDenomination(e.target.value as string)}/>
             <FormControl key={9} className={classes.inputField} fullWidth>
-              <InputLabel>Lead Manager</InputLabel>
+              <InputLabel>Issuing Agent</InputLabel>
               <Select
                   value={agent}
                   onChange={e => setAgent(e.target.value as string)}

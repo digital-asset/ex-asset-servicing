@@ -2,8 +2,10 @@ module Init where
 
 import Daml.Script
 import DA.Date
+import DA.Foldable
 import DA.Next.Set
 import DA.Finance.Asset
+import DA.Finance.Distribution.Distribution
 import DA.Finance.Instrument.Equity.Option
 import DA.Finance.Issuance.Issuance
 import DA.Finance.Types
@@ -44,14 +46,16 @@ init = do
   let
     assetId = Id with signatories = fromList [ depository ]; label = "BMWG.DE"; version = 0
     investors = [ investor1, investor2, investor3 ]
-    issuanceAccount = getAccount depository "BMW@CLEARSTREAM" depository issuer
-    distributionAccount = getAccount agent "DB@DB" depository issuer
+    issuerAccountAtDepository = getAccount depository "BMW@CLEARSTREAM" depository issuer
+    issuerAccountAtAgent = getAccount agent "BMW@DB" agent issuer
+    agentAccountAtDepository = getAccount depository "DB@CLEARSTREAM" depository agent
+    agentAccountAtAgent = getAccount agent "DB@DB" agent agent
 
   depositoryCid <- submit depository do createCmd Depository with ..
-  issuerCid <- submit depository do createCmd Issuer with ..
-  agentCid <- submit depository do createCmd Agent with ..
+  issuerCid <- submit depository do createCmd Issuer with depositoryAccount = issuerAccountAtDepository; ..
+  agentCid <- submit depository do createCmd Agent with ownAccount = agentAccountAtAgent; depositoryAccount = agentAccountAtDepository; ..
 
-  -- Issuances
+  -- Issuance
   let
     label = "BMWG.DE-CALL-50.0-20210321"
     underlying = Id with signatories = fromList [ depository ]; label = "BMWG.DE"; version = 0
@@ -64,14 +68,48 @@ init = do
     issueSize = 10000000.0
     minimumDenomination = 1000.0
     issuanceData = WarrantIssuanceData with ..
-  submit issuer do exerciseCmd issuerCid RequestWarrantIssuance with ..
+  issuanceRequestCid <- submit issuer do exerciseCmd issuerCid RequestWarrantIssuance with ..
+  admissionCheckRequestCid <- submit agent do exerciseCmd agentCid RequestAdmissionCheck with ..
+  let admissionCheck = AdmissionCheck with parties = True; product = True; legalDocs = True
+  admissionCheckResponseCid <- submit depository do exerciseCmd depositoryCid HandleAdmissionCheck with ..
+  codeAllocationRequestCid <- submit agent do exerciseCmd agentCid RequestCodeAllocation with ..
+  let allocatedCode = "XS1500887022"
+  codeAllocationResponseCid <- submit depository do exerciseCmd depositoryCid HandleCodeAllocation with ..
+  globalNotesRequestCid <- submit agent do exerciseCmd agentCid RequestGlobalNotes with ..
+  let success = True
+  globalNotesResponseCid <- submit depository do exerciseCmd depositoryCid HandleGlobalNotes with ..
+  depositInstructionCid <- submit depository do exerciseCmd depositoryCid HandleDepositInstruction with ..
+  issuanceDepositCid <- submit depository do exerciseCmd depositoryCid SettleDepositInstruction with ..
 
   -- Assets
   let
-    assetId = Id with signatories = fromList [ depository ]; label = "XS150688702214"; version = 0
-    asset = Asset with id = assetId; quantity = 10_000_000.0
-    accountId = Id with signatories = fromList [ depository ]; label = "BMW@CLEARSTREAM"; version = 0
-    account = Account with id = accountId; provider = depository; owner = issuer
-    deposit = AssetDeposit with asset; account; observers = empty
-  submit depository do createCmd deposit
+    assetId = Id with signatories = fromList [ agent ]; label = "EUR"; version = 0
+    asset = Asset with id = assetId; quantity = 850_000.0
+    accountId1 = Id with signatories = fromList [ agent ]; label = "INVESTOR1@DB"; version = 0
+    accountId2 = Id with signatories = fromList [ agent ]; label = "INVESTOR2@DB"; version = 0
+    accountId3 = Id with signatories = fromList [ agent ]; label = "INVESTOR3@DB"; version = 0
+    account1 = Account with id = accountId1; provider = agent; owner = investor1
+    account2 = Account with id = accountId2; provider = agent; owner = investor2
+    account3 = Account with id = accountId3; provider = agent; owner = investor3
+    deposit1 = AssetDeposit with asset; account = account1; observers = empty
+    deposit2 = AssetDeposit with asset; account = account2; observers = empty
+    deposit3 = AssetDeposit with asset; account = account3; observers = empty
+  depositCid1 <- submit agent do createCmd deposit1
+  depositCid2 <- submit agent do createCmd deposit2
+  depositCid3 <- submit agent do createCmd deposit3
+
+  -- Distribution
+  let
+    asset = Asset with id = (Id with signatories = fromList [ depository ]; label = "XS1500887022", version = 0); quantity = 10_000_000.0
+    price = Asset with id = (Id with signatories = fromList [ agent ]; label = "EUR", version = 0); quantity = 0.85
+
+  distributionRequestCid <- submit issuer do exerciseCmd issuerCid RequestDistribution with label = "DIST-BMW-XS1500887022"; agentAccount = issuerAccountAtAgent; ..
+  [ srCid1, srCid2, srCid3 ] <- submit agent do exerciseCmd distributionRequestCid RequestSubscription with ..
+  sresCid1 <- submit investor1 do exerciseCmd srCid1 RespondSubscription with quantity = 1_000_000.0; depositCid = depositCid1
+  sresCid2 <- submit investor2 do exerciseCmd srCid2 RespondSubscription with quantity = 1_000_000.0; depositCid = depositCid2
+  sresCid3 <- submit investor3 do exerciseCmd srCid3 RespondSubscription with quantity = 1_000_000.0; depositCid = depositCid3
+  let subscriptionResponseCids = [ sresCid1, sresCid2, sresCid3 ]
+  siCids <- submit agent do exerciseCmd distributionRequestCid InstructDistribution with ..
+  -- forA_ siCids (\siCid -> submit depository do exerciseCmd siCid Settle)
+
   pure ()
