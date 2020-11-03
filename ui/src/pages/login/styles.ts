@@ -19,27 +19,15 @@ export default makeStyles((theme : any) => createStyles({
     flexDirection: "column",
     justifyContent: "center",
     alignItems: "center",
-    [theme.breakpoints.down("md")]: {
-      width: "50%",
-    },
-    [theme.breakpoints.down("xs")]: {
-      display: "none",
-    },
   },
   logotypeImage: {
-    width: 165,
-    marginBottom: theme.spacing(4),
+    width: 400,
+    //marginBottom: theme.spacing(1),
   },
   logotypeText: {
-    color: theme.palette.text.primary, //"#00565f", //"#3a478f",
+    color: theme.palette.primary.main,
     fontWeight: 500,
-    fontSize: 64,
-    [theme.breakpoints.down("md")]: {
-      fontSize: 48,
-    },
-    [theme.breakpoints.down("sm")]: {
-      fontSize: 36,
-    },
+    fontSize: 36,
     marginBottom: theme.spacing(4),
   },
   formContainer: {
@@ -49,9 +37,6 @@ export default makeStyles((theme : any) => createStyles({
     flexDirection: "column",
     justifyContent: "center",
     alignItems: "center",
-    [theme.breakpoints.down("md")]: {
-      width: "50%",
-    },
   },
   form: {
     width: 320,

@@ -19,29 +19,29 @@ export default makeStyles((theme : any) => createStyles({
   },
   linkIcon: {
     marginRight: theme.spacing(1),
-    color: theme.palette.text.primary, // + "99",
+    color: theme.palette.text.secondary, // + "99",
     transition: theme.transitions.create("color"),
     width: 24,
     display: "flex",
     justifyContent: "center",
   },
   linkIconActive: {
-    color: theme.palette.secondary.main,
+    color: theme.palette.primary.main,
   },
   linkText: {
     padding: 0,
-    color: theme.palette.text.primary, // + "CC",
+    color: theme.palette.text.secondary, // + "CC",
     transition: theme.transitions.create(["opacity", "color"]),
     fontSize: 16,
   },
   linkTextNested: {
     padding: 0,
-    color: theme.palette.text.primary, // + "CC",
+    color: theme.palette.secondary.main, // + "CC",
     transition: theme.transitions.create(["opacity", "color"]),
     fontSize: 12,
   },
   linkTextActive: {
-    color: theme.palette.text.secondary,
+    color: theme.palette.primary.main,
   },
   linkTextHidden: {
     opacity: 0,

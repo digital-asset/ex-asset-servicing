@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Grid, CircularProgress, Typography, Button, TextField, Fade } from "@material-ui/core";
 import { withRouter, RouteComponentProps } from "react-router-dom";
 import useStyles from "./styles";
-import loginLogo from "../../images/loginLogo.svg";
+import loginLogo from "../../images/loginLogo.png";
 import { useUserDispatch, loginUser, loginDablUser } from "../../context/UserContext";
 import { isLocalDev } from "../../config";
 

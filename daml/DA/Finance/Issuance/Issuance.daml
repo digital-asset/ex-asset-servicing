@@ -172,13 +172,15 @@ template GlobalNotesResponse
 template DepositInstruction
   with
     depository : Party
+    agent : Party
     issuer : Party
     issuanceData : WarrantIssuanceData
     account : Account
     asset : Asset
   where
     signatory depository
-
+    observer agent, issuer
+    
     controller depository can
       SettleDepositInstruction : ContractId AssetDeposit
         do

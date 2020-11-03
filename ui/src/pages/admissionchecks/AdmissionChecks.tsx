@@ -45,7 +45,8 @@ const AdmissionChecks : React.FC<RouteComponentProps> = ({ history } : RouteComp
             <TableCell key={7} className={classes.tableCell}>{e.payload.issuanceData.issueSize}</TableCell>
             <TableCell key={8} className={classes.tableCell}>{e.payload.issuanceData.minimumDenomination}</TableCell>
             <TableCell key={9} className={classes.tableCell}>
-              <Button color="secondary" size="small" className={classes.choiceButton} variant="contained" onClick={() => respondAdmissionCheck(e.contractId)}>Check</Button>
+              <Button color="secondary" size="small" className={classes.choiceButton} variant="contained" onClick={() => respondAdmissionCheck(e.contractId)}>Confirm</Button>
+              <Button color="secondary" size="small" className={classes.choiceButton} variant="contained">Reject</Button>
             </TableCell>
           </TableRow>
         ))}

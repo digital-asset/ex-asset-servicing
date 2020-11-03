@@ -17,6 +17,7 @@ import Warrants from "../pages/warrants/Warrants";
 import { useParty, useQuery } from "@daml/react";
 import { Agent, Depository, Issuer } from "@daml.js/asset-servicing-0.0.1/lib/Roles";
 import AssetDeposits from "../pages/assetdeposits/AssetDeposits";
+import SettlementInstructions from "../pages/settlementinstructions/SettlementInstructions";
 
 function AssetCustody() {
   const classes = useStyles();
@@ -32,20 +33,16 @@ function AssetCustody() {
 
   var entries : SidebarEntry[] = [];
   if (isDepository) {
-    // entries.push({ label: "Settlement", path: "/apps/assetdistribution/settlement", render: () => (<SettlementInstructions />), icon: (<Poll/>), children: [] });
-    // entries.push({ label: "Assets", path: "/apps/assetdistribution/assets", render: () => (<AssetDeposits />), icon: (<Poll/>), children: [] });
+    entries.push({ label: "Settlement", path: "/apps/assetcustody/settlement", render: () => (<SettlementInstructions />), icon: (<Poll/>), children: [] });
+    entries.push({ label: "Assets", path: "/apps/assetcustody/assets", render: () => (<AssetDeposits />), icon: (<Poll/>), children: [] });
   } else if (isAgent) {
-    entries.push({ label: "Assets", path: "/apps/assetcustody/assets", render: () => (<AssetDeposits />), icon: (<Poll/>), children: [] });
     entries.push({ label: "Warrant Exercises", path: "/apps/assetcustody/exerciserequests", render: () => <ExerciseRequests />, icon: (<LocalAtm/>), children: [] });
-    // entries.push({ label: "Stock Dividends", path: "/apps/assetcustody/dividends", render: () => <Dividends />, icon: (<LocalAtm/>), children: [] });
-    // entries.push({ label: "Stock Splits", path: "/apps/assetcustody/stocksplits", render: () => <StockSplits />, icon: (<CallSplit/>), children: [] });
-    // entries.push({ label: "Coupons", path: "/apps/assetcustody/coupons", render: () => <Bonds />, icon: (<ConfirmationNumber/>), children: [] });
-    // entries.push({ label: "Derivatives", path: "/apps/assetcustody/derivatives", render: () => <Derivatives />, icon: (<TrendingUp/>), children: [] });
-  } else if (isIssuer) {
-  } else {
     entries.push({ label: "Assets", path: "/apps/assetcustody/assets", render: () => (<AssetDeposits />), icon: (<Poll/>), children: [] });
+  } else if (isIssuer) {
+    entries.push({ label: "Assets", path: "/apps/assetcustody/assets", render: () => (<AssetDeposits />), icon: (<Poll/>), children: [] });
+  } else {
     entries.push({ label: "Warrants", path: "/apps/assetcustody/warrants", render: () => (<Warrants />), icon: (<Poll/>), children: [] });
-    // entries.push({ label: "Assets", path: "/apps/assetdistribution/assets", render: () => (<AssetDeposits />), icon: (<Poll/>), children: [] });
+    entries.push({ label: "Assets", path: "/apps/assetcustody/assets", render: () => (<AssetDeposits />), icon: (<Poll/>), children: [] });
   }
 
   entries = entries.flatMap(e => getChildren(e).concat([e]));

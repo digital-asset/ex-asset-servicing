@@ -56,7 +56,7 @@ template Depository
             asset = Asset with quantity = ir.issuanceData.issueSize; ..
             warrant = Warrant with id; issuer = ir.issuer; terms = ir.issuanceData.terms; observers = [ depository, ir.issuer, ir.agent ]
           warrantCid <- create warrant
-          diCid <- create DepositInstruction with issuer = ir.issuer; issuanceData = ir.issuanceData; account = ir.issuanceAccount; ..
+          diCid <- create DepositInstruction with agent = ir.agent; issuer = ir.issuer; issuanceData = ir.issuanceData; account = ir.issuanceAccount; ..
           pure (warrant, diCid)
 
       nonconsuming HandleIssuanceRequest : ContractId AssetDeposit

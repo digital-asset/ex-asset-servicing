@@ -88,10 +88,11 @@ const Issuances : React.FC<RouteComponentProps> = ({ history } : RouteComponentP
         <TableRow className={classes.tableRow}>
           <TableCell key={0} className={classes.tableCell} align="center"><b>Issuance</b></TableCell>
           <TableCell key={1} className={classes.tableCell} align="center"><b>Type</b></TableCell>
-          <TableCell key={2} className={classes.tableCell} align="center"><b>Status</b></TableCell>
-          <TableCell key={3} className={classes.tableCell} align="center" style={{ width: "220px" }}><b>Workflow</b></TableCell>
-          <TableCell key={4} className={classes.tableCell} align="center" style={{ width: "220px" }}><b>Action</b></TableCell>
-          <TableCell key={5} className={classes.tableCell} align="center"><b>Details</b></TableCell>
+          <TableCell key={2} className={classes.tableCell} align="center"><b>ISIN</b></TableCell>
+          <TableCell key={3} className={classes.tableCell} align="center"><b>Status</b></TableCell>
+          <TableCell key={4} className={classes.tableCell} align="center" style={{ width: "180px" }}><b>Workflow</b></TableCell>
+          <TableCell key={5} className={classes.tableCell} align="center" style={{ width: "200px" }}><b>Action</b></TableCell>
+          <TableCell key={6} className={classes.tableCell} align="center"><b>Details</b></TableCell>
         </TableRow>
       </TableHead>
       <TableBody>
@@ -99,8 +100,9 @@ const Issuances : React.FC<RouteComponentProps> = ({ history } : RouteComponentP
           <TableRow key={i} className={classes.tableRow}>
             <TableCell key={0} className={classes.tableCell} align="center">{e.data.label}</TableCell>
             <TableCell key={1} className={classes.tableCell} align="center">{e.type}</TableCell>
-            <TableCell key={2} className={classes.tableCell} align="center">{e.status}</TableCell>
-            <TableCell key={3} className={classes.tableCell} align="center">
+            <TableCell key={2} className={classes.tableCell} align="center">{!!e.cares ? e.cares.payload.allocatedCode : "N/A"}</TableCell>
+            <TableCell key={3} className={classes.tableCell} align="center">{e.status}</TableCell>
+            <TableCell key={4} className={classes.tableCell} align="center">
               {!e.acreq && !e.acres && <><RadioButtonUnchecked className={classes.default} /><TrendingFlat /></>}
               {!!e.acreq && !e.acres && <><Help className={classes.yellow} /><TrendingFlat /></>}
               {!e.acreq && !!e.acres && e.acres.payload.admissionCheck.parties && e.acres.payload.admissionCheck.product && e.acres.payload.admissionCheck.legalDocs && <><CheckCircle className={classes.green} /><TrendingFlat /></>}
@@ -113,13 +115,13 @@ const Issuances : React.FC<RouteComponentProps> = ({ history } : RouteComponentP
               {!e.gnreq && !!e.gnres && e.gnres.payload.success && <CheckCircle className={classes.green} />}
               {!e.gnreq && !!e.gnres && !e.gnres.payload.success && <Cancel className={classes.red} />}
             </TableCell>
-            <TableCell key={4} className={classes.tableCell} align="center">
-              {!e.acreq && !e.acres && isAgent && <Button color="secondary" size="small" className={classes.choiceButton} variant="contained" onClick={() => requestAdmissionCheck(e.contractId)}>Admission Check</Button>}
-              {!e.careq && !e.cares && e.acres && isAgent && <Button color="secondary" size="small" className={classes.choiceButton} variant="contained" onClick={() => requestCodeAllocation(e.contractId, e.acres!.contractId)}>Code Allocation</Button>}
-              {!e.gnreq && !e.gnres && e.cares && isAgent && <Button color="secondary" size="small" className={classes.choiceButton} variant="contained" onClick={() => requestGlobalNotes(e.contractId, e.acres!.contractId, e.cares!.contractId)}>Global Notes Setup</Button>}
-              {isDepository && !e.settled && <Button color="secondary" size="small" className={classes.choiceButton} variant="contained" disabled={!e.acres || !e.cares || !e.gnres || !e.gnres.payload.success || e.instructed} onClick={() => dispatchDepositInstruction(e.contractId, e.acres!.contractId, e.cares!.contractId, e.gnres!.contractId)}>Deposit Instruction</Button>}
-            </TableCell>
             <TableCell key={5} className={classes.tableCell} align="center">
+              {!e.acreq && !e.acres && isAgent && <Button color="secondary" size="small" className={classes.choiceButton} variant="contained" onClick={() => requestAdmissionCheck(e.contractId)}>Request Admission Check</Button>}
+              {!e.careq && !e.cares && e.acres && isAgent && <Button color="secondary" size="small" className={classes.choiceButton} variant="contained" onClick={() => requestCodeAllocation(e.contractId, e.acres!.contractId)}>Request Code Allocation</Button>}
+              {!e.gnreq && !e.gnres && e.cares && isAgent && <Button color="secondary" size="small" className={classes.choiceButton} variant="contained" onClick={() => requestGlobalNotes(e.contractId, e.acres!.contractId, e.cares!.contractId)}>Request Global Notes Setup</Button>}
+              {isDepository && !e.settled && <Button color="secondary" size="small" className={classes.choiceButton} variant="contained" disabled={!e.acres || !e.cares || !e.gnres || !e.gnres.payload.success || e.instructed} onClick={() => dispatchDepositInstruction(e.contractId, e.acres!.contractId, e.cares!.contractId, e.gnres!.contractId)}>Issue Deposit Instruction</Button>}
+            </TableCell>
+            <TableCell key={6} className={classes.tableCell} align="center">
               <IconButton color="primary" size="small" component="span" onClick={() => history.push("/apps/assetissuance/issuances/" + e.contractId.replace("#", "_"))}>
                 <KeyboardArrowRight fontSize="small"/>
               </IconButton>

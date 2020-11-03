@@ -98,4 +98,10 @@ export default makeStyles((theme : any) => createStyles({
     color: theme.palette.text.primary, //"rgba(255, 255, 255, 0.35)",
     // margin: theme.spacing(2),
   },
+  userBox: {
+    color: "white",
+    backgroundColor: "#639",//theme.palette.text.primary,
+    padding: 5,
+    borderRadius: 5,
+  }
 }));

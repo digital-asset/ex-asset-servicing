@@ -48,12 +48,12 @@ function Header({ history, app, isInitialized, setup, teardown } : RouteComponen
             <Typography variant="h1" className={classes.logotype}>DIGITAL SECURITIES DEPOSITORY</Typography>
             </Grid>
             <Grid item xs={12} alignContent="center">
-              <Typography variant="h5">{app}</Typography>
+              <Typography variant="body1" style={{ color: "white" }}>{app}</Typography>
             </Grid>
           </Grid>
         </Box>
         <div className={classes.grow} />
-        <Box style={{ backgroundColor: "#608ad8", padding: 5, borderRadius: 5 }}>
+        <Box className={classes.userBox}>
           <Grid container direction="column" alignItems="center">
             <Grid item xs={12}><Typography variant="caption">{party}</Typography></Grid>
             <Grid item xs={12}><Typography variant="caption">({role})</Typography></Grid>
