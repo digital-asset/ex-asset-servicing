@@ -1,0 +1,104 @@
+module DA.Finance.Custody.Custody where
+
+import DA.Foldable (forA_)
+import DA.Finance.Asset
+import DA.Finance.Distribution.Distribution
+import DA.Finance.Issuance.Issuance
+import DA.Finance.Types
+import DA.List (head)
+import DA.Next.Set (empty)
+
+template WarrantExerciseRuleProposal
+  with 
+    depository : Party
+    agent : Party
+    issuer : Party
+    issuerAccountAtAgent : Account
+    agentAccountAtAgent : Account
+    agentAccountAtDepository : Account
+  where
+    signatory depository
+    observer agent, issuer
+
+    controller issuer can
+      Accept : ContractId WarrantExerciseRule
+        do
+          create WarrantExerciseRule with ..
+
+template WarrantExerciseRule
+  with
+    depository : Party
+    agent : Party
+    issuer : Party
+    issuerAccountAtAgent : Account
+    agentAccountAtAgent : Account
+    agentAccountAtDepository : Account
+  where
+    signatory depository, issuer
+    observer agent
+
+    controller agent can
+      nonconsuming InstructWarrantExercise : [ContractId SettlementInstruction]
+        with
+          exerciseRequestCids : [ContractId WarrantExerciseRequest]
+          issuerStockDepositCid : ContractId AssetDeposit
+          warrantDepositCid : ContractId AssetDeposit
+        do
+          exerciseRequests <- mapA fetch exerciseRequestCids
+          forA_ exerciseRequestCids (`exercise` SettleExerciseRequest)
+          let warrantDepositCids = map (\er -> er.warrantDepositCid) exerciseRequests
+          forA_ warrantDepositCids (archive)
+          archive warrantDepositCid
+          
+          let
+            quantities = map (\er -> er.quantity / er.warrant.terms.contractSize) exerciseRequests
+            totalQuantity = sum quantities
+            investors = map (.investor) exerciseRequests
+          issuerStockDeposit <- fetch issuerStockDepositCid
+          agentStockDepositCid <- create AssetDeposit with account = agentAccountAtAgent; observers = empty; asset = issuerStockDeposit.asset with quantity = issuerStockDeposit.asset.quantity
+          requestedDepositCid <-
+            if issuerStockDeposit.asset.quantity > totalQuantity then
+              head <$> exercise issuerStockDepositCid AssetDeposit_Split with quantities = [ totalQuantity ]
+            else
+              pure issuerStockDepositCid
+
+          requestedDeposit <- fetch requestedDepositCid
+          agentDepositCids <- exercise agentStockDepositCid AssetDeposit_Split with quantities
+          let
+            issuer = (head exerciseRequests).warrant.issuer
+            label = (head exerciseRequests).label
+            requestDepositPairs = zip exerciseRequests agentDepositCids
+            createSettlementInstructions ((er, agentDepositCid) : (WarrantExerciseRequest, ContractId AssetDeposit)) =
+              do
+                investorDeposit <- fetch er.cashDepositCid
+                agentDeposit <- fetch agentDepositCid
+                -- assertMsg "Investor deposit doesn't match price asset" $ investorDeposit.asset.id == sr.price.id
+                assertMsg "Investor deposit doesn't match cost" $ investorDeposit.asset.quantity == er.quantity / er.warrant.terms.contractSize * er.warrant.terms.strike
+                let
+                  delivery = SettlementInstruction with fromDeposit = agentDeposit; fromDepositCid = agentDepositCid; toAccount = investorDeposit.account; ..
+                  payment = SettlementInstruction with fromDeposit = investorDeposit; fromDepositCid = er.cashDepositCid; toAccount = issuerAccountAtAgent; ..
+                pure [ delivery, payment ]
+            exerciseInstruction = SettlementInstruction with fromDeposit = requestedDeposit; fromDepositCid = requestedDepositCid; toAccount = agentAccountAtDepository; ..
+          settlementInstructions <- concat <$> mapA createSettlementInstructions requestDepositPairs
+          mapA create (exerciseInstruction :: settlementInstructions)
+
+template WarrantExerciseRequest
+  with
+    agent : Party
+    investor : Party
+    label : Text
+    warrant : Warrant
+    quantity : Decimal
+    warrantDepositCid : ContractId AssetDeposit
+    cashDepositCid : ContractId AssetDeposit
+    settled : Bool
+  where
+    signatory investor
+    observer agent
+
+    controller agent can
+      SettleExerciseRequest : ContractId WarrantExerciseRequest
+        do
+          create this with settled = True
+
+

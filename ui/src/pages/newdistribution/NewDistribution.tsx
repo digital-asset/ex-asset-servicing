@@ -36,7 +36,9 @@ const NewDistribution : React.FC<RouteComponentProps> = ({ history }) => {
     if (!ad) return
     const agentAccount = getAccount(agent, party, party + "@" + agent);
     const asset = { ...ad.payload.asset, quantity: distributionSize };
-    await ledger.exercise(Issuer.RequestDistribution, issuers[0].contractId, { label: getLabel(), agent, agentAccount, asset });
+    const issuanceDepositCid = ad.contractId;
+    // TODO: Support smaller than total distribution
+    await ledger.exercise(Issuer.RequestDistribution, issuers[0].contractId, { label: getLabel(), agent, agentAccount, issuanceDepositCid, asset });
     history.push("/apps/assetdistribution/distributions");
   }
 

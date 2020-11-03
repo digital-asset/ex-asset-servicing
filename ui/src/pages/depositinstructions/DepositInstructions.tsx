@@ -18,7 +18,7 @@ const DepositInstructions : React.FC<RouteComponentProps> = ({ history } : Route
   const settleDepositInstruction = async (depositInstructionCid : ContractId<DepositInstruction>, diLabel : string) => {
     const ir = irs.find(r => r.payload.issuanceData.label === diLabel);
     if (!ir || !isDepository) return;
-    await ledger.exercise(Depository.SettleDepositInstruction, depositoryRoles[0].contractId, { issuanceRequestCid: ir.contractId, depositInstructionCid });
+    await ledger.exercise(Depository.HandleIssuanceRequest, depositoryRoles[0].contractId, { issuanceRequestCid: ir.contractId, depositInstructionCid });
   };
 
   return (

@@ -17,7 +17,7 @@ const SettlementInstructions : React.FC<RouteComponentProps> = ({ history } : Ro
 
   const settleInstruction = async (instructionCid : ContractId<SettlementInstruction>) => {
     if (!isDepository) return;
-    await ledger.exercise(SettlementInstruction.Settle, instructionCid, {});
+    await ledger.exercise(SettlementInstruction.SettleInstruction, instructionCid, {});
   };
 
   return (

@@ -26,7 +26,7 @@ const AssetDeposits : React.FC<AssetDepositsProps> = ({ role, account }) => {
   }
 
   const party = useParty();
-  const deposits = useStreamQueries(AssetDeposit).contracts;//.filter(ad => ad.payload.account.provider === party || ad.payload.account.owner === party);
+  const deposits = useStreamQueries(AssetDeposit).contracts.filter(ad => ad.payload.account.provider === party || ad.payload.account.owner === party);
   const effects = useStreamQueries(LifecycleEffects).contracts;
   const entries = deposits.map(deposit => {
     const effect = effects.find(e => e.payload.id.label === deposit.payload.asset.id.label && e.payload.id.version === deposit.payload.asset.id.version);

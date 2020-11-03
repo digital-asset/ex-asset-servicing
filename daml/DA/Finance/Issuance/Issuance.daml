@@ -30,6 +30,24 @@ data WarrantIssuanceData = WarrantIssuanceData
     minimumDenomination : Decimal
   deriving (Eq, Show)
 
+template Warrant
+  with
+    id : Id
+    issuer : Party
+    terms : WarrantTerms
+    observers : [Party]
+  where
+    signatory id.signatories
+    observer observers
+
+    choice Warrant_SetObservers : ContractId Warrant
+      with
+        ctrl : Party
+        newObservers : [Party]
+      controller ctrl
+      do
+        create this with observers = newObservers
+
 template WarrantIssuanceRequest
   with
     depository : Party
@@ -48,11 +66,8 @@ template WarrantIssuanceRequest
           depositInstructionCid : ContractId DepositInstruction
         do
           assert $ not settled
-          di <- fetch depositInstructionCid
-          archive depositInstructionCid
-          let observers = fromList [ di.account.provider, di.account.owner ]
           create this with settled = True
-          create AssetDeposit with asset = di.asset; account = di.account; ..
+          exercise depositInstructionCid SettleDepositInstruction
 
 template AdmissionCheckRequest
   with
@@ -163,4 +178,10 @@ template DepositInstruction
     asset : Asset
   where
     signatory depository
+
+    controller depository can
+      SettleDepositInstruction : ContractId AssetDeposit
+        do
+          let observers = fromList [ account.provider, account.owner ]
+          create AssetDeposit with asset = asset; account = account; ..
 

@@ -42,15 +42,21 @@ function Header({ history, app, isInitialized, setup, teardown } : RouteComponen
       <Toolbar className={classes.toolbar}>
         <img alt="headerLogo" src={headerLogo} height="48px" />
         <div className={classes.grow} />
-        <Typography variant="h1" className={classes.logotype}>
-          DIGITAL SECURITIES DEPOSITORY
-        </Typography>
+        <Box alignContent="center">
+          <Grid container direction="column" alignItems="center">
+            <Grid item xs={12}>
+            <Typography variant="h1" className={classes.logotype}>DIGITAL SECURITIES DEPOSITORY</Typography>
+            </Grid>
+            <Grid item xs={12} alignContent="center">
+              <Typography variant="h5">{app}</Typography>
+            </Grid>
+          </Grid>
+        </Box>
         <div className={classes.grow} />
-        <Box style={{ width: "150px" }}>
-          <Grid container direction="column">
-            <Grid item xs={12}><Typography variant="caption">APP:  {app}</Typography></Grid>
-            <Grid item xs={12}><Typography variant="caption">USER: {party}</Typography></Grid>
-            <Grid item xs={12}><Typography variant="caption">ROLE: {role}</Typography></Grid>
+        <Box style={{ backgroundColor: "#608ad8", padding: 5, borderRadius: 5 }}>
+          <Grid container direction="column" alignItems="center">
+            <Grid item xs={12}><Typography variant="caption">{party}</Typography></Grid>
+            <Grid item xs={12}><Typography variant="caption">({role})</Typography></Grid>
           </Grid>
         </Box>
         <IconButton

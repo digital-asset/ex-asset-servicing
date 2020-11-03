@@ -1,8 +1,8 @@
 module DA.Finance.Distribution.Distribution where
 
 import DA.Finance.Asset
+import DA.Finance.Issuance.Issuance
 import DA.Finance.Types
-import DA.Foldable (forA_)
 import DA.List (head)
 import DA.Next.Set (empty)
 
@@ -12,8 +12,10 @@ template DistributionRequest
     issuer : Party
     agent : Party
     label : Text
+    issuanceDepositCid : ContractId AssetDeposit
     asset : Asset
     issuerAccountAtAgent : Account
+    instructed : Bool
   where
     signatory depository, issuer
     observer agent
@@ -27,20 +29,23 @@ template DistributionRequest
           mapA (\investor -> create SubscriptionRequest with ..) investors
 
     controller agent can
-      nonconsuming InstructDistribution : [ContractId SettlementInstruction]
+      InstructDistribution : [ContractId SettlementInstruction]
         with
           subscriptionResponseCids : [ContractId SubscriptionResponse]
-          issuanceDepositCid : ContractId AssetDeposit
+          warrantCid : ContractId Warrant
           agentAccountAtAgent : Account
           agentAccountAtDepository : Account
         do
+          create this with instructed = True
           subscriptionResponses <- mapA fetch subscriptionResponseCids
-          forA_ subscriptionResponseCids (`exercise` DeleteSubscriptionResponse)
+          -- forA_ subscriptionResponseCids (`exercise` DeleteSubscriptionResponse)
 
           let
             quantities = map (.quantity) subscriptionResponses
             totalQuantity = sum quantities
             investors = map (.investor) subscriptionResponses
+
+          exercise warrantCid Warrant_SetObservers with ctrl = agent; newObservers = [ depository, agent, issuer ] <> investors
           depositCid <- create AssetDeposit with account = agentAccountAtAgent; observers = empty; asset = asset with quantity = totalQuantity
           subscribedDepositCid <- head <$> exercise issuanceDepositCid AssetDeposit_Split with quantities = [ totalQuantity ]
           subscribedDeposit <- fetch subscribedDepositCid
@@ -51,7 +56,7 @@ template DistributionRequest
               do
                 investorDeposit <- fetch sr.depositCid
                 agentDeposit <- fetch agentDepositCid
-                assertMsg "Investor deposit doesn't match price asset" $ investorDeposit.asset.id == sr.price.id
+                assertMsg "Investor deposit doesn't match price asset" $ investorDeposit.asset.id.label == sr.price.id.label
                 assertMsg "Investor deposit doesn't match cost" $ investorDeposit.asset.quantity == sr.quantity * sr.price.quantity
                 let
                   delivery = SettlementInstruction with fromDeposit = agentDeposit; fromDepositCid = agentDepositCid; toAccount = investorDeposit.account; ..
@@ -113,7 +118,7 @@ template SettlementInstruction
     signatory depository, issuer, agent
 
     controller depository can
-      Settle : ContractId AssetDeposit
+      SettleInstruction : ContractId AssetDeposit
         do
           fromDeposit <- fetch fromDepositCid
           archive fromDepositCid

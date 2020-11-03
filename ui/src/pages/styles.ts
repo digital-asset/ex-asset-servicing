@@ -48,10 +48,14 @@ export default makeStyles((theme : any) => createStyles({
   red: {
     fill: "#990000"
   },
-  chip: {
+  chipYellow: {
+    color: "white",
+    backgroundColor: "#999900",
+    verticalAlign: "top",
+  },
+  chipGreen: {
     color: "white",
     backgroundColor: "#009900",
     verticalAlign: "top",
-  }
-
+  },
 }));

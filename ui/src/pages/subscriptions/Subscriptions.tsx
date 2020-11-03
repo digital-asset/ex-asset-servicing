@@ -32,8 +32,8 @@ const Subscriptions : React.FC<RouteComponentProps> = ({ history } : RouteCompon
   function showDialog(sr : CreateEvent<SubscriptionRequest>) {
     async function onClose(state : any | null) {
       setDialogProps({ ...defaultDialogProps, open: false});
-      const ad = ads.find(c => c.payload.asset.id.label === sr.payload.price.id.label);
       const cost = Math.round(parseInt(state.amount) * parseFloat(sr.payload.price.quantity));
+      const ad = ads.find(c => c.payload.asset.id.label === sr.payload.price.id.label && parseInt(c.payload.asset.quantity) === cost);
       if (!state || !ad || parseInt(ad.payload.asset.quantity) < cost) return;
       if (parseInt(ad.payload.asset.quantity) > cost) {
         const [ [ depositCid, ], ] = await ledger.exercise(AssetDeposit.AssetDeposit_Split, ad.contractId, { quantities: [ state.amount ] });

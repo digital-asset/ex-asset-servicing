@@ -4,7 +4,7 @@ import { Table, TableBody, TableCell, TableRow, TableHead, IconButton, Button } 
 import { withRouter, RouteComponentProps } from "react-router-dom";
 import useStyles from "../styles";
 import { Cancel, CheckCircle, Help, KeyboardArrowRight, RadioButtonUnchecked, TrendingFlat } from "@material-ui/icons";
-import { AdmissionCheckRequest, AdmissionCheckResponse, CodeAllocationRequest, CodeAllocationResponse, GlobalNotesRequest, GlobalNotesResponse, WarrantIssuanceRequest } from "@daml.js/asset-servicing-0.0.1/lib/DA/Finance/Issuance/Issuance";
+import { AdmissionCheckRequest, AdmissionCheckResponse, CodeAllocationRequest, CodeAllocationResponse, DepositInstruction, GlobalNotesRequest, GlobalNotesResponse, WarrantIssuanceRequest } from "@daml.js/asset-servicing-0.0.1/lib/DA/Finance/Issuance/Issuance";
 import { ContractId } from "@daml/types";
 import { Agent, Depository } from "@daml.js/asset-servicing-0.0.1/lib/Roles";
 
@@ -24,6 +24,7 @@ const Issuances : React.FC<RouteComponentProps> = ({ history } : RouteComponentP
   const caress = useStreamQueries(CodeAllocationResponse).contracts;
   const gnreqs = useStreamQueries(GlobalNotesRequest).contracts;
   const gnress = useStreamQueries(GlobalNotesResponse).contracts;
+  const dis = useStreamQueries(DepositInstruction).contracts;
 
   const entries = irs.map(ir => {
     const data = ir.payload.issuanceData;
@@ -33,20 +34,26 @@ const Issuances : React.FC<RouteComponentProps> = ({ history } : RouteComponentP
     const cares = caress.find(cares => cares.payload.issuanceData.label === data.label);
     const gnreq = gnreqs.find(gnreq => gnreq.payload.issuanceData.label === data.label);
     const gnres = gnress.find(gnres => gnres.payload.issuanceData.label === data.label);
-    const status = !!gnres
-      ? (gnres.payload.success ? "Global notes setup completed" : "Global notes setup rejected")
-      : (!!gnreq
-        ? "Global notes setup requested"
-        : (!!cares
-          ? "Code allocation completed"
-          : (!!careq
-            ? "Code allocation requested"
-            : (!!acres
-              ? (acres.payload.admissionCheck.parties && acres.payload.admissionCheck.product && acres.payload.admissionCheck.legalDocs ? "Admission check completed" : "Admission check rejected")
-              : (!!acreq
-                ? "Admission check requested"
-                : "Product configuration completed")))));
-    return { contractId: ir.contractId, type: "Warrant", data, settled: ir.payload.settled, status, acreq, acres, careq, cares, gnreq, gnres, }
+    const instructed = !!dis.find(di => di.payload.issuanceData.label === ir.payload.issuanceData.label);
+
+    const status = ir.payload.settled
+      ? "Issuance settled"
+      : (instructed
+        ? "Issuance instructed"
+        : (!!gnres
+          ? (gnres.payload.success ? "Global notes setup completed" : "Global notes setup rejected")
+          : (!!gnreq
+            ? "Global notes setup requested"
+            : (!!cares
+              ? "Code allocation completed"
+              : (!!careq
+                ? "Code allocation requested"
+                : (!!acres
+                  ? (acres.payload.admissionCheck.parties && acres.payload.admissionCheck.product && acres.payload.admissionCheck.legalDocs ? "Admission check completed" : "Admission check rejected")
+                  : (!!acreq
+                    ? "Admission check requested"
+                    : "Product configuration completed")))))));
+    return { contractId: ir.contractId, type: "Warrant", data, settled: ir.payload.settled, status, acreq, acres, careq, cares, gnreq, gnres, instructed };
   });
 
   const requestAdmissionCheck = async (issuanceRequestCid : ContractId<WarrantIssuanceRequest>) => {
@@ -82,7 +89,7 @@ const Issuances : React.FC<RouteComponentProps> = ({ history } : RouteComponentP
           <TableCell key={0} className={classes.tableCell} align="center"><b>Issuance</b></TableCell>
           <TableCell key={1} className={classes.tableCell} align="center"><b>Type</b></TableCell>
           <TableCell key={2} className={classes.tableCell} align="center"><b>Status</b></TableCell>
-          <TableCell key={3} className={classes.tableCell} align="center"><b>Workflow</b></TableCell>
+          <TableCell key={3} className={classes.tableCell} align="center" style={{ width: "220px" }}><b>Workflow</b></TableCell>
           <TableCell key={4} className={classes.tableCell} align="center" style={{ width: "220px" }}><b>Action</b></TableCell>
           <TableCell key={5} className={classes.tableCell} align="center"><b>Details</b></TableCell>
         </TableRow>
@@ -110,7 +117,7 @@ const Issuances : React.FC<RouteComponentProps> = ({ history } : RouteComponentP
               {!e.acreq && !e.acres && isAgent && <Button color="secondary" size="small" className={classes.choiceButton} variant="contained" onClick={() => requestAdmissionCheck(e.contractId)}>Admission Check</Button>}
               {!e.careq && !e.cares && e.acres && isAgent && <Button color="secondary" size="small" className={classes.choiceButton} variant="contained" onClick={() => requestCodeAllocation(e.contractId, e.acres!.contractId)}>Code Allocation</Button>}
               {!e.gnreq && !e.gnres && e.cares && isAgent && <Button color="secondary" size="small" className={classes.choiceButton} variant="contained" onClick={() => requestGlobalNotes(e.contractId, e.acres!.contractId, e.cares!.contractId)}>Global Notes Setup</Button>}
-              {isDepository && !e.settled && <Button color="secondary" size="small" className={classes.choiceButton} variant="contained" disabled={!e.acres || !e.cares || !e.gnres || !e.gnres.payload.success} onClick={() => dispatchDepositInstruction(e.contractId, e.acres!.contractId, e.cares!.contractId, e.gnres!.contractId)}>Deposit Instruction</Button>}
+              {isDepository && !e.settled && <Button color="secondary" size="small" className={classes.choiceButton} variant="contained" disabled={!e.acres || !e.cares || !e.gnres || !e.gnres.payload.success || e.instructed} onClick={() => dispatchDepositInstruction(e.contractId, e.acres!.contractId, e.cares!.contractId, e.gnres!.contractId)}>Deposit Instruction</Button>}
             </TableCell>
             <TableCell key={5} className={classes.tableCell} align="center">
               <IconButton color="primary" size="small" component="span" onClick={() => history.push("/apps/assetissuance/issuances/" + e.contractId.replace("#", "_"))}>
