@@ -7,6 +7,12 @@ export default makeStyles((theme : any) => createStyles({
     paddingBottom: 6,
     fontSize: "0.75rem"
   },
+  tableCellSmall: {
+    verticalAlign: "center",
+    paddingTop: 2,
+    paddingBottom: 2,
+    fontSize: "0.7rem"
+  },
   tableCellButton: {
     verticalAlign: "center",
     paddingTop: 0,
@@ -38,6 +44,7 @@ export default makeStyles((theme : any) => createStyles({
     marginTop: 20
   },
   default: {
+    fill: "#fff",
   },
   green: {
     fill: "#009900",
@@ -58,4 +65,12 @@ export default makeStyles((theme : any) => createStyles({
     backgroundColor: "#009900",
     verticalAlign: "top",
   },
+  paper: {
+    padding: '6px 16px',
+  },
+  dot: {
+    padding: 0,
+    borderColor: "#009900",
+    backgroundColor: "white",
+  }
 }));

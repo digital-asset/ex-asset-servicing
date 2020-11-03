@@ -53,7 +53,7 @@ function Header({ history, app, isInitialized, setup, teardown } : RouteComponen
           </Grid>
         </Box>
         <div className={classes.grow} />
-        <Box className={classes.userBox}>
+        <Box className={classes.userBox} style={{ width: "120px" }}>
           <Grid container direction="column" alignItems="center">
             <Grid item xs={12}><Typography variant="caption">{party}</Typography></Grid>
             <Grid item xs={12}><Typography variant="caption">({role})</Typography></Grid>

@@ -14,7 +14,7 @@ const NewDistribution : React.FC<RouteComponentProps> = ({ history }) => {
   const ledger = useLedger();
   const issuers = useQuery(Issuer).contracts;
   const isIssuer = issuers.length > 0 && issuers[0].payload.issuer === party;
-  const irs = useQuery(WarrantIssuanceRequest).contracts.filter(ir => ir.payload.settled);
+  const irs = useQuery(WarrantIssuanceRequest).contracts;
   const cas = useQuery(CodeAllocationResponse).contracts;
   const ads = useQuery(AssetDeposit).contracts;
   const [ issuance, setIssuance ] = useState<string>("");
@@ -25,7 +25,6 @@ const NewDistribution : React.FC<RouteComponentProps> = ({ history }) => {
   const getLabel = () => {
     const ca = cas.find(c => c.payload.issuanceData.label === issuance);
     const part1 = !!ca ? "-" + ca.payload.allocatedCode : "";
-    // const part2 = !!distributionSize ? "-" + distributionSize : "";
     return "DIST-" + issuers[0]?.payload.issuer + part1;
   }
 

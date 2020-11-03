@@ -34,26 +34,27 @@ const Issuances : React.FC<RouteComponentProps> = ({ history } : RouteComponentP
     const cares = caress.find(cares => cares.payload.issuanceData.label === data.label);
     const gnreq = gnreqs.find(gnreq => gnreq.payload.issuanceData.label === data.label);
     const gnres = gnress.find(gnres => gnres.payload.issuanceData.label === data.label);
-    const instructed = !!dis.find(di => di.payload.issuanceData.label === ir.payload.issuanceData.label);
-
-    const status = ir.payload.settled
-      ? "Issuance settled"
-      : (instructed
-        ? "Issuance instructed"
+    const instructed = dis.find(di => di.payload.issuanceData.label === ir.payload.issuanceData.label && !di.payload.settled);
+    const settled = dis.find(di => di.payload.issuanceData.label === ir.payload.issuanceData.label && di.payload.settled);
+      
+    const status = !instructed && !!settled
+      ? "Deposit instruction settled"
+      : (!!instructed && !settled
+        ? "Deposit instruction sent"
         : (!!gnres
-          ? (gnres.payload.success ? "Global notes setup completed" : "Global notes setup rejected")
+          ? (gnres.payload.success ? "Global notes setup successful" : "Global notes setup failed")
           : (!!gnreq
             ? "Global notes setup requested"
             : (!!cares
-              ? "Code allocation completed"
+              ? "Code allocation successful"
               : (!!careq
                 ? "Code allocation requested"
                 : (!!acres
-                  ? (acres.payload.admissionCheck.parties && acres.payload.admissionCheck.product && acres.payload.admissionCheck.legalDocs ? "Admission check completed" : "Admission check rejected")
+                  ? (acres.payload.admissionCheck.parties && acres.payload.admissionCheck.product && acres.payload.admissionCheck.legalDocs ? "Admission check successful" : "Admission check failed")
                   : (!!acreq
                     ? "Admission check requested"
                     : "Product configuration completed")))))));
-    return { contractId: ir.contractId, type: "Warrant", data, settled: ir.payload.settled, status, acreq, acres, careq, cares, gnreq, gnres, instructed };
+    return { contractId: ir.contractId, data, instructed, settled, status, acreq, acres, careq, cares, gnreq, gnres };
   });
 
   const requestAdmissionCheck = async (issuanceRequestCid : ContractId<WarrantIssuanceRequest>) => {
@@ -87,41 +88,42 @@ const Issuances : React.FC<RouteComponentProps> = ({ history } : RouteComponentP
       <TableHead>
         <TableRow className={classes.tableRow}>
           <TableCell key={0} className={classes.tableCell} align="center"><b>Issuance</b></TableCell>
-          <TableCell key={1} className={classes.tableCell} align="center"><b>Type</b></TableCell>
-          <TableCell key={2} className={classes.tableCell} align="center"><b>ISIN</b></TableCell>
-          <TableCell key={3} className={classes.tableCell} align="center"><b>Status</b></TableCell>
-          <TableCell key={4} className={classes.tableCell} align="center" style={{ width: "180px" }}><b>Workflow</b></TableCell>
-          <TableCell key={5} className={classes.tableCell} align="center" style={{ width: "200px" }}><b>Action</b></TableCell>
-          <TableCell key={6} className={classes.tableCell} align="center"><b>Details</b></TableCell>
+          <TableCell key={1} className={classes.tableCell} align="center"><b>ISIN</b></TableCell>
+          <TableCell key={2} className={classes.tableCell} align="center"><b>Status</b></TableCell>
+          <TableCell key={3} className={classes.tableCell} align="center" style={{ width: "220px" }}><b>Workflow</b></TableCell>
+          <TableCell key={4} className={classes.tableCell} align="center" style={{ width: "190px" }}><b>Action</b></TableCell>
+          <TableCell key={5} className={classes.tableCell} align="center" style={{ width: "20px" }}><b>Details</b></TableCell>
         </TableRow>
       </TableHead>
       <TableBody>
         {entries.map((e, i) => (
           <TableRow key={i} className={classes.tableRow}>
             <TableCell key={0} className={classes.tableCell} align="center">{e.data.label}</TableCell>
-            <TableCell key={1} className={classes.tableCell} align="center">{e.type}</TableCell>
-            <TableCell key={2} className={classes.tableCell} align="center">{!!e.cares ? e.cares.payload.allocatedCode : "N/A"}</TableCell>
-            <TableCell key={3} className={classes.tableCell} align="center">{e.status}</TableCell>
-            <TableCell key={4} className={classes.tableCell} align="center">
-              {!e.acreq && !e.acres && <><RadioButtonUnchecked className={classes.default} /><TrendingFlat /></>}
+            <TableCell key={1} className={classes.tableCell} align="center">{!!e.cares ? e.cares.payload.allocatedCode : "N/A"}</TableCell>
+            <TableCell key={2} className={classes.tableCell} align="center">{e.status}</TableCell>
+            <TableCell key={3} className={classes.tableCell} align="center">
+              {!e.acreq && !e.acres && <><RadioButtonUnchecked /><TrendingFlat /></>}
               {!!e.acreq && !e.acres && <><Help className={classes.yellow} /><TrendingFlat /></>}
               {!e.acreq && !!e.acres && e.acres.payload.admissionCheck.parties && e.acres.payload.admissionCheck.product && e.acres.payload.admissionCheck.legalDocs && <><CheckCircle className={classes.green} /><TrendingFlat /></>}
               {!e.acreq && !!e.acres && (!e.acres.payload.admissionCheck.parties || !e.acres.payload.admissionCheck.product || !e.acres.payload.admissionCheck.legalDocs) && <><Cancel className={classes.red} /><TrendingFlat /></>}
-              {!e.careq && !e.cares && <><RadioButtonUnchecked className={classes.default} /><TrendingFlat /></>}
+              {!e.careq && !e.cares && <><RadioButtonUnchecked /><TrendingFlat /></>}
               {!!e.careq && !e.cares && <><Help className={classes.yellow} /><TrendingFlat /></>}
               {!e.careq && !!e.cares && <><CheckCircle className={classes.green} /><TrendingFlat /></>}
-              {!e.gnreq && !e.gnres && <RadioButtonUnchecked className={classes.default} />}
-              {!!e.gnreq && !e.gnres && <Help className={classes.yellow} />}
-              {!e.gnreq && !!e.gnres && e.gnres.payload.success && <CheckCircle className={classes.green} />}
-              {!e.gnreq && !!e.gnres && !e.gnres.payload.success && <Cancel className={classes.red} />}
+              {!e.gnreq && !e.gnres && <><RadioButtonUnchecked /><TrendingFlat /></>}
+              {!!e.gnreq && !e.gnres && <><Help className={classes.yellow} /><TrendingFlat /></>}
+              {!e.gnreq && !!e.gnres && e.gnres.payload.success && <><CheckCircle className={classes.green} /><TrendingFlat /></>}
+              {!e.gnreq && !!e.gnres && !e.gnres.payload.success && <><Cancel className={classes.red} /><TrendingFlat /></>}
+              {!e.instructed && !e.settled && <RadioButtonUnchecked />}
+              {!!e.instructed && !e.settled && <Help className={classes.yellow} />}
+              {!e.instructed && !!e.settled && <CheckCircle className={classes.green} />}
             </TableCell>
-            <TableCell key={5} className={classes.tableCell} align="center">
+            <TableCell key={4} className={classes.tableCell} align="center">
               {!e.acreq && !e.acres && isAgent && <Button color="secondary" size="small" className={classes.choiceButton} variant="contained" onClick={() => requestAdmissionCheck(e.contractId)}>Request Admission Check</Button>}
               {!e.careq && !e.cares && e.acres && isAgent && <Button color="secondary" size="small" className={classes.choiceButton} variant="contained" onClick={() => requestCodeAllocation(e.contractId, e.acres!.contractId)}>Request Code Allocation</Button>}
               {!e.gnreq && !e.gnres && e.cares && isAgent && <Button color="secondary" size="small" className={classes.choiceButton} variant="contained" onClick={() => requestGlobalNotes(e.contractId, e.acres!.contractId, e.cares!.contractId)}>Request Global Notes Setup</Button>}
-              {isDepository && !e.settled && <Button color="secondary" size="small" className={classes.choiceButton} variant="contained" disabled={!e.acres || !e.cares || !e.gnres || !e.gnres.payload.success || e.instructed} onClick={() => dispatchDepositInstruction(e.contractId, e.acres!.contractId, e.cares!.contractId, e.gnres!.contractId)}>Issue Deposit Instruction</Button>}
+              {isDepository && !e.settled && <Button color="secondary" size="small" className={classes.choiceButton} variant="contained" disabled={!e.acres || !e.cares || !e.gnres || !e.gnres.payload.success || !!e.instructed} onClick={() => dispatchDepositInstruction(e.contractId, e.acres!.contractId, e.cares!.contractId, e.gnres!.contractId)}>Issue Deposit Instruction</Button>}
             </TableCell>
-            <TableCell key={6} className={classes.tableCell} align="center">
+            <TableCell key={5} className={classes.tableCell} align="center">
               <IconButton color="primary" size="small" component="span" onClick={() => history.push("/apps/assetissuance/issuances/" + e.contractId.replace("#", "_"))}>
                 <KeyboardArrowRight fontSize="small"/>
               </IconButton>

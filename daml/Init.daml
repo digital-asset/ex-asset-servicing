@@ -64,7 +64,7 @@ init = do
     eur = "EUR"
     bmw = "BMWG.DE"
     allocatedCode = "XS1500887022"
-    label = "BMWG.DE-CALL-50.0-20210321"
+    label = "ISS-BMWG.DE-CALL-50.0-20210321"
     underlying = Id with signatories = fromList [ depository ]; label = "BMWG.DE"; version = 0
     optionType = CALL
     strike = 50.0

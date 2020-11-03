@@ -13,7 +13,7 @@ const DepositInstructions : React.FC<RouteComponentProps> = ({ history } : Route
   const ledger = useLedger();
   const depositoryRoles = useQuery(Depository).contracts;
   const isDepository = depositoryRoles.length > 0 && depositoryRoles[0].payload.depository === party;
-  const entries = useStreamQueries(DepositInstruction).contracts;
+  const entries = useStreamQueries(DepositInstruction).contracts.filter(di => !di.payload.settled);
   const irs = useStreamQueries(WarrantIssuanceRequest).contracts;
   const settleDepositInstruction = async (depositInstructionCid : ContractId<DepositInstruction>, diLabel : string) => {
     const ir = irs.find(r => r.payload.issuanceData.label === diLabel);

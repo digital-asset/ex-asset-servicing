@@ -1192,10 +1192,10 @@
 "@daml.js/asset-servicing-0.0.1@file:../daml.js/asset-servicing-0.0.1":
   version "1.7.0-snapshot.20201027.5530.0.bdbf8977"
   dependencies:
-    "@daml.js/40f452260bef3f29dede136108fc08a88d5a5250310281067087da6f0baddff7" "file:../../../Library/Caches/Yarn/v6/npm-@daml-js-asset-servicing-0-0-1-1.7.0-snapshot.20201027.5530.0.bdbf8977-f07924f3-2d7e-4f27-85f9-231d2ab6be3f-1604005405946/node_modules/@daml.js/40f452260bef3f29dede136108fc08a88d5a5250310281067087da6f0baddff7"
-    "@daml.js/68ad63a8cbadd6063e5d6b728a2264696f66b76894b29e60a64eafaac42a181b" "file:../../../Library/Caches/Yarn/v6/npm-@daml-js-asset-servicing-0-0-1-1.7.0-snapshot.20201027.5530.0.bdbf8977-f07924f3-2d7e-4f27-85f9-231d2ab6be3f-1604005405946/node_modules/@daml.js/68ad63a8cbadd6063e5d6b728a2264696f66b76894b29e60a64eafaac42a181b"
-    "@daml.js/bfcd37bd6b84768e86e432f5f6c33e25d9e7724a9d42e33875ff74f6348e733f" "file:../../../Library/Caches/Yarn/v6/npm-@daml-js-asset-servicing-0-0-1-1.7.0-snapshot.20201027.5530.0.bdbf8977-f07924f3-2d7e-4f27-85f9-231d2ab6be3f-1604005405946/node_modules/@daml.js/bfcd37bd6b84768e86e432f5f6c33e25d9e7724a9d42e33875ff74f6348e733f"
-    "@daml.js/d14e08374fc7197d6a0de468c968ae8ba3aadbf9315476fd39071831f5923662" "file:../../../Library/Caches/Yarn/v6/npm-@daml-js-asset-servicing-0-0-1-1.7.0-snapshot.20201027.5530.0.bdbf8977-f07924f3-2d7e-4f27-85f9-231d2ab6be3f-1604005405946/node_modules/@daml.js/d14e08374fc7197d6a0de468c968ae8ba3aadbf9315476fd39071831f5923662"
+    "@daml.js/40f452260bef3f29dede136108fc08a88d5a5250310281067087da6f0baddff7" "file:../../../Library/Caches/Yarn/v6/npm-@daml-js-asset-servicing-0-0-1-1.7.0-snapshot.20201027.5530.0.bdbf8977-5b402960-d95e-431a-b056-0cbdc1fb492f-1604420598805/node_modules/@daml.js/40f452260bef3f29dede136108fc08a88d5a5250310281067087da6f0baddff7"
+    "@daml.js/68ad63a8cbadd6063e5d6b728a2264696f66b76894b29e60a64eafaac42a181b" "file:../../../Library/Caches/Yarn/v6/npm-@daml-js-asset-servicing-0-0-1-1.7.0-snapshot.20201027.5530.0.bdbf8977-5b402960-d95e-431a-b056-0cbdc1fb492f-1604420598805/node_modules/@daml.js/68ad63a8cbadd6063e5d6b728a2264696f66b76894b29e60a64eafaac42a181b"
+    "@daml.js/bfcd37bd6b84768e86e432f5f6c33e25d9e7724a9d42e33875ff74f6348e733f" "file:../../../Library/Caches/Yarn/v6/npm-@daml-js-asset-servicing-0-0-1-1.7.0-snapshot.20201027.5530.0.bdbf8977-5b402960-d95e-431a-b056-0cbdc1fb492f-1604420598805/node_modules/@daml.js/bfcd37bd6b84768e86e432f5f6c33e25d9e7724a9d42e33875ff74f6348e733f"
+    "@daml.js/d14e08374fc7197d6a0de468c968ae8ba3aadbf9315476fd39071831f5923662" "file:../../../Library/Caches/Yarn/v6/npm-@daml-js-asset-servicing-0-0-1-1.7.0-snapshot.20201027.5530.0.bdbf8977-5b402960-d95e-431a-b056-0cbdc1fb492f-1604420598805/node_modules/@daml.js/d14e08374fc7197d6a0de468c968ae8ba3aadbf9315476fd39071831f5923662"
     "@daml/ledger" "1.7.0-snapshot.20201027.5530.0.bdbf8977"
     "@daml/types" "1.7.0-snapshot.20201027.5530.0.bdbf8977"
     "@mojotech/json-type-validation" "^3.1.0"
@@ -1463,6 +1463,17 @@
   integrity sha512-GBitL3oBWO0hzBhvA9KxqcowRUsA0qzwKkURyC8nppnC3fw54KPKZ+d4V1Eeg/UnDRSzDaI9nGCdel/eh9AQMg==
   dependencies:
     "@babel/runtime" "^7.4.4"
+
+"@material-ui/lab@^4.0.0-alpha.56":
+  version "4.0.0-alpha.56"
+  resolved "https://registry.yarnpkg.com/@material-ui/lab/-/lab-4.0.0-alpha.56.tgz#ff63080949b55b40625e056bbda05e130d216d34"
+  integrity sha512-xPlkK+z/6y/24ka4gVJgwPfoCF4RCh8dXb1BNE7MtF9bXEBLN/lBxNTK8VAa0qm3V2oinA6xtUIdcRh0aeRtVw==
+  dependencies:
+    "@babel/runtime" "^7.4.4"
+    "@material-ui/utils" "^4.10.2"
+    clsx "^1.0.4"
+    prop-types "^15.7.2"
+    react-is "^16.8.0"
 
 "@material-ui/pickers@^3.2.10":
   version "3.2.10"

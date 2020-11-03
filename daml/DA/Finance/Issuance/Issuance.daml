@@ -55,18 +55,15 @@ template WarrantIssuanceRequest
     agent : Party
     issuanceData : WarrantIssuanceData
     issuanceAccount : Account
-    settled : Bool
   where
     signatory depository, issuer
     observer agent
 
     controller depository can
-      SettleIssuanceRequest : ContractId AssetDeposit
+      nonconsuming SettleIssuanceRequest : ContractId AssetDeposit
         with
           depositInstructionCid : ContractId DepositInstruction
         do
-          assert $ not settled
-          create this with settled = True
           exercise depositInstructionCid SettleDepositInstruction
 
 template AdmissionCheckRequest
@@ -177,6 +174,7 @@ template DepositInstruction
     issuanceData : WarrantIssuanceData
     account : Account
     asset : Asset
+    settled : Bool
   where
     signatory depository
     observer agent, issuer
@@ -185,5 +183,6 @@ template DepositInstruction
       SettleDepositInstruction : ContractId AssetDeposit
         do
           let observers = fromList [ account.provider, account.owner ]
+          create this with settled = True
           create AssetDeposit with asset = asset; account = account; ..
 
