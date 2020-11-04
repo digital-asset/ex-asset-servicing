@@ -3,7 +3,7 @@ import { useLedger, useParty, useQuery, useStreamQueries } from "@daml/react";
 import { Table, TableBody, TableCell, TableRow, TableHead, IconButton, Button, Chip } from "@material-ui/core";
 import { withRouter, RouteComponentProps } from "react-router-dom";
 import useStyles from "../styles";
-import { CheckCircle, KeyboardArrowRight, RadioButtonUnchecked, TrendingFlat } from "@material-ui/icons";
+import { CheckCircle, Help, KeyboardArrowRight, RadioButtonUnchecked, TrendingFlat } from "@material-ui/icons";
 import { ContractId } from "@daml/types";
 import { SubscriptionRequest, SubscriptionResponse, DistributionRequest, SettlementInstruction } from "@daml.js/asset-servicing-0.0.1/lib/DA/Finance/Distribution/Distribution";
 import { Agent } from "@daml.js/asset-servicing-0.0.1/lib/Roles";
@@ -24,26 +24,31 @@ const Distributions : React.FC<RouteComponentProps> = ({ history } : RouteCompon
   const sress = useStreamQueries(SubscriptionResponse).contracts;
 
   const entries = drs.map(dr => {
-    const settled = dr.payload.instructed && sis.filter(si => si.payload.label === dr.payload.label).length === 0;
-    const status = settled
+    const requested = sreqs.filter(sr => sr.payload.label === dr.payload.label);
+    const received = sress.filter(sr => sr.payload.label === dr.payload.label);
+    const instructed = sis.filter(r => r.payload.label === dr.payload.label && !r.payload.settled);
+    const settled = sis.filter(r => r.payload.label === dr.payload.label && r.payload.settled);
+
+    const status = instructed.length === 0 && settled.length > 0
       ? "Distribution settled"
-      : (dr.payload.instructed
+      : (instructed.length > 0
         ? "Distribution instructed"
-        : (sress.length > 0
+        : (received.length > 0
           ? "Subscriptions received"
-          : (sreqs.length > 0
+          : (requested.length > 0
             ? "Subscription opened"
             : "Distribution requested")));
   
     return {
       contractId: dr.contractId,
-      instructed: dr.payload.instructed,
       issuer: dr.payload.issuer,
       asset: dr.payload.asset,
       subscribed: sress.map(c => parseInt(c.payload.quantity)).reduce((a, b) => a + b, 0).toFixed(1),
       status,
-      requested: sreqs.filter(sr => sr.payload.label === dr.payload.label),
-      received: sress.filter(sr => sr.payload.label === dr.payload.label),
+      instructed: instructed.length > 0,
+      settled: settled.length > 0,
+      requested,
+      received,
     }
   });
 
@@ -71,9 +76,9 @@ const Distributions : React.FC<RouteComponentProps> = ({ history } : RouteCompon
           <TableCell key={2} className={classes.tableCell} align="right"><b>Total Size</b></TableCell>
           <TableCell key={3} className={classes.tableCell} align="right"><b>Subscribed</b></TableCell>
           <TableCell key={4} className={classes.tableCell} align="center"><b>Status</b></TableCell>
-          <TableCell key={5} className={classes.tableCell} align="center"><b>Workflow</b></TableCell>
-          <TableCell key={6} className={classes.tableCell} align="center" style={{ width: "100px" }}><b>Action</b></TableCell>
-          <TableCell key={7} className={classes.tableCell} align="center"><b>Details</b></TableCell>
+          <TableCell key={5} className={classes.tableCell} align="center" style={{ width: "220px" }}><b>Workflow</b></TableCell>
+          <TableCell key={6} className={classes.tableCell} align="center" style={{ width: "170px" }}><b>Action</b></TableCell>
+          <TableCell key={7} className={classes.tableCell} align="center" style={{ width: "20px" }}><b>Details</b></TableCell>
         </TableRow>
       </TableHead>
       <TableBody>
@@ -85,21 +90,24 @@ const Distributions : React.FC<RouteComponentProps> = ({ history } : RouteCompon
             <TableCell key={3} className={classes.tableCell} align="right">{e.subscribed}</TableCell>
             <TableCell key={4} className={classes.tableCell} align="center">{e.status}</TableCell>
             <TableCell key={5} className={classes.tableCell} align="center">
-              {e.requested.length + e.received.length === 0 && <><RadioButtonUnchecked className={classes.default} /><TrendingFlat /></>}
+              {e.requested.length + e.received.length === 0 && <><RadioButtonUnchecked /><TrendingFlat /></>}
               {e.requested.length + e.received.length > 0 && <><CheckCircle className={classes.green} /><TrendingFlat /></>}
-              {e.requested.length + e.received.length === 0 && <><RadioButtonUnchecked className={classes.default} /><TrendingFlat /></>}
+              {e.requested.length + e.received.length === 0 && <><RadioButtonUnchecked /><TrendingFlat /></>}
               {e.requested.length + e.received.length > 0 && e.requested.length > 0 && <><Chip className={classes.chipYellow} size="small" label={e.requested.length}/><TrendingFlat /></>}
               {e.requested.length + e.received.length > 0 && e.requested.length === 0 && <><Chip className={classes.chipGreen} size="small" label={e.requested.length}/><TrendingFlat /></>}
-              {e.requested.length + e.received.length === 0 && <><RadioButtonUnchecked className={classes.default} /></>}
-              {e.requested.length > 0 && e.received.length === 0 && <><Chip className={classes.chipYellow} size="small" label={e.received.length}/></>}
-              {e.received.length > 0 && <><Chip className={classes.chipGreen} size="small" label={e.received.length}/></>}
+              {e.requested.length + e.received.length === 0 && <><RadioButtonUnchecked /><TrendingFlat /></>}
+              {e.requested.length > 0 && <><Chip className={classes.chipYellow} size="small" label={e.received.length}/><TrendingFlat /></>}
+              {e.requested.length === 0 && e.received.length > 0 && <><Chip className={classes.chipGreen} size="small" label={e.received.length}/><TrendingFlat /></>}
+              {!e.instructed && !e.settled && <RadioButtonUnchecked />}
+              {e.instructed && !e.settled && <Help className={classes.yellow} />}
+              {e.settled && <CheckCircle className={classes.green} />}
             </TableCell>
             <TableCell key={6} className={classes.tableCell} align="center">
               {isAgent && e.requested.length === 0 && e.received.length === 0 && <Button color="secondary" size="small" className={classes.choiceButton} variant="contained" onClick={() => openSubscription(e.contractId)}>Open Subscription</Button>}
-              {isAgent && !e.instructed && e.requested.length + e.received.length > 0 && <Button color="secondary" size="small" className={classes.choiceButton} variant="contained" disabled={e.received.length === 0} onClick={() => instructDistribution(e.contractId, e.received.map(r => r.contractId), e.asset.id.label, e.issuer)}>Instruct Distribution</Button>}
+              {isAgent && !e.instructed && !e.settled && e.requested.length + e.received.length > 0 && <Button color="secondary" size="small" className={classes.choiceButton} variant="contained" disabled={e.received.length === 0} onClick={() => instructDistribution(e.contractId, e.received.map(r => r.contractId), e.asset.id.label, e.issuer)}>Instruct Distribution</Button>}
             </TableCell>
             <TableCell key={7} className={classes.tableCell}>
-              <IconButton color="primary" size="small" component="span" onClick={() => history.push("/apps/distribution/distributions/" + e.contractId.replace("#", "_"))}>
+              <IconButton color="primary" size="small" component="span" onClick={() => history.push("/apps/assetdistribution/distributions/" + e.contractId.replace("#", "_"))}>
                 <KeyboardArrowRight fontSize="small"/>
               </IconButton>
             </TableCell>

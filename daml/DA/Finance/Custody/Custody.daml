@@ -45,7 +45,6 @@ template WarrantExerciseRule
           warrantDepositCid : ContractId AssetDeposit
         do
           exerciseRequests <- mapA fetch exerciseRequestCids
-          forA_ exerciseRequestCids (`exercise` SettleExerciseRequest)
           let warrantDepositCids = map (\er -> er.warrantDepositCid) exerciseRequests
           forA_ warrantDepositCids (archive)
           archive warrantDepositCid
@@ -75,10 +74,10 @@ template WarrantExerciseRule
                 -- assertMsg "Investor deposit doesn't match price asset" $ investorDeposit.asset.id == sr.price.id
                 assertMsg "Investor deposit doesn't match cost" $ investorDeposit.asset.quantity == er.quantity / er.warrant.terms.contractSize * er.warrant.terms.strike
                 let
-                  delivery = SettlementInstruction with fromDeposit = agentDeposit; fromDepositCid = agentDepositCid; toAccount = investorDeposit.account; ..
-                  payment = SettlementInstruction with fromDeposit = investorDeposit; fromDepositCid = er.cashDepositCid; toAccount = issuerAccountAtAgent; ..
+                  delivery = SettlementInstruction with fromDeposit = agentDeposit; fromDepositCid = agentDepositCid; toAccount = investorDeposit.account; settled = False; ..
+                  payment = SettlementInstruction with fromDeposit = investorDeposit; fromDepositCid = er.cashDepositCid; toAccount = issuerAccountAtAgent; settled = False; ..
                 pure [ delivery, payment ]
-            exerciseInstruction = SettlementInstruction with fromDeposit = requestedDeposit; fromDepositCid = requestedDepositCid; toAccount = agentAccountAtDepository; ..
+            exerciseInstruction = SettlementInstruction with fromDeposit = requestedDeposit; fromDepositCid = requestedDepositCid; toAccount = agentAccountAtDepository; settled = False; ..
           settlementInstructions <- concat <$> mapA createSettlementInstructions requestDepositPairs
           mapA create (exerciseInstruction :: settlementInstructions)
 
@@ -91,14 +90,8 @@ template WarrantExerciseRequest
     quantity : Decimal
     warrantDepositCid : ContractId AssetDeposit
     cashDepositCid : ContractId AssetDeposit
-    settled : Bool
   where
     signatory investor
     observer agent
-
-    controller agent can
-      SettleExerciseRequest : ContractId WarrantExerciseRequest
-        do
-          create this with settled = True
 
 

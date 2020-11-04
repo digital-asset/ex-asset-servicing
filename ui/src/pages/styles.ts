@@ -13,6 +13,14 @@ export default makeStyles((theme : any) => createStyles({
     paddingBottom: 2,
     fontSize: "0.7rem"
   },
+  tableCellMini: {
+    verticalAlign: "center",
+    paddingTop: 2,
+    paddingBottom: 2,
+    paddingLeft: 4,
+    paddingRight: 6,
+    fontSize: "0.6rem"
+  },
   tableCellButton: {
     verticalAlign: "center",
     paddingTop: 0,

@@ -82,11 +82,11 @@ template Depository
           if issuerStockDeposit.asset.quantity > er.quantity then do
             [ splitDepositCid, _ ] <- exercise issuerStockDepositCid AssetDeposit_Split with quantities = [ er.quantity ]
             splitDeposit <- fetch splitDepositCid
-            create SettlementInstruction with fromDeposit = splitDeposit; fromDepositCid = splitDepositCid, toAccount = agentAccountAtDepository; label = er.label; ..
-            create SettlementInstruction with fromDeposit = agentCashDeposit; fromDepositCid = er.cashDepositCid, toAccount = issuerAccountAtAgent; label = er.label; ..
+            create SettlementInstruction with fromDeposit = splitDeposit; fromDepositCid = splitDepositCid, toAccount = agentAccountAtDepository; label = er.label; settled = False; ..
+            create SettlementInstruction with fromDeposit = agentCashDeposit; fromDepositCid = er.cashDepositCid, toAccount = issuerAccountAtAgent; label = er.label; settled = False; ..
           else do
-            create SettlementInstruction with fromDeposit = issuerStockDeposit; fromDepositCid = issuerStockDepositCid, toAccount = agentAccountAtDepository; label = er.label; ..
-            create SettlementInstruction with fromDeposit = agentCashDeposit; fromDepositCid = er.cashDepositCid, toAccount = issuerAccountAtAgent; label = er.label; ..
+            create SettlementInstruction with fromDeposit = issuerStockDeposit; fromDepositCid = issuerStockDepositCid, toAccount = agentAccountAtDepository; label = er.label; settled = False; ..
+            create SettlementInstruction with fromDeposit = agentCashDeposit; fromDepositCid = er.cashDepositCid, toAccount = issuerAccountAtAgent; label = er.label; settled = False; ..
 
       -- nonconsuming SettleExercise : [ContractId AssetDeposit]
       --   with
@@ -165,4 +165,4 @@ template Issuer
           issuanceDepositCid : ContractId AssetDeposit
           asset : Asset
         do
-          create DistributionRequest with issuerAccountAtAgent = agentAccount; instructed = False; ..
+          create DistributionRequest with issuerAccountAtAgent = agentAccount; ..

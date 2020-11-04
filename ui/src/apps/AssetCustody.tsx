@@ -7,17 +7,13 @@ import Sidebar from "../components/Sidebar/Sidebar";
 import { useLayoutState } from "../context/LayoutContext";
 import { LocalAtm, Poll } from "@material-ui/icons";
 import { SidebarEntry, getChildren } from "../components/Sidebar/SidebarEntry";
-import Bond from "../pages/lifecycling/Bond";
-import Derivative from "../pages/lifecycling/Derivative";
-import ExerciseRequests from "../pages/exerciserequests/ExerciseRequests";
-import StockSplit from "../pages/corporateactions/StockSplit";
-import Dividend from "../pages/corporateactions/Dividend";
-import AssetDeposit from "../pages/assetdeposits/AssetDeposit";
+import Exercises from "../pages/exercises/Exercises";
 import Warrants from "../pages/warrants/Warrants";
 import { useParty, useQuery } from "@daml/react";
 import { Agent, Depository, Issuer } from "@daml.js/asset-servicing-0.0.1/lib/Roles";
 import AssetDeposits from "../pages/assetdeposits/AssetDeposits";
 import SettlementInstructions from "../pages/settlementinstructions/SettlementInstructions";
+import Exercise from "../pages/exercises/Exercise";
 
 function AssetCustody() {
   const classes = useStyles();
@@ -36,7 +32,7 @@ function AssetCustody() {
     entries.push({ label: "Settlement", path: "/apps/assetcustody/settlement", render: () => (<SettlementInstructions />), icon: (<Poll/>), children: [] });
     entries.push({ label: "Assets", path: "/apps/assetcustody/assets", render: () => (<AssetDeposits />), icon: (<Poll/>), children: [] });
   } else if (isAgent) {
-    entries.push({ label: "Warrant Exercises", path: "/apps/assetcustody/exerciserequests", render: () => <ExerciseRequests />, icon: (<LocalAtm/>), children: [] });
+    entries.push({ label: "Exercises", path: "/apps/assetcustody/exercises", render: () => <Exercises />, icon: (<LocalAtm/>), children: [] });
     entries.push({ label: "Assets", path: "/apps/assetcustody/assets", render: () => (<AssetDeposits />), icon: (<Poll/>), children: [] });
   } else if (isIssuer) {
     entries.push({ label: "Assets", path: "/apps/assetcustody/assets", render: () => (<AssetDeposits />), icon: (<Poll/>), children: [] });
@@ -59,11 +55,7 @@ function AssetCustody() {
         >
           <div className={classes.fakeToolbar} />
           <Switch>
-            <Route key={"deposits"} path={"/apps/assetcustody/positions/:contractId"} component={AssetDeposit} />
-            <Route key={"stocksplit"} path={"/apps/assetcustody/events/stocksplits/:contractId"} component={StockSplit} />
-            <Route key={"dividend"} path={"/apps/assetcustody/events/dividends/:contractId"} component={Dividend} />
-            <Route key="bonds" path={"/apps/assetcustody/events/bonds/:contractId"} component={Bond} />
-            <Route key="derivatives" path={"/apps/assetcustody/events/derivatives/:contractId"} component={Derivative} />
+            <Route key={"exercise"} path={"/apps/assetcustody/exercises/:contractId"} component={Exercise} />
             {entries.map(e => 
               <Route exact={true} key={e.label} {...e} />
             )}

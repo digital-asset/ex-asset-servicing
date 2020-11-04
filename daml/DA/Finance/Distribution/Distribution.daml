@@ -15,7 +15,6 @@ template DistributionRequest
     issuanceDepositCid : ContractId AssetDeposit
     asset : Asset
     issuerAccountAtAgent : Account
-    instructed : Bool
   where
     signatory depository, issuer
     observer agent
@@ -28,17 +27,14 @@ template DistributionRequest
         do
           mapA (\investor -> create SubscriptionRequest with ..) investors
 
-    controller agent can
-      InstructDistribution : [ContractId SettlementInstruction]
+      nonconsuming InstructDistribution : [ContractId SettlementInstruction]
         with
           subscriptionResponseCids : [ContractId SubscriptionResponse]
           warrantCid : ContractId Warrant
           agentAccountAtAgent : Account
           agentAccountAtDepository : Account
         do
-          create this with instructed = True
           subscriptionResponses <- mapA fetch subscriptionResponseCids
-          -- forA_ subscriptionResponseCids (`exercise` DeleteSubscriptionResponse)
 
           let
             quantities = map (.quantity) subscriptionResponses
@@ -59,10 +55,10 @@ template DistributionRequest
                 assertMsg "Investor deposit doesn't match price asset" $ investorDeposit.asset.id.label == sr.price.id.label
                 assertMsg "Investor deposit doesn't match cost" $ investorDeposit.asset.quantity == sr.quantity * sr.price.quantity
                 let
-                  delivery = SettlementInstruction with fromDeposit = agentDeposit; fromDepositCid = agentDepositCid; toAccount = investorDeposit.account; ..
-                  payment = SettlementInstruction with fromDeposit = investorDeposit; fromDepositCid = sr.depositCid; toAccount = issuerAccountAtAgent; ..
+                  delivery = SettlementInstruction with fromDeposit = agentDeposit; fromDepositCid = agentDepositCid; toAccount = investorDeposit.account; settled = False; ..
+                  payment = SettlementInstruction with fromDeposit = investorDeposit; fromDepositCid = sr.depositCid; toAccount = issuerAccountAtAgent; settled = False; ..
                 pure [ delivery, payment ]
-            distributionInstruction = SettlementInstruction with fromDeposit = subscribedDeposit; fromDepositCid = subscribedDepositCid; toAccount = agentAccountAtDepository; ..
+            distributionInstruction = SettlementInstruction with fromDeposit = subscribedDeposit; fromDepositCid = subscribedDepositCid; toAccount = agentAccountAtDepository; settled = False; ..
           settlementInstructions <- concat <$> mapA createSettlementInstructions responseDepositPairs
           mapA create (distributionInstruction :: settlementInstructions)
 
@@ -114,6 +110,7 @@ template SettlementInstruction
     fromDeposit : AssetDeposit
     fromDepositCid : ContractId AssetDeposit
     toAccount : Account
+    settled : Bool
   where
     signatory depository, issuer, agent
 
@@ -122,4 +119,5 @@ template SettlementInstruction
         do
           fromDeposit <- fetch fromDepositCid
           archive fromDepositCid
+          create this with settled = True
           create fromDeposit with account = toAccount

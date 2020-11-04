@@ -13,7 +13,7 @@ const SettlementInstructions : React.FC<RouteComponentProps> = ({ history } : Ro
   const ledger = useLedger();
   const depositoryRoles = useQuery(Depository).contracts;
   const isDepository = depositoryRoles.length > 0 && depositoryRoles[0].payload.depository === party;
-  const entries = useStreamQueries(SettlementInstruction).contracts;
+  const entries = useStreamQueries(SettlementInstruction).contracts.filter(si => !si.payload.settled);
 
   const settleInstruction = async (instructionCid : ContractId<SettlementInstruction>) => {
     if (!isDepository) return;
