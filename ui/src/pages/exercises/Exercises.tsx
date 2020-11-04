@@ -26,7 +26,7 @@ const Exercises : React.FC<RouteComponentProps> = ({ history } : RouteComponentP
     const instructed = requests.length === 0 ? [] : sis.filter(si => si.payload.label === requests[0].payload.label && !si.payload.settled);
     const settled = requests.length === 0 ? [] : sis.filter(si => si.payload.label === requests[0].payload.label && si.payload.settled);
     const status = requests.length === 0
-      ? "Exercise notices pending"
+      ? "Exercise open"
       : (instructed.length === 0 && settled.length === 0
         ? "Exercise notices received"
         : (instructed.length > 0

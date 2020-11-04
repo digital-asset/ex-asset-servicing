@@ -1,12 +1,21 @@
 import React, { useState } from "react";
 import { withRouter, RouteComponentProps } from "react-router-dom";
-import { AppBar, Toolbar, IconButton, Typography, Grid, Box, CircularProgress } from "@material-ui/core";
-import { ExitToApp, Apps, PlayArrow, FastRewind } from "@material-ui/icons";
-import useStyles from "./styles";
-import { useUserDispatch, signOut } from "../../context/UserContext";
-import headerLogo from "../../images/headerLogo.png";
+import AppBar from "@material-ui/core/AppBar";
+import Toolbar from "@material-ui/core/Toolbar";
+import IconButton from "@material-ui/core/IconButton";
+import Typography from "@material-ui/core/Typography";
+import Grid from "@material-ui/core/Grid";
+import Box from "@material-ui/core/Box";
+import CircularProgress from "@material-ui/core/CircularProgress";
+import ExitToApp from "@material-ui/icons/ExitToApp";
+import Apps from "@material-ui/icons/Apps";
+import PlayArrow from "@material-ui/icons/PlayArrow";
+import FastRewind from "@material-ui/icons/FastRewind";
 import { useParty, useQuery } from "@daml/react";
 import { Agent, Depository, Issuer } from "@daml.js/asset-servicing-0.0.1/lib/Roles";
+import useStyles from "./styles";
+import headerLogo from "../../images/headerLogo.png";
+import { useUserDispatch, signOut } from "../../context/UserContext";
 
 interface HeaderProps {
   app : string
@@ -45,9 +54,9 @@ function Header({ history, app, isInitialized, setup, teardown } : RouteComponen
         <Box alignContent="center">
           <Grid container direction="column" alignItems="center">
             <Grid item xs={12}>
-            <Typography variant="h1" className={classes.logotype}>DIGITAL SECURITIES DEPOSITORY</Typography>
+            <Typography variant="h1" className={classes.logotype}>DIGITAL SECURITIES PLATFORM</Typography>
             </Grid>
-            <Grid item xs={12} alignContent="center">
+            <Grid item xs={12}>
               <Typography variant="body1" style={{ color: "white" }}>{app}</Typography>
             </Grid>
           </Grid>

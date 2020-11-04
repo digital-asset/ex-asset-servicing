@@ -100,7 +100,7 @@ export default makeStyles((theme : any) => createStyles({
   },
   userBox: {
     color: "white",
-    backgroundColor: "#639",//theme.palette.text.primary,
+    backgroundColor: "#608ad8",//theme.palette.text.primary,
     padding: 5,
     borderRadius: 5,
   }

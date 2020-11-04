@@ -7,7 +7,7 @@ import ilImage from "./images/instrument-lifecycling-app.jpg";
 import pmImage from "./images/position-management-app.jpg";
 import Header from "./components/Header/Header";
 // import { useParty, useQuery } from "@daml/react";
-// import { Agent, Depository } from "@daml.js/asset-servicing-0.0.1/lib/Roles";
+// import { Issuer, Agent, Depository } from "@daml.js/asset-servicing-0.0.1/lib/Roles";
 
 export default function Apps({ history } : RouteComponentProps) {
   const classes = useStyles();
@@ -16,6 +16,8 @@ export default function Apps({ history } : RouteComponentProps) {
   // const isDepository = depositories.length > 0 && depositories[0].payload.depository === party;
   // const agents = useQuery(Agent).contracts;
   // const isAgent = agents.length > 0 && agents[0].payload.agent === party;
+  // const issuers = useQuery(Issuer).contracts;
+  // const isIssuer = issuers.length > 0 && issuers[0].payload.issuer === party;
 
   return (
     <>

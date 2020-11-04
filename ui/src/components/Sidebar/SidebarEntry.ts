@@ -4,6 +4,7 @@ export type SidebarEntry = {
   icon : JSX.Element
   render : () => JSX.Element
   children : SidebarEntry[]
+  divider?: boolean
 }
 
 export const getChildren = (e : SidebarEntry) : SidebarEntry[] => {

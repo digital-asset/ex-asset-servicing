@@ -1,8 +1,12 @@
 import React, { useState } from "react";
-import { ListItem, ListItemIcon, ListItemText, Collapse, List } from "@material-ui/core";
 import { Link } from "react-router-dom";
 import { History, Location } from "history";
 import classnames from "classnames";
+import Collapse from "@material-ui/core/Collapse";
+import List from "@material-ui/core/List";
+import ListItem from "@material-ui/core/ListItem";
+import ListItemIcon from "@material-ui/core/ListItemIcon";
+import ListItemText from "@material-ui/core/ListItemText";
 import useStyles from "./styles";
 import { SidebarEntry } from "../../SidebarEntry";
 

@@ -131,15 +131,15 @@ const Distribution : React.FC<RouteComponentProps> = ({ history }) => {
               <TableHead>
                 <TableRow className={classes.tableRow}>
                   <TableCell key={0} className={classes.tableCellSmall} align="center"><b>Recipient</b></TableCell>
-                  <TableCell key={1} className={classes.tableCellSmall} align="center"><b>Price</b></TableCell>
+                  <TableCell key={1} className={classes.tableCellSmall} align="right"><b>Price</b></TableCell>
                   <TableCell key={2} className={classes.tableCellSmall} align="center"><b>Currency</b></TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
                 {requested.map(e => <TableRow key={0} className={classes.tableRow}>
-                  <TableCell key={0} className={classes.tableCellSmall}>{e.payload.investor}</TableCell>
-                  <TableCell key={1} className={classes.tableCellSmall}>{e.payload.price.quantity}</TableCell>
-                  <TableCell key={2} className={classes.tableCellSmall}>{e.payload.price.id.label}</TableCell>
+                  <TableCell key={0} className={classes.tableCellSmall} align="center">{e.payload.investor}</TableCell>
+                  <TableCell key={1} className={classes.tableCellSmall} align="right">{e.payload.price.quantity}</TableCell>
+                  <TableCell key={2} className={classes.tableCellSmall} align="center">{e.payload.price.id.label}</TableCell>
                 </TableRow>)}
               </TableBody>
             </Table>
@@ -166,17 +166,17 @@ const Distribution : React.FC<RouteComponentProps> = ({ history }) => {
               <TableHead>
                 <TableRow className={classes.tableRow}>
                   <TableCell key={0} className={classes.tableCellSmall} align="center"><b>Respondent</b></TableCell>
-                  <TableCell key={1} className={classes.tableCellSmall} align="center"><b>Quantity</b></TableCell>
-                  <TableCell key={2} className={classes.tableCellSmall} align="center"><b>Price</b></TableCell>
+                  <TableCell key={1} className={classes.tableCellSmall} align="right"><b>Quantity</b></TableCell>
+                  <TableCell key={2} className={classes.tableCellSmall} align="right"><b>Price</b></TableCell>
                   <TableCell key={3} className={classes.tableCellSmall} align="center"><b>Currency</b></TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
                 {received.map(e => <TableRow key={0} className={classes.tableRow}>
-                  <TableCell key={0} className={classes.tableCellSmall}>{e.payload.investor}</TableCell>
-                  <TableCell key={1} className={classes.tableCellSmall}>{e.payload.quantity}</TableCell>
-                  <TableCell key={2} className={classes.tableCellSmall}>{e.payload.price.quantity}</TableCell>
-                  <TableCell key={3} className={classes.tableCellSmall}>{e.payload.price.id.label}</TableCell>
+                  <TableCell key={0} className={classes.tableCellSmall} align="center">{e.payload.investor}</TableCell>
+                  <TableCell key={1} className={classes.tableCellSmall} align="right">{e.payload.quantity}</TableCell>
+                  <TableCell key={2} className={classes.tableCellSmall} align="right">{e.payload.price.quantity}</TableCell>
+                  <TableCell key={3} className={classes.tableCellSmall} align="center">{e.payload.price.id.label}</TableCell>
                 </TableRow>)}
               </TableBody>
             </Table>
@@ -210,11 +210,11 @@ const Distribution : React.FC<RouteComponentProps> = ({ history }) => {
               </TableHead>
               <TableBody>
                 {instructed.concat(settled).map(e => <TableRow key={0} className={classes.tableRow}>
-                  <TableCell key={0} className={classes.tableCellMini}>{e.payload.fromDeposit.account.owner}</TableCell>
-                  <TableCell key={1} className={classes.tableCellMini}>{e.payload.toAccount.owner}</TableCell>
+                  <TableCell key={0} className={classes.tableCellMini} align="center">{e.payload.fromDeposit.account.owner}</TableCell>
+                  <TableCell key={1} className={classes.tableCellMini} align="center">{e.payload.toAccount.owner}</TableCell>
                   <TableCell key={2} className={classes.tableCellMini} align="right">{e.payload.fromDeposit.asset.quantity}</TableCell>
-                  <TableCell key={3} className={classes.tableCellMini}>{e.payload.fromDeposit.asset.id.label}</TableCell>
-                  <TableCell key={4} className={classes.tableCellMini}>{e.payload.settled.toString()}</TableCell>
+                  <TableCell key={3} className={classes.tableCellMini} align="center">{e.payload.fromDeposit.asset.id.label}</TableCell>
+                  <TableCell key={4} className={classes.tableCellMini} align="center">{e.payload.settled.toString()}</TableCell>
                 </TableRow>)}
               </TableBody>
             </Table>

@@ -1,19 +1,19 @@
 import React from "react";
 import { Route, Switch, withRouter } from "react-router-dom";
 import classnames from "classnames";
-import useStyles from "./styles";
-import Header from "../components/Header/Header";
-import Sidebar from "../components/Sidebar/Sidebar";
-import { useLayoutState } from "../context/LayoutContext";
-import { LocalAtm, Poll } from "@material-ui/icons";
-import { SidebarEntry, getChildren } from "../components/Sidebar/SidebarEntry";
-import Exercises from "../pages/exercises/Exercises";
-import Warrants from "../pages/warrants/Warrants";
+import Poll from "@material-ui/icons/Poll";
 import { useParty, useQuery } from "@daml/react";
 import { Agent, Depository, Issuer } from "@daml.js/asset-servicing-0.0.1/lib/Roles";
+import useStyles from "./styles";
+import { useLayoutState } from "../context/LayoutContext";
+import Header from "../components/Header/Header";
+import Sidebar from "../components/Sidebar/Sidebar";
+import { SidebarEntry, getChildren } from "../components/Sidebar/SidebarEntry";
 import AssetDeposits from "../pages/assetdeposits/AssetDeposits";
-import SettlementInstructions from "../pages/settlementinstructions/SettlementInstructions";
+import Exercises from "../pages/exercises/Exercises";
 import Exercise from "../pages/exercises/Exercise";
+import Warrants from "../pages/warrants/Warrants";
+import SettlementInstructions from "../pages/settlementinstructions/SettlementInstructions";
 
 function AssetCustody() {
   const classes = useStyles();
@@ -29,10 +29,10 @@ function AssetCustody() {
 
   var entries : SidebarEntry[] = [];
   if (isDepository) {
+    entries.push({ label: "Assets", path: "/apps/assetcustody/assets", render: () => (<AssetDeposits />), icon: (<Poll/>), children: [], divider: true });
     entries.push({ label: "Settlement", path: "/apps/assetcustody/settlement", render: () => (<SettlementInstructions />), icon: (<Poll/>), children: [] });
-    entries.push({ label: "Assets", path: "/apps/assetcustody/assets", render: () => (<AssetDeposits />), icon: (<Poll/>), children: [] });
   } else if (isAgent) {
-    entries.push({ label: "Exercises", path: "/apps/assetcustody/exercises", render: () => <Exercises />, icon: (<LocalAtm/>), children: [] });
+    entries.push({ label: "Exercises", path: "/apps/assetcustody/exercises", render: () => <Exercises />, icon: (<Poll/>), children: [] });
     entries.push({ label: "Assets", path: "/apps/assetcustody/assets", render: () => (<AssetDeposits />), icon: (<Poll/>), children: [] });
   } else if (isIssuer) {
     entries.push({ label: "Assets", path: "/apps/assetcustody/assets", render: () => (<AssetDeposits />), icon: (<Poll/>), children: [] });

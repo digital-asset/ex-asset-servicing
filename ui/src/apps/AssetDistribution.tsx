@@ -1,14 +1,14 @@
 import React from "react";
 import { Route, Switch, withRouter } from "react-router-dom";
 import classnames from "classnames";
+import Poll from "@material-ui/icons/Poll";
+import { useParty, useQuery } from "@daml/react";
+import { Agent, Depository, Issuer } from "@daml.js/asset-servicing-0.0.1/lib/Roles";
 import useStyles from "./styles";
+import { useLayoutState } from "../context/LayoutContext";
 import Header from "../components/Header/Header";
 import Sidebar from "../components/Sidebar/Sidebar";
-import { useLayoutState } from "../context/LayoutContext";
-import { Poll } from "@material-ui/icons";
 import { SidebarEntry } from "../components/Sidebar/SidebarEntry";
-import {  useParty, useQuery } from "@daml/react";
-import { Agent, Depository, Issuer } from "@daml.js/asset-servicing-0.0.1/lib/Roles";
 import Distributions from "../pages/distributions/Distributions";
 import Distribution from "../pages/distributions/Distribution";
 import NewDistribution from "../pages/newdistribution/NewDistribution";
@@ -29,8 +29,8 @@ function AssetDistribution() {
 
   const entries : SidebarEntry[] = [];
   if (isDepository) {
+    entries.push({ label: "Assets", path: "/apps/assetdistribution/assets", render: () => (<AssetDeposits />), icon: (<Poll/>), children: [], divider: true });
     entries.push({ label: "Settlement", path: "/apps/assetdistribution/settlement", render: () => (<SettlementInstructions />), icon: (<Poll/>), children: [] });
-    entries.push({ label: "Assets", path: "/apps/assetdistribution/assets", render: () => (<AssetDeposits />), icon: (<Poll/>), children: [] });
   } else if (isAgent) {
     entries.push({ label: "Distributions", path: "/apps/assetdistribution/distributions", render: () => (<Distributions />), icon: (<Poll/>), children: [] });
     entries.push({ label: "Assets", path: "/apps/assetdistribution/assets", render: () => (<AssetDeposits />), icon: (<Poll/>), children: [] });

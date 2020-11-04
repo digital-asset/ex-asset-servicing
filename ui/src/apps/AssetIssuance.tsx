@@ -1,14 +1,14 @@
 import React from "react";
 import { Route, Switch, withRouter } from "react-router-dom";
 import classnames from "classnames";
+import Poll from "@material-ui/icons/Poll";
+import { useParty, useQuery } from "@daml/react";
+import { Agent, Depository, Issuer } from "@daml.js/asset-servicing-0.0.1/lib/Roles";
 import useStyles from "./styles";
 import Header from "../components/Header/Header";
 import Sidebar from "../components/Sidebar/Sidebar";
 import { useLayoutState } from "../context/LayoutContext";
-import { Poll } from "@material-ui/icons";
 import { SidebarEntry } from "../components/Sidebar/SidebarEntry";
-import { useParty, useQuery } from "@daml/react";
-import { Agent, Depository, Issuer } from "@daml.js/asset-servicing-0.0.1/lib/Roles";
 import AdmissionChecks from "../pages/admissionchecks/AdmissionChecks";
 import CodeAllocations from "../pages/codeallocations/CodeAllocations";
 import GlobalNotes from "../pages/globalnotes/GlobalNotes";
@@ -40,11 +40,11 @@ function AssetIssuance() {
     entries.push({ label: "Issuances", path: "/apps/assetissuance/issuances", render: () => (<Issuances />), icon: (<Poll/>), children: [] });
   } else if (isDepository) {
     entries.push({ label: "Issuances", path: "/apps/assetissuance/issuances", render: () => (<Issuances />), icon: (<Poll/>), children: [] });
+    entries.push({ label: "Assets", path: "/apps/assetissuance/assets", render: () => (<AssetDeposits />), icon: (<Poll/>), children: [], divider: true });
     entries.push({ label: "Security Admission", path: "/apps/assetissuance/admissionchecks", render: () => (<AdmissionChecks />), icon: (<Poll/>), children: [] });
     entries.push({ label: "Code Allocation", path: "/apps/assetissuance/codeallocations", render: () => (<CodeAllocations />), icon: (<Poll/>), children: [] });
     entries.push({ label: "Global Notes", path: "/apps/assetissuance/globalnotes", render: () => (<GlobalNotes />), icon: (<Poll/>), children: [] });
     entries.push({ label: "Deposit Instructions", path: "/apps/assetissuance/depositinstructions", render: () => (<DepositInstructions />), icon: (<Poll/>), children: [] });
-    entries.push({ label: "Assets", path: "/apps/assetissuance/assets", render: () => (<AssetDeposits />), icon: (<Poll/>), children: [] });
   }
 
   return (

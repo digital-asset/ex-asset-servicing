@@ -1,11 +1,19 @@
 import React from "react";
-import { AssetDeposit } from "@daml.js/asset-servicing-0.0.1/lib/DA/Finance/Asset";
-import { Button, Dialog, DialogContent, DialogActions, DialogTitle, Grid, Typography, CircularProgress, Chip } from "@material-ui/core";
-import { LifecycleEffects, AssetLifecycleRule } from "@daml.js/asset-servicing-0.0.1/lib/DA/Finance/Asset/Lifecycle";
+import Dialog from "@material-ui/core/Dialog";
+import DialogTitle from "@material-ui/core/DialogTitle";
+import DialogContent from "@material-ui/core/DialogContent";
+import DialogActions from "@material-ui/core/DialogActions";
+import Button from "@material-ui/core/Button";
+import Grid from "@material-ui/core/Grid";
+import Typography from "@material-ui/core/Typography";
+import CircularProgress from "@material-ui/core/CircularProgress";
+import Chip from "@material-ui/core/Chip";
+import Forward from "@material-ui/icons/Forward";
 import { CreateEvent } from "@daml/ledger";
-import { Forward } from "@material-ui/icons";
-import { useUserState } from "../../context/UserContext";
 import { useLedger } from "@daml/react";
+import { AssetDeposit } from "@daml.js/asset-servicing-0.0.1/lib/DA/Finance/Asset";
+import { LifecycleEffects, AssetLifecycleRule } from "@daml.js/asset-servicing-0.0.1/lib/DA/Finance/Asset/Lifecycle";
+import { useUserState } from "../../context/UserContext";
 
 export type LifecycleDialogProps = {
   open: boolean

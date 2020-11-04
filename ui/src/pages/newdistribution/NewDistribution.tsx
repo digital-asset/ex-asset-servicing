@@ -77,9 +77,9 @@ const NewDistribution : React.FC<RouteComponentProps> = ({ history }) => {
               value={agent}
               onChange={e => setAgent(e.target.value as string)}
               MenuProps={{ anchorOrigin: { vertical: "bottom", horizontal: "left" }, transformOrigin: { vertical: "top", horizontal: "left" }, getContentAnchorEl: null }}>
-            <MenuItem key={0} value="DB">DB</MenuItem>
-            <MenuItem key={1} value="UBS">UBS</MenuItem>
-            <MenuItem key={2} value="COMMERZBANK">COMMERZBANK</MenuItem>
+            <MenuItem key={0} value="AGENT">AGENT</MenuItem>
+            {/* <MenuItem key={1} value="UBS">UBS</MenuItem>
+            <MenuItem key={2} value="COMMERZBANK">COMMERZBANK</MenuItem> */}
           </Select>
         </FormControl>
         <Button key={10} className={classes.newButton} fullWidth color="secondary" size="large" variant="contained" onClick={() => requestDistribution()}>Request Distribution</Button>
