@@ -1,7 +1,6 @@
 import React from "react";
 import { Route, Switch, withRouter } from "react-router-dom";
 import classnames from "classnames";
-import Poll from "@material-ui/icons/Poll";
 import { useParty, useQuery } from "@daml/react";
 import { Agent, Depository, Issuer } from "@daml.js/asset-servicing-0.0.1/lib/Roles";
 import useStyles from "./styles";
@@ -15,6 +14,7 @@ import NewDistribution from "../pages/newdistribution/NewDistribution";
 import AssetDeposits from "../pages/assetdeposits/AssetDeposits";
 import Subscriptions from "../pages/subscriptions/Subscriptions";
 import SettlementInstructions from "../pages/settlementinstructions/SettlementInstructions";
+import { Add, LocalAtm, PlayArrow, Settings } from "@material-ui/icons";
 
 function AssetDistribution() {
   const classes = useStyles();
@@ -29,18 +29,18 @@ function AssetDistribution() {
 
   const entries : SidebarEntry[] = [];
   if (isDepository) {
-    entries.push({ label: "Assets", path: "/apps/assetdistribution/assets", render: () => (<AssetDeposits />), icon: (<Poll/>), children: [], divider: true });
-    entries.push({ label: "Settlement", path: "/apps/assetdistribution/settlement", render: () => (<SettlementInstructions />), icon: (<Poll/>), children: [] });
+    entries.push({ label: "Assets", path: "/apps/assetdistribution/assets", render: () => (<AssetDeposits />), icon: (<LocalAtm/>), children: [], divider: true });
+    entries.push({ label: "Settlement", path: "/apps/assetdistribution/settlement", render: () => (<SettlementInstructions />), icon: (<Settings/>), children: [] });
   } else if (isAgent) {
-    entries.push({ label: "Distributions", path: "/apps/assetdistribution/distributions", render: () => (<Distributions />), icon: (<Poll/>), children: [] });
-    entries.push({ label: "Assets", path: "/apps/assetdistribution/assets", render: () => (<AssetDeposits />), icon: (<Poll/>), children: [] });
+    entries.push({ label: "Distributions", path: "/apps/assetdistribution/distributions", render: () => (<Distributions />), icon: (<PlayArrow/>), children: [] });
+    entries.push({ label: "Assets", path: "/apps/assetdistribution/assets", render: () => (<AssetDeposits />), icon: (<LocalAtm/>), children: [] });
   } else if (isIssuer) {
-    entries.push({ label: "New Distribution", path: "/apps/assetdistribution/newdistribution", render: () => (<NewDistribution />), icon: (<Poll/>), children: [] });
-    entries.push({ label: "Distributions", path: "/apps/assetdistribution/distributions", render: () => (<Distributions />), icon: (<Poll/>), children: [] });
-    entries.push({ label: "Assets", path: "/apps/assetdistribution/assets", render: () => (<AssetDeposits />), icon: (<Poll/>), children: [] });
+    entries.push({ label: "New Distribution", path: "/apps/assetdistribution/newdistribution", render: () => (<NewDistribution />), icon: (<Add/>), children: [] });
+    entries.push({ label: "Distributions", path: "/apps/assetdistribution/distributions", render: () => (<Distributions />), icon: (<PlayArrow/>), children: [] });
+    entries.push({ label: "Assets", path: "/apps/assetdistribution/assets", render: () => (<AssetDeposits />), icon: (<LocalAtm/>), children: [] });
   } else {
-    entries.push({ label: "Subscriptions", path: "/apps/assetdistribution/subscriptions", render: () => (<Subscriptions />), icon: (<Poll/>), children: [] });
-    entries.push({ label: "Assets", path: "/apps/assetdistribution/assets", render: () => (<AssetDeposits />), icon: (<Poll/>), children: [] });
+    entries.push({ label: "Subscriptions", path: "/apps/assetdistribution/subscriptions", render: () => (<Subscriptions />), icon: (<PlayArrow/>), children: [] });
+    entries.push({ label: "Assets", path: "/apps/assetdistribution/assets", render: () => (<AssetDeposits />), icon: (<LocalAtm/>), children: [] });
   }
 
   return (

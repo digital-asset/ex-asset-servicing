@@ -113,7 +113,7 @@ const Exercise : React.FC<RouteComponentProps> = ({ history }) => {
           <TimelineDot variant="outlined" style={{ padding: 0, borderColor: reqColor }}>
             {requests.length === 0 && <RadioButtonUnchecked className={classes.default} fontSize="large" />}
             {requests.length > 0 && instructed.length === 0 && settled.length === 0 && <Chip className={classes.chipYellow} label={requests.length}/>}
-            {requests.length > 0 && instructed.length === 0 && settled.length > 0 && <Chip className={classes.chipGreen} label={requests.length}/>}
+            {requests.length > 0 && (instructed.length + settled.length > 0) && <Chip className={classes.chipGreen} label={requests.length}/>}
           </TimelineDot>
           <TimelineConnector />
         </TimelineSeparator>

@@ -1,7 +1,6 @@
 import React from "react";
 import { Route, Switch, withRouter } from "react-router-dom";
 import classnames from "classnames";
-import Poll from "@material-ui/icons/Poll";
 import { useParty, useQuery } from "@daml/react";
 import { Agent, Depository, Issuer } from "@daml.js/asset-servicing-0.0.1/lib/Roles";
 import useStyles from "./styles";
@@ -14,6 +13,7 @@ import Exercises from "../pages/exercises/Exercises";
 import Exercise from "../pages/exercises/Exercise";
 import Warrants from "../pages/warrants/Warrants";
 import SettlementInstructions from "../pages/settlementinstructions/SettlementInstructions";
+import { LocalAtm, PlayArrow, Settings } from "@material-ui/icons";
 
 function AssetCustody() {
   const classes = useStyles();
@@ -29,16 +29,16 @@ function AssetCustody() {
 
   var entries : SidebarEntry[] = [];
   if (isDepository) {
-    entries.push({ label: "Assets", path: "/apps/assetcustody/assets", render: () => (<AssetDeposits />), icon: (<Poll/>), children: [], divider: true });
-    entries.push({ label: "Settlement", path: "/apps/assetcustody/settlement", render: () => (<SettlementInstructions />), icon: (<Poll/>), children: [] });
+    entries.push({ label: "Assets", path: "/apps/assetcustody/assets", render: () => (<AssetDeposits />), icon: (<LocalAtm/>), children: [], divider: true });
+    entries.push({ label: "Settlement", path: "/apps/assetcustody/settlement", render: () => (<SettlementInstructions />), icon: (<Settings/>), children: [] });
   } else if (isAgent) {
-    entries.push({ label: "Exercises", path: "/apps/assetcustody/exercises", render: () => <Exercises />, icon: (<Poll/>), children: [] });
-    entries.push({ label: "Assets", path: "/apps/assetcustody/assets", render: () => (<AssetDeposits />), icon: (<Poll/>), children: [] });
+    entries.push({ label: "Exercises", path: "/apps/assetcustody/exercises", render: () => <Exercises />, icon: (<PlayArrow/>), children: [] });
+    entries.push({ label: "Assets", path: "/apps/assetcustody/assets", render: () => (<AssetDeposits />), icon: (<LocalAtm/>), children: [] });
   } else if (isIssuer) {
-    entries.push({ label: "Assets", path: "/apps/assetcustody/assets", render: () => (<AssetDeposits />), icon: (<Poll/>), children: [] });
+    entries.push({ label: "Assets", path: "/apps/assetcustody/assets", render: () => (<AssetDeposits />), icon: (<LocalAtm/>), children: [] });
   } else {
-    entries.push({ label: "Warrants", path: "/apps/assetcustody/warrants", render: () => (<Warrants />), icon: (<Poll/>), children: [] });
-    entries.push({ label: "Assets", path: "/apps/assetcustody/assets", render: () => (<AssetDeposits />), icon: (<Poll/>), children: [] });
+    entries.push({ label: "Warrants", path: "/apps/assetcustody/warrants", render: () => (<Warrants />), icon: (<PlayArrow/>), children: [] });
+    entries.push({ label: "Assets", path: "/apps/assetcustody/assets", render: () => (<AssetDeposits />), icon: (<LocalAtm/>), children: [] });
   }
 
   entries = entries.flatMap(e => getChildren(e).concat([e]));

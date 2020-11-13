@@ -45,8 +45,8 @@ const Distributions : React.FC<RouteComponentProps> = ({ history } : RouteCompon
       asset: dr.payload.asset,
       subscribed: sress.map(c => parseInt(c.payload.quantity)).reduce((a, b) => a + b, 0).toFixed(1),
       status,
-      instructed: instructed.length > 0,
-      settled: settled.length > 0,
+      instructed,
+      settled,
       requested,
       received,
     }
@@ -98,13 +98,13 @@ const Distributions : React.FC<RouteComponentProps> = ({ history } : RouteCompon
               {e.requested.length + e.received.length === 0 && <><RadioButtonUnchecked /><TrendingFlat /></>}
               {e.requested.length > 0 && <><Chip className={classes.chipYellow} size="small" label={e.received.length}/><TrendingFlat /></>}
               {e.requested.length === 0 && e.received.length > 0 && <><Chip className={classes.chipGreen} size="small" label={e.received.length}/><TrendingFlat /></>}
-              {!e.instructed && !e.settled && <RadioButtonUnchecked />}
-              {e.instructed && !e.settled && <Help className={classes.yellow} />}
-              {e.settled && <CheckCircle className={classes.green} />}
+              {e.instructed.length === 0 && e.settled.length === 0 && <RadioButtonUnchecked />}
+              {e.instructed.length > 0 && <Help className={classes.yellow} />}
+              {e.instructed.length === 0 && e.settled.length > 0 && <CheckCircle className={classes.green} />}
             </TableCell>
             <TableCell key={6} className={classes.tableCell} align="center">
               {isAgent && e.requested.length === 0 && e.received.length === 0 && <Button color="secondary" size="small" className={classes.choiceButton} variant="contained" onClick={() => openSubscription(e.contractId)}>Open Subscription</Button>}
-              {isAgent && !e.instructed && !e.settled && e.requested.length + e.received.length > 0 && <Button color="secondary" size="small" className={classes.choiceButton} variant="contained" disabled={e.received.length === 0} onClick={() => instructDistribution(e.contractId, e.received.map(r => r.contractId), e.asset.id.label, e.issuer)}>Instruct Distribution</Button>}
+              {isAgent && e.instructed.length === 0 && e.settled.length === 0 && e.requested.length + e.received.length > 0 && <Button color="secondary" size="small" className={classes.choiceButton} variant="contained" disabled={e.received.length === 0} onClick={() => instructDistribution(e.contractId, e.received.map(r => r.contractId), e.asset.id.label, e.issuer)}>Instruct Distribution</Button>}
             </TableCell>
             <TableCell key={7} className={classes.tableCell}>
               <IconButton color="primary" size="small" component="span" onClick={() => history.push("/apps/assetdistribution/distributions/" + e.contractId.replace("#", "_"))}>
