@@ -3,10 +3,11 @@ import { Typography, Grid, FormControl, InputLabel, Select, MenuItem, TextField,
 import { RouteComponentProps, withRouter } from "react-router-dom";
 import useStyles from "../styles";
 import { useLedger, useParty, useQuery } from "@daml/react";
-import { Issuer } from "@daml.js/asset-servicing-0.0.1/lib/Roles";
-import { CodeAllocationResponse, WarrantIssuanceRequest } from "@daml.js/asset-servicing-0.0.1/lib/DA/Finance/Issuance/Issuance";
-import { AssetDeposit } from "@daml.js/asset-servicing-0.0.1/lib/DA/Finance/Asset";
+import { Issuer } from "@daml.js/dsp-0.0.1/lib/Roles";
+import { CodeAllocationResponse, WarrantIssuanceRequest } from "@daml.js/dsp-0.0.1/lib/DA/Finance/Issuance/Issuance";
+import { AssetDeposit } from "@daml.js/dsp-0.0.1/lib/DA/Finance/Asset";
 import { getAccount } from "../../scripts/Util";
+import { getParty, getName } from "../../config";
 
 const NewDistribution : React.FC<RouteComponentProps> = ({ history }) => {
   const classes = useStyles();
@@ -21,11 +22,12 @@ const NewDistribution : React.FC<RouteComponentProps> = ({ history }) => {
   const [ distributionSize, setDistributionSize ] = useState<string>("");
   const [ distributionType, setDistributionType ] = useState<string>("");
   const [ agent, setAgent ] = useState<string>("");
+  const [ agentName, setAgentName ] = useState<string>("");
 
   const getLabel = () => {
     const ca = cas.find(c => c.payload.issuanceData.label === issuance);
     const part1 = !!ca ? "-" + ca.payload.allocatedCode : "";
-    return "DIST-" + issuers[0]?.payload.issuer + part1;
+    return "DIST-" + getName(issuers[0]?.payload.issuer) + part1;
   }
 
   const requestDistribution = async () => {
@@ -33,7 +35,7 @@ const NewDistribution : React.FC<RouteComponentProps> = ({ history }) => {
     const code = cas.find(c => c.payload.issuanceData.label === issuance)?.payload.allocatedCode || "";
     const ad = ads.find(c => c.payload.asset.id.label === code);
     if (!ad) return
-    const agentAccount = getAccount(agent, party, party + "@" + agent);
+    const agentAccount = getAccount(agent, party, getName(party) + "@" + getName(agent));
     const asset = { ...ad.payload.asset, quantity: distributionSize };
     const issuanceDepositCid = ad.contractId;
     // TODO: Support smaller than total distribution
@@ -74,12 +76,15 @@ const NewDistribution : React.FC<RouteComponentProps> = ({ history }) => {
         <FormControl key={6} className={classes.inputField} fullWidth>
           <InputLabel>Distribution Agent</InputLabel>
           <Select
-              value={agent}
-              onChange={e => setAgent(e.target.value as string)}
+              value={agentName}
+              onChange={e => {
+                setAgent(getParty(e.target.value as string));
+                setAgentName(e.target.value as string);
+              }}
               MenuProps={{ anchorOrigin: { vertical: "bottom", horizontal: "left" }, transformOrigin: { vertical: "top", horizontal: "left" }, getContentAnchorEl: null }}>
             <MenuItem key={0} value="AGENT">AGENT</MenuItem>
-            {/* <MenuItem key={1} value="UBS">UBS</MenuItem>
-            <MenuItem key={2} value="COMMERZBANK">COMMERZBANK</MenuItem> */}
+            <MenuItem key={1} value="AGENT2">AGENT2</MenuItem>
+            <MenuItem key={2} value="AGENT3">AGENT3</MenuItem>
           </Select>
         </FormControl>
         <Button key={10} className={classes.newButton} fullWidth color="secondary" size="large" variant="contained" onClick={() => requestDistribution()}>Request Distribution</Button>

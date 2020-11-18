@@ -4,9 +4,9 @@ import { Table, TableBody, TableCell, TableRow, TableHead, IconButton, Button } 
 import { withRouter, RouteComponentProps } from "react-router-dom";
 import useStyles from "../styles";
 import { Cancel, CheckCircle, Help, KeyboardArrowRight, RadioButtonUnchecked, TrendingFlat } from "@material-ui/icons";
-import { AdmissionCheckRequest, AdmissionCheckResponse, CodeAllocationRequest, CodeAllocationResponse, DepositInstruction, GlobalNotesRequest, GlobalNotesResponse, WarrantIssuanceRequest } from "@daml.js/asset-servicing-0.0.1/lib/DA/Finance/Issuance/Issuance";
+import { AdmissionCheckRequest, AdmissionCheckResponse, CodeAllocationRequest, CodeAllocationResponse, DepositInstruction, GlobalNotesRequest, GlobalNotesResponse, WarrantIssuanceRequest } from "@daml.js/dsp-0.0.1/lib/DA/Finance/Issuance/Issuance";
 import { ContractId } from "@daml/types";
-import { Agent, Depository } from "@daml.js/asset-servicing-0.0.1/lib/Roles";
+import { Agent, Depository } from "@daml.js/dsp-0.0.1/lib/Roles";
 
 const Issuances : React.FC<RouteComponentProps> = ({ history } : RouteComponentProps) => {
   const classes = useStyles();

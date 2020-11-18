@@ -3,7 +3,7 @@ import { useStreamQueries } from "@daml/react";
 import { Typography, Grid, Table, TableBody, TableCell, TableRow } from "@material-ui/core";
 import { useParams, RouteComponentProps } from "react-router-dom";
 import useStyles from "../styles";
-import { AdmissionCheckResponse, CodeAllocationResponse, DepositInstruction, GlobalNotesResponse, WarrantIssuanceRequest } from "@daml.js/asset-servicing-0.0.1/lib/DA/Finance/Issuance/Issuance";
+import { AdmissionCheckResponse, CodeAllocationResponse, DepositInstruction, GlobalNotesResponse, WarrantIssuanceRequest } from "@daml.js/dsp-0.0.1/lib/DA/Finance/Issuance/Issuance";
 
 const AssetDeposit : React.FC<RouteComponentProps> = ({ history }) => {
   const classes = useStyles();

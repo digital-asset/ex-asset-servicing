@@ -5,7 +5,8 @@ import DateFnsUtils from '@date-io/date-fns';
 import { RouteComponentProps } from "react-router-dom";
 import useStyles from "../../styles";
 import { useLedger, useParty, useQuery } from "@daml/react";
-import { Issuer } from "@daml.js/asset-servicing-0.0.1/lib/Roles";
+import { Issuer } from "@daml.js/dsp-0.0.1/lib/Roles";
+import { getParty } from "../../../config";
 
 const NewWarrant : React.FC<RouteComponentProps> = ({ history }) => {
   const classes = useStyles();
@@ -22,6 +23,7 @@ const NewWarrant : React.FC<RouteComponentProps> = ({ history }) => {
   const [ issueSize, setIssueSize ] = useState<string>("");
   const [ minimumDenomination, setMinimumDenomination ] = useState<string>("");
   const [ agent, setAgent ] = useState<string>("");
+  const [ agentName, setAgentName ] = useState<string>("");
 
   const getLabel = () => {
     const part1 = !!optionType ? "-" + optionType : "";
@@ -77,12 +79,15 @@ const NewWarrant : React.FC<RouteComponentProps> = ({ history }) => {
             <FormControl key={9} className={classes.inputField} fullWidth>
               <InputLabel>Issuing Agent</InputLabel>
               <Select
-                  value={agent}
-                  onChange={e => setAgent(e.target.value as string)}
+                  value={agentName}
+                  onChange={e => {
+                    setAgent(getParty(e.target.value as string));
+                    setAgentName(e.target.value as string);
+                  }}
                   MenuProps={{ anchorOrigin: { vertical: "bottom", horizontal: "left" }, transformOrigin: { vertical: "top", horizontal: "left" }, getContentAnchorEl: null }}>
                 <MenuItem key={0} value="AGENT">AGENT</MenuItem>
-                {/* <MenuItem key={1} value="UBS">UBS</MenuItem>
-                <MenuItem key={2} value="COMMERZBANK">COMMERZBANK</MenuItem> */}
+                <MenuItem key={1} value="AGENT2">AGENT2</MenuItem>
+                <MenuItem key={2} value="AGENT3">AGENT3</MenuItem>
               </Select>
             </FormControl>
             <Button key={10} className={classes.newButton} fullWidth color="secondary" size="large" variant="contained" onClick={() => requestWarrantIssuance()}>Request Issuance</Button>

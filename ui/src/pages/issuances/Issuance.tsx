@@ -10,8 +10,9 @@ import TimelineConnector from '@material-ui/lab/TimelineConnector';
 import TimelineContent from '@material-ui/lab/TimelineContent';
 import { useParams, RouteComponentProps } from "react-router-dom";
 import useStyles from "../styles";
-import { AdmissionCheckRequest, AdmissionCheckResponse, CodeAllocationRequest, CodeAllocationResponse, DepositInstruction, GlobalNotesRequest, GlobalNotesResponse, WarrantIssuanceRequest } from "@daml.js/asset-servicing-0.0.1/lib/DA/Finance/Issuance/Issuance";
+import { AdmissionCheckRequest, AdmissionCheckResponse, CodeAllocationRequest, CodeAllocationResponse, DepositInstruction, GlobalNotesRequest, GlobalNotesResponse, WarrantIssuanceRequest } from "@daml.js/dsp-0.0.1/lib/DA/Finance/Issuance/Issuance";
 import { Cancel, CheckCircle, Help, RadioButtonUnchecked } from "@material-ui/icons";
+import { getName } from "../../config";
 
 const Issuance : React.FC<RouteComponentProps> = ({ history }) => {
   const classes = useStyles();
@@ -261,11 +262,11 @@ const Issuance : React.FC<RouteComponentProps> = ({ history }) => {
                 </TableRow>
                 <TableRow key={1} className={classes.tableRow}>
                   <TableCell key={0} className={classes.tableCellSmall}><b>Provider</b></TableCell>
-                  <TableCell key={1} className={classes.tableCellSmall}>{ir.payload.issuanceAccount.provider}</TableCell>
+                  <TableCell key={1} className={classes.tableCellSmall}>{getName(ir.payload.issuanceAccount.provider)}</TableCell>
                 </TableRow>
                 <TableRow key={2} className={classes.tableRow}>
                   <TableCell key={0} className={classes.tableCellSmall}><b>Owner</b></TableCell>
-                  <TableCell key={1} className={classes.tableCellSmall}>{ir.payload.issuanceAccount.owner}</TableCell>
+                  <TableCell key={1} className={classes.tableCellSmall}>{getName(ir.payload.issuanceAccount.owner)}</TableCell>
                 </TableRow>
                 <TableRow key={3} className={classes.tableRow}>
                   <TableCell key={0} className={classes.tableCellSmall}><b>Asset</b></TableCell>

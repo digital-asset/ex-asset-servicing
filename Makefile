@@ -18,5 +18,6 @@ ui:
 package:
 	rm -rf deploy/	
 	mkdir deploy
-	cp .daml/dist/asset-servicing-0.0.1.dar deploy/
-	cd ui && zip -r ../deploy/asset-servicing-ui.zip build/
+	cp .daml/dist/dsp-0.0.1.dar deploy/
+	cd ui && yarn build
+	cd ui && zip -r ../deploy/dsp-ui.zip build/

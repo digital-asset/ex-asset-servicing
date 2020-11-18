@@ -2,7 +2,7 @@ import React from "react";
 import { Route, Switch, withRouter } from "react-router-dom";
 import classnames from "classnames";
 import { useParty, useQuery } from "@daml/react";
-import { Agent, Depository, Issuer } from "@daml.js/asset-servicing-0.0.1/lib/Roles";
+import { Agent, Depository, Issuer } from "@daml.js/dsp-0.0.1/lib/Roles";
 import useStyles from "./styles";
 import Header from "../components/Header/Header";
 import Sidebar from "../components/Sidebar/Sidebar";

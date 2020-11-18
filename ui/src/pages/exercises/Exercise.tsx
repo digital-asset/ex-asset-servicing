@@ -11,9 +11,10 @@ import TimelineContent from '@material-ui/lab/TimelineContent';
 import { useParams, RouteComponentProps } from "react-router-dom";
 import useStyles from "../styles";
 import { CheckCircle, Help, RadioButtonUnchecked } from "@material-ui/icons";
-import { SettlementInstruction } from "@daml.js/asset-servicing-0.0.1/lib/DA/Finance/Distribution/Distribution";
-import { Warrant } from "@daml.js/asset-servicing-0.0.1/lib/DA/Finance/Issuance/Issuance";
-import { WarrantExerciseRequest } from "@daml.js/asset-servicing-0.0.1/lib/DA/Finance/Custody/Custody/module";
+import { SettlementInstruction } from "@daml.js/dsp-0.0.1/lib/DA/Finance/Distribution/Distribution";
+import { Warrant } from "@daml.js/dsp-0.0.1/lib/DA/Finance/Issuance/Issuance";
+import { WarrantExerciseRequest } from "@daml.js/dsp-0.0.1/lib/DA/Finance/Custody/Custody/module";
+import { getName } from "../../config";
 
 const Exercise : React.FC<RouteComponentProps> = ({ history }) => {
   const classes = useStyles();
@@ -130,7 +131,7 @@ const Exercise : React.FC<RouteComponentProps> = ({ history }) => {
               </TableHead>
               <TableBody>
                 {requests.map(e => <TableRow key={0} className={classes.tableRow}>
-                  <TableCell key={0} className={classes.tableCellSmall} align="center">{e.payload.investor}</TableCell>
+                  <TableCell key={0} className={classes.tableCellSmall} align="center">{getName(e.payload.investor)}</TableCell>
                   <TableCell key={1} className={classes.tableCellSmall} align="center">{e.payload.quantity}</TableCell>
                 </TableRow>)}
               </TableBody>
@@ -165,8 +166,8 @@ const Exercise : React.FC<RouteComponentProps> = ({ history }) => {
               </TableHead>
               <TableBody>
                 {instructed.concat(settled).map(e => <TableRow key={0} className={classes.tableRow}>
-                  <TableCell key={0} className={classes.tableCellMini} align="center">{e.payload.fromDeposit.account.owner}</TableCell>
-                  <TableCell key={1} className={classes.tableCellMini} align="center">{e.payload.toAccount.owner}</TableCell>
+                  <TableCell key={0} className={classes.tableCellMini} align="center">{getName(e.payload.fromDeposit.account.owner)}</TableCell>
+                  <TableCell key={1} className={classes.tableCellMini} align="center">{getName(e.payload.toAccount.owner)}</TableCell>
                   <TableCell key={2} className={classes.tableCellMini} align="right">{e.payload.fromDeposit.asset.quantity}</TableCell>
                   <TableCell key={3} className={classes.tableCellMini} align="center">{e.payload.fromDeposit.asset.id.label}</TableCell>
                   <TableCell key={4} className={classes.tableCellMini} align="center">{e.payload.settled.toString()}</TableCell>

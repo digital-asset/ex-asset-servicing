@@ -3,7 +3,7 @@ import { useLedger, useStreamQueries } from "@daml/react";
 import { Table, TableBody, TableCell, TableRow, TableHead, Button } from "@material-ui/core";
 import { withRouter, RouteComponentProps } from "react-router-dom";
 import useStyles from "../styles";
-import { CodeAllocationRequest } from "@daml.js/asset-servicing-0.0.1/lib/DA/Finance/Issuance/Issuance";
+import { CodeAllocationRequest } from "@daml.js/dsp-0.0.1/lib/DA/Finance/Issuance/Issuance";
 import { ContractId } from "@daml/types";
 
 const CodeAllocations : React.FC<RouteComponentProps> = ({ history } : RouteComponentProps) => {

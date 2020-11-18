@@ -1,11 +1,11 @@
 import React from "react";
 import { useLedger, useParty, useStreamQueries } from "@daml/react";
-import { AssetDeposit } from "@daml.js/asset-servicing-0.0.1/lib/DA/Finance/Asset";
+import { AssetDeposit } from "@daml.js/dsp-0.0.1/lib/DA/Finance/Asset";
 import { Table, TableHead, TableRow, TableCell, TableBody, Button } from "@material-ui/core";
 import useStyles from "../styles";
-import { Warrant } from "@daml.js/asset-servicing-0.0.1/lib/DA/Finance/Issuance/Issuance";
+import { Warrant } from "@daml.js/dsp-0.0.1/lib/DA/Finance/Issuance/Issuance";
 import { ContractId } from "@daml/types";
-import { WarrantExerciseRequest } from "@daml.js/asset-servicing-0.0.1/lib/DA/Finance/Custody/Custody/module";
+import { WarrantExerciseRequest } from "@daml.js/dsp-0.0.1/lib/DA/Finance/Custody/Custody/module";
 
 const Warrants : React.FC = () => {
   const classes = useStyles();

@@ -7,7 +7,7 @@ import ilImage from "./images/instrument-lifecycling-app.jpg";
 import pmImage from "./images/position-management-app.jpg";
 import Header from "./components/Header/Header";
 // import { useParty, useQuery } from "@daml/react";
-// import { Issuer, Agent, Depository } from "@daml.js/asset-servicing-0.0.1/lib/Roles";
+// import { Issuer, Agent, Depository } from "@daml.js/dsp-0.0.1/lib/Roles";
 
 export default function Apps({ history } : RouteComponentProps) {
   const classes = useStyles();

@@ -5,10 +5,11 @@ import { withRouter, RouteComponentProps } from "react-router-dom";
 import useStyles from "../styles";
 import { CheckCircle, Help, KeyboardArrowRight, RadioButtonUnchecked, TrendingFlat } from "@material-ui/icons";
 import { ContractId } from "@daml/types";
-import { SubscriptionRequest, SubscriptionResponse, DistributionRequest, SettlementInstruction } from "@daml.js/asset-servicing-0.0.1/lib/DA/Finance/Distribution/Distribution";
-import { Agent } from "@daml.js/asset-servicing-0.0.1/lib/Roles";
+import { SubscriptionRequest, SubscriptionResponse, DistributionRequest, SettlementInstruction } from "@daml.js/dsp-0.0.1/lib/DA/Finance/Distribution/Distribution";
+import { Agent } from "@daml.js/dsp-0.0.1/lib/Roles";
 import { getAsset } from "../../scripts/Util";
-import { Warrant } from "@daml.js/asset-servicing-0.0.1/lib/DA/Finance/Issuance/Issuance";
+import { Warrant } from "@daml.js/dsp-0.0.1/lib/DA/Finance/Issuance/Issuance";
+import { getName } from "../../config";
 
 const Distributions : React.FC<RouteComponentProps> = ({ history } : RouteComponentProps) => {
   const classes = useStyles();
@@ -84,7 +85,7 @@ const Distributions : React.FC<RouteComponentProps> = ({ history } : RouteCompon
       <TableBody>
         {entries.map((e, i) => (
           <TableRow key={i} className={classes.tableRow}>
-            <TableCell key={0} className={classes.tableCell} align="center">{e.issuer}</TableCell>
+            <TableCell key={0} className={classes.tableCell} align="center">{getName(e.issuer)}</TableCell>
             <TableCell key={1} className={classes.tableCell} align="center">{e.asset.id.label}</TableCell>
             <TableCell key={2} className={classes.tableCell} align="right">{e.asset.quantity}</TableCell>
             <TableCell key={3} className={classes.tableCell} align="right">{e.subscribed}</TableCell>

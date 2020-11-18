@@ -4,10 +4,11 @@ import { Table, TableBody, TableCell, TableRow, TableHead, IconButton, Button } 
 import { withRouter, RouteComponentProps } from "react-router-dom";
 import useStyles from "../styles";
 import {  KeyboardArrowRight } from "@material-ui/icons";
-import { SubscriptionRequest } from "@daml.js/asset-servicing-0.0.1/lib/DA/Finance/Distribution/Distribution";
+import { SubscriptionRequest } from "@daml.js/dsp-0.0.1/lib/DA/Finance/Distribution/Distribution";
 import { InputDialog, InputDialogProps } from "../../components/InputDialog/InputDialog";
-import { AssetDeposit } from "@daml.js/asset-servicing-0.0.1/lib/DA/Finance/Asset";
+import { AssetDeposit } from "@daml.js/dsp-0.0.1/lib/DA/Finance/Asset";
 import { CreateEvent } from "@daml/ledger";
+import { getName } from "../../config";
 
 const Subscriptions : React.FC<RouteComponentProps> = ({ history } : RouteComponentProps) => {
   const classes = useStyles();
@@ -62,7 +63,7 @@ const Subscriptions : React.FC<RouteComponentProps> = ({ history } : RouteCompon
         <TableBody>
           {entries.map((e, i) => (
             <TableRow key={i} className={classes.tableRow}>
-              <TableCell key={0} className={classes.tableCell} align="center">{e.payload.issuer}</TableCell>
+              <TableCell key={0} className={classes.tableCell} align="center">{getName(e.payload.issuer)}</TableCell>
               <TableCell key={1} className={classes.tableCell} align="center">{e.payload.asset.id.label}</TableCell>
               <TableCell key={2} className={classes.tableCell} align="right">{e.payload.asset.quantity}</TableCell>
               <TableCell key={3} className={classes.tableCell} align="right">{e.payload.price.quantity + " " + e.payload.price.id.label}</TableCell>

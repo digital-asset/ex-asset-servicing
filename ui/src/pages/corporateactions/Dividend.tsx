@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import { useStreamQueries, useQuery, useLedger } from "@daml/react";
-import { EquityStock } from "@daml.js/asset-servicing-0.0.1/lib/DA/Finance/Instrument/Equity/Stock";
-import { EquityStockCashDividendRule } from "@daml.js/asset-servicing-0.0.1/lib/DA/Finance/Instrument/Equity/Stock/Lifecycle";
+import { EquityStock } from "@daml.js/dsp-0.0.1/lib/DA/Finance/Instrument/Equity/Stock";
+import { EquityStockCashDividendRule } from "@daml.js/dsp-0.0.1/lib/DA/Finance/Instrument/Equity/Stock/Lifecycle";
 import { Typography, Grid, Table, TableBody, TableCell, TableRow, TableHead, Button, CircularProgress } from "@material-ui/core";
 import { RouteComponentProps, useParams } from "react-router-dom";
-import { EquityCashDividend } from "@daml.js/asset-servicing-0.0.1/lib/DA/Finance/Instrument/Equity/CashDividend";
+import { EquityCashDividend } from "@daml.js/dsp-0.0.1/lib/DA/Finance/Instrument/Equity/CashDividend";
 import useStyles from "./styles";
 
 const Dividend : React.FC<RouteComponentProps> = ({ history } : RouteComponentProps) => {

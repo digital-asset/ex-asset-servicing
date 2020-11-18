@@ -1,5 +1,5 @@
-import { EquityOption, ExerciseType, OptionType, SettlementType } from "@daml.js/asset-servicing-0.0.1/lib/DA/Finance/Instrument/Equity/Option";
-import { Account, Asset, Id } from "@daml.js/asset-servicing-0.0.1/lib/DA/Finance/Types";
+import { EquityOption, ExerciseType, OptionType, SettlementType } from "@daml.js/dsp-0.0.1/lib/DA/Finance/Instrument/Equity/Option";
+import { Account, Asset, Id } from "@daml.js/dsp-0.0.1/lib/DA/Finance/Types";
 import { Party } from "@daml/types";
 
 export const empty = { textMap: {} };

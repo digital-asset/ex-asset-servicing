@@ -1,6 +1,6 @@
 import React from "react";
 import { useStreamQueries } from "@daml/react";
-import { Bond } from "@daml.js/asset-servicing-0.0.1/lib/DA/Finance/Instrument/FixedIncome/Bond";
+import { Bond } from "@daml.js/dsp-0.0.1/lib/DA/Finance/Instrument/FixedIncome/Bond";
 import { Table, TableBody, TableCell, TableRow, TableHead, IconButton } from "@material-ui/core";
 import { withRouter, RouteComponentProps } from "react-router-dom";
 import useStyles from "./styles";

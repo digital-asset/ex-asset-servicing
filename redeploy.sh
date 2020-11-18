@@ -5,8 +5,10 @@
     exit 1
   fi
 
-DAR_FILE=deploy/asset-servicing-0.0.1.dar
-UI_FILE=deploy/asset-servicing-ui.zip
+# NOTE: Not maintained, needs fixing
+
+DAR_FILE=deploy/dsp-0.0.1.dar
+UI_FILE=deploy/dsp-ui.zip
 
 PROJECT_NAME=$1
 LEDGER_NAME=$2

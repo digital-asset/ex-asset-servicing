@@ -1,16 +1,17 @@
 module Init where
 
 import Daml.Script
-import DA.Date
-import DA.Foldable
-import DA.List (head)
+-- import DA.Date
+-- import DA.Foldable
+-- import DA.List (head)
 import DA.Next.Set
 import DA.Finance.Asset
 import DA.Finance.Custody.Custody
-import DA.Finance.Distribution.Distribution
-import DA.Finance.Instrument.Equity.Option
+-- import DA.Finance.Distribution.Distribution
+-- import DA.Finance.Instrument.Equity.Option
 import DA.Finance.Issuance.Issuance
 import DA.Finance.Types
+import DA.Text
 import Roles
 
 template InitDone
@@ -33,23 +34,13 @@ getAccount sig label provider owner =
   let id = Id with signatories = fromList [sig]; label; version = 0
   in Account with ..
 
-init : Script ()
-init = do
+init : [Party] -> Script ()
+init parties = do
 
   -- Parties
   let
-    dep = "DEPOSITORY"
-    agt = "AGENT"
-    iss = "ISSUER"
-    inv1 = "INVESTOR1"
-    inv2 = "INVESTOR2"
-    inv3 = "INVESTOR3"
-  depository <- allocatePartyWithHint dep $ PartyIdHint with partyIdHint = dep
-  agent <- allocatePartyWithHint agt $ PartyIdHint with partyIdHint = agt
-  issuer <- allocatePartyWithHint iss $ PartyIdHint with partyIdHint = iss
-  investor1 <- allocatePartyWithHint inv1 $ PartyIdHint with partyIdHint = inv1
-  investor2 <- allocatePartyWithHint inv2 $ PartyIdHint with partyIdHint = inv2
-  investor3 <- allocatePartyWithHint inv3 $ PartyIdHint with partyIdHint = inv3
+    [ depository, agent, issuer, investor1, investor2, investor3 ] = parties
+    [ dep, agt, iss, inv1, inv2, inv3 ] = [ "CSD", "AGENT", "ISSUER", "INVESTOR1", "INVESTOR2", "INVESTOR3" ]
   
   -- Roles
   let
@@ -101,30 +92,46 @@ init = do
   issuerStockDepositCid <- submit depository do createCmd stockAssetDeposit
 
   -- -- Issuance
-  -- let
-  --   allocatedCode = "XS1500887022"
-  --   label = "ISS-BMWG.DE-CALL-50.0-20210321"
-  --   underlying = Id with signatories = fromList [ depository ]; label = bmw; version = 0
-  --   optionType = CALL
-  --   strike = 50.0
-  --   exerciseType = EUROPEAN
-  --   expiry = date 2021 Mar 21
-  --   contractSize = 100.0
-  --   terms = WarrantTerms with ..
-  --   issueSize = 10000000.0
-  --   minimumDenomination = 1000.0
-  --   issuanceData = WarrantIssuanceData with ..
-  -- issuanceRequestCid <- submit issuer do exerciseCmd issuerCid RequestWarrantIssuance with ..
-  -- admissionCheckRequestCid <- submit agent do exerciseCmd agentCid RequestAdmissionCheck with ..
-  -- let admissionCheck = AdmissionCheck with parties = True; product = True; legalDocs = True
-  -- admissionCheckResponseCid <- submit depository do exerciseCmd depositoryCid HandleAdmissionCheck with ..
-  -- codeAllocationRequestCid <- submit agent do exerciseCmd agentCid RequestCodeAllocation with ..
-  -- codeAllocationResponseCid <- submit depository do exerciseCmd depositoryCid HandleCodeAllocation with ..
-  -- globalNotesRequestCid <- submit agent do exerciseCmd agentCid RequestGlobalNotes with ..
-  -- let success = True
-  -- globalNotesResponseCid <- submit depository do exerciseCmd depositoryCid HandleGlobalNotes with ..
-  -- (warrant, depositInstructionCid) <- submit depository do exerciseCmd depositoryCid HandleDepositInstruction with ..
-  -- issuanceDepositCid <- submit depository do exerciseCmd depositoryCid HandleIssuanceRequest with ..
+
+  let
+    issueWarrant allocatedCode optionType strike exerciseType expiry issueSize step =
+      let
+        et = substring 0 1 $ show exerciseType
+        label = "ISS-BMWG.DE-" <> show optionType <> "-" <> show strike <> "-" <> et <> "-" <> show expiry
+        underlying = Id with signatories = fromList [ depository ]; label = bmw; version = 0
+        contractSize = 100.0
+        terms = WarrantTerms with ..
+        minimumDenomination = 1000.0
+        issuanceData = WarrantIssuanceData with ..
+      in do
+        issuanceRequestCid <- submit issuer do exerciseCmd issuerCid RequestWarrantIssuance with ..
+        if step > 0 then do
+          admissionCheckRequestCid <- submit agent do exerciseCmd agentCid RequestAdmissionCheck with ..
+          let admissionCheck = AdmissionCheck with parties = True; product = True; legalDocs = True
+          admissionCheckResponseCid <- submit depository do exerciseCmd depositoryCid HandleAdmissionCheck with ..
+          if step > 1 then do
+            codeAllocationRequestCid <- submit agent do exerciseCmd agentCid RequestCodeAllocation with ..
+            codeAllocationResponseCid <- submit depository do exerciseCmd depositoryCid HandleCodeAllocation with ..
+            if step > 2 then do
+              globalNotesRequestCid <- submit agent do exerciseCmd agentCid RequestGlobalNotes with ..
+              globalNotesResponseCid <- submit depository do exerciseCmd depositoryCid HandleGlobalNotes with success = True; ..
+              if step > 3 then do
+                (warrant, depositInstructionCid) <- submit depository do exerciseCmd depositoryCid HandleDepositInstruction with ..
+                submit depository do exerciseCmd depositoryCid HandleIssuanceRequest with ..
+                pure ()
+              else
+                pure ()
+            else
+              pure ()
+          else
+            pure ()
+        else
+          pure ()
+  -- issueWarrant "XS1500887020" CALL 53.0 EUROPEAN (date 2021 Mar 21) 7000000.0 1
+  -- issueWarrant "XS1500887021" PUT 62.0 AMERICAN (date 2023 Mar 21) 5000000.0 3
+  -- issueWarrant "XS1500887022" PUT 52.0 EUROPEAN (date 2022 Mar 21) 8000000.0 2
+  -- issueWarrant "XS1500887023" CALL 54.0 AMERICAN (date 2021 Mar 21) 12000000.0 3
+  -- issueWarrant "XS1500887024" CALL 49.0 EUROPEAN (date 2024 Mar 21) 4000000.0 4
 
   -- -- Distribution
   -- let

@@ -12,10 +12,11 @@ import Apps from "@material-ui/icons/Apps";
 import PlayArrow from "@material-ui/icons/PlayArrow";
 import FastRewind from "@material-ui/icons/FastRewind";
 import { useParty, useQuery } from "@daml/react";
-import { Agent, Depository, Issuer } from "@daml.js/asset-servicing-0.0.1/lib/Roles";
+import { Agent, Depository, Issuer } from "@daml.js/dsp-0.0.1/lib/Roles";
 import useStyles from "./styles";
 import headerLogo from "../../images/headerLogo.png";
 import { useUserDispatch, signOut } from "../../context/UserContext";
+import { getName } from "../../config";
 
 interface HeaderProps {
   app : string
@@ -64,7 +65,7 @@ function Header({ history, app, isInitialized, setup, teardown } : RouteComponen
         <div className={classes.grow} />
         <Box className={classes.userBox} style={{ width: "120px" }}>
           <Grid container direction="column" alignItems="center">
-            <Grid item xs={12}><Typography variant="caption">{party}</Typography></Grid>
+            <Grid item xs={12}><Typography variant="caption">{getName(party)}</Typography></Grid>
             <Grid item xs={12}><Typography variant="caption">({role})</Typography></Grid>
           </Grid>
         </Box>

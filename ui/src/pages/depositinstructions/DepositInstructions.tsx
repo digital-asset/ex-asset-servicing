@@ -3,9 +3,10 @@ import { useLedger, useParty, useQuery, useStreamQueries } from "@daml/react";
 import { Table, TableBody, TableCell, TableRow, TableHead, Button } from "@material-ui/core";
 import { withRouter, RouteComponentProps } from "react-router-dom";
 import useStyles from "../styles";
-import { DepositInstruction, WarrantIssuanceRequest } from "@daml.js/asset-servicing-0.0.1/lib/DA/Finance/Issuance/Issuance";
+import { DepositInstruction, WarrantIssuanceRequest } from "@daml.js/dsp-0.0.1/lib/DA/Finance/Issuance/Issuance";
 import { ContractId } from "@daml/types";
-import { Depository } from "@daml.js/asset-servicing-0.0.1/lib/Roles";
+import { Depository } from "@daml.js/dsp-0.0.1/lib/Roles";
+import { getName } from "../../config";
 
 const DepositInstructions : React.FC<RouteComponentProps> = ({ history } : RouteComponentProps) => {
   const classes = useStyles();
@@ -36,7 +37,7 @@ const DepositInstructions : React.FC<RouteComponentProps> = ({ history } : Route
       <TableBody>
         {entries.map((e, i) => (
           <TableRow key={i} className={classes.tableRow}>
-            <TableCell key={0} className={classes.tableCell}>{e.payload.issuer}</TableCell>
+            <TableCell key={0} className={classes.tableCell}>{getName(e.payload.issuer)}</TableCell>
             <TableCell key={1} className={classes.tableCell}>{e.payload.issuanceData.label}</TableCell>
             <TableCell key={2} className={classes.tableCell}>{e.payload.asset.id.label}</TableCell>
             <TableCell key={3} className={classes.tableCell}>{e.payload.asset.quantity}</TableCell>

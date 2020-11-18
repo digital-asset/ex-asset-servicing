@@ -11,8 +11,8 @@ import Chip from "@material-ui/core/Chip";
 import Forward from "@material-ui/icons/Forward";
 import { CreateEvent } from "@daml/ledger";
 import { useLedger } from "@daml/react";
-import { AssetDeposit } from "@daml.js/asset-servicing-0.0.1/lib/DA/Finance/Asset";
-import { LifecycleEffects, AssetLifecycleRule } from "@daml.js/asset-servicing-0.0.1/lib/DA/Finance/Asset/Lifecycle";
+import { AssetDeposit } from "@daml.js/dsp-0.0.1/lib/DA/Finance/Asset";
+import { LifecycleEffects, AssetLifecycleRule } from "@daml.js/dsp-0.0.1/lib/DA/Finance/Asset/Lifecycle";
 import { useUserState } from "../../context/UserContext";
 
 export type LifecycleDialogProps = {

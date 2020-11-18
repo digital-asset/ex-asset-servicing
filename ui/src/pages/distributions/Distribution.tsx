@@ -11,7 +11,8 @@ import TimelineContent from '@material-ui/lab/TimelineContent';
 import { useParams, RouteComponentProps } from "react-router-dom";
 import useStyles from "../styles";
 import { CheckCircle, Help, RadioButtonUnchecked } from "@material-ui/icons";
-import { DistributionRequest, SettlementInstruction, SubscriptionRequest, SubscriptionResponse } from "@daml.js/asset-servicing-0.0.1/lib/DA/Finance/Distribution/Distribution";
+import { DistributionRequest, SettlementInstruction, SubscriptionRequest, SubscriptionResponse } from "@daml.js/dsp-0.0.1/lib/DA/Finance/Distribution/Distribution";
+import { getName } from "../../config";
 
 const Distribution : React.FC<RouteComponentProps> = ({ history }) => {
   const classes = useStyles();
@@ -88,11 +89,11 @@ const Distribution : React.FC<RouteComponentProps> = ({ history }) => {
                 </TableRow>
                 <TableRow key={1} className={classes.tableRow}>
                   <TableCell key={0} className={classes.tableCellSmall}><b>Issuer</b></TableCell>
-                  <TableCell key={1} className={classes.tableCellSmall}>{dr.payload.issuer}</TableCell>
+                  <TableCell key={1} className={classes.tableCellSmall}>{getName(dr.payload.issuer)}</TableCell>
                 </TableRow>
                 <TableRow key={2} className={classes.tableRow}>
                   <TableCell key={0} className={classes.tableCellSmall}><b>Distribution Agent</b></TableCell>
-                  <TableCell key={1} className={classes.tableCellSmall}>{dr.payload.agent}</TableCell>
+                  <TableCell key={1} className={classes.tableCellSmall}>{getName(dr.payload.agent)}</TableCell>
                 </TableRow>
                 <TableRow key={3} className={classes.tableRow}>
                   <TableCell key={0} className={classes.tableCellSmall}><b>Instrument</b></TableCell>
@@ -137,7 +138,7 @@ const Distribution : React.FC<RouteComponentProps> = ({ history }) => {
               </TableHead>
               <TableBody>
                 {requested.map(e => <TableRow key={0} className={classes.tableRow}>
-                  <TableCell key={0} className={classes.tableCellSmall} align="center">{e.payload.investor}</TableCell>
+                  <TableCell key={0} className={classes.tableCellSmall} align="center">{getName(e.payload.investor)}</TableCell>
                   <TableCell key={1} className={classes.tableCellSmall} align="right">{e.payload.price.quantity}</TableCell>
                   <TableCell key={2} className={classes.tableCellSmall} align="center">{e.payload.price.id.label}</TableCell>
                 </TableRow>)}
@@ -173,7 +174,7 @@ const Distribution : React.FC<RouteComponentProps> = ({ history }) => {
               </TableHead>
               <TableBody>
                 {received.map(e => <TableRow key={0} className={classes.tableRow}>
-                  <TableCell key={0} className={classes.tableCellSmall} align="center">{e.payload.investor}</TableCell>
+                  <TableCell key={0} className={classes.tableCellSmall} align="center">{getName(e.payload.investor)}</TableCell>
                   <TableCell key={1} className={classes.tableCellSmall} align="right">{e.payload.quantity}</TableCell>
                   <TableCell key={2} className={classes.tableCellSmall} align="right">{e.payload.price.quantity}</TableCell>
                   <TableCell key={3} className={classes.tableCellSmall} align="center">{e.payload.price.id.label}</TableCell>
@@ -210,8 +211,8 @@ const Distribution : React.FC<RouteComponentProps> = ({ history }) => {
               </TableHead>
               <TableBody>
                 {instructed.concat(settled).map(e => <TableRow key={0} className={classes.tableRow}>
-                  <TableCell key={0} className={classes.tableCellMini} align="center">{e.payload.fromDeposit.account.owner}</TableCell>
-                  <TableCell key={1} className={classes.tableCellMini} align="center">{e.payload.toAccount.owner}</TableCell>
+                  <TableCell key={0} className={classes.tableCellMini} align="center">{getName(e.payload.fromDeposit.account.owner)}</TableCell>
+                  <TableCell key={1} className={classes.tableCellMini} align="center">{getName(e.payload.toAccount.owner)}</TableCell>
                   <TableCell key={2} className={classes.tableCellMini} align="right">{e.payload.fromDeposit.asset.quantity}</TableCell>
                   <TableCell key={3} className={classes.tableCellMini} align="center">{e.payload.fromDeposit.asset.id.label}</TableCell>
                   <TableCell key={4} className={classes.tableCellMini} align="center">{e.payload.settled.toString()}</TableCell>

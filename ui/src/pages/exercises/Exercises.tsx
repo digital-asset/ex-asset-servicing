@@ -1,14 +1,15 @@
 import React from "react";
 import { useLedger, useParty, useStreamQueries } from "@daml/react";
-import { AssetDeposit } from "@daml.js/asset-servicing-0.0.1/lib/DA/Finance/Asset";
+import { AssetDeposit } from "@daml.js/dsp-0.0.1/lib/DA/Finance/Asset";
 import { Table, TableHead, TableRow, TableCell, TableBody, Button, IconButton, Chip } from "@material-ui/core";
 import useStyles from "../styles";
-import { Warrant } from "@daml.js/asset-servicing-0.0.1/lib/DA/Finance/Issuance/Issuance";
+import { Warrant } from "@daml.js/dsp-0.0.1/lib/DA/Finance/Issuance/Issuance";
 import { ContractId } from "@daml/types";
-import { WarrantExerciseRequest, WarrantExerciseRule } from "@daml.js/asset-servicing-0.0.1/lib/DA/Finance/Custody/Custody/module";
-import { SettlementInstruction } from "@daml.js/asset-servicing-0.0.1/lib/DA/Finance/Distribution/Distribution";
+import { WarrantExerciseRequest, WarrantExerciseRule } from "@daml.js/dsp-0.0.1/lib/DA/Finance/Custody/Custody/module";
+import { SettlementInstruction } from "@daml.js/dsp-0.0.1/lib/DA/Finance/Distribution/Distribution";
 import { CheckCircle, Help, KeyboardArrowRight, RadioButtonUnchecked, TrendingFlat } from "@material-ui/icons";
 import { RouteComponentProps, withRouter } from "react-router-dom";
+import { getName } from "../../config";
 
 const Exercises : React.FC<RouteComponentProps> = ({ history } : RouteComponentProps) => {
   const classes = useStyles();
@@ -65,7 +66,7 @@ const Exercises : React.FC<RouteComponentProps> = ({ history } : RouteComponentP
         <TableBody>
           {entries.map((e, i) => (
             <TableRow key={i} className={classes.tableRow}>
-              <TableCell key={0} className={classes.tableCell} align="center">{e.warrant.payload.issuer}</TableCell>
+              <TableCell key={0} className={classes.tableCell} align="center">{getName(e.warrant.payload.issuer)}</TableCell>
               <TableCell key={1} className={classes.tableCell} align="center">{e.warrant.payload.id.label}</TableCell>
               <TableCell key={2} className={classes.tableCell} align="center">{e.requests.length}</TableCell>
               <TableCell key={3} className={classes.tableCell} align="center">{e.totalQuantity}</TableCell>

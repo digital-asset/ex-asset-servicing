@@ -6,14 +6,14 @@ import { tokens } from "./tokens";
 export const isLocalDev = process.env.NODE_ENV === 'development';
 
 const host = window.location.host.split('.');
-const ledgerId = isLocalDev ? "asset-servicing" : host[0];
+const ledgerId = isLocalDev ? "dsp" : host[0];
 const apiUrl = host.slice(1);
 apiUrl.unshift('api');
 
 export const httpBaseUrl = isLocalDev ? undefined : ('https://' + apiUrl.join('.') + (window.location.port ? ':' + window.location.port : '') + '/data/' + ledgerId + '/');
 export const wsBaseUrl = isLocalDev ? 'ws://localhost:7575/' : undefined;
 
-const applicationId = "asset-servicing";
+const applicationId = "dsp";
 const createToken = (party : string) => jwt.sign({ "https://daml.com/ledger-api": { ledgerId, applicationId, admin: true, actAs: [party], readAs: [party] } }, "secret");
 
 let loginUrl = host.slice(1)
@@ -31,5 +31,3 @@ export function getName(party : string) {
 export function getToken(party : string) {
   return isLocalDev ? createToken(party) : (tokens.get(party) || "");
 }
-
-export const underlyings = [ "DAIGn.DE", "DBKGn.DE", "DB1Gn.DE", "DTEGn.DE", "SIEGn.DE", "VOWG_p.DE" ];
