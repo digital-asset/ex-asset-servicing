@@ -1,7 +1,6 @@
-daml 1.2
 module DA.Finance.Instrument.Equity.ACBRC where
 
-import DA.Next.Set
+import DA.Set
 import DA.Finance.Types
 
 template ACBRC

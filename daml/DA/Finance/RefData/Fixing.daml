@@ -1,6 +1,6 @@
 module DA.Finance.RefData.Fixing where
 
-import DA.Next.Set
+import DA.Set
 import DA.Finance.Types
 
 template Fixing

@@ -1,10 +1,9 @@
-daml 1.2
 
 module Init where
 
 import Daml.Script
 import DA.Date as D
-import DA.Next.Set
+import DA.Set
 import DA.Foldable
 import DA.Finance.Asset
 import DA.Finance.Asset.Lifecycle
