@@ -1,14 +1,13 @@
 -- Copyright (c) 2019, Digital Asset (Switzerland) GmbH and/or its affiliates. All rights reserved.
 -- SPDX-License-Identifier: Apache-2.0
 
-daml 1.2
 module DA.Finance.Trade.Dvp
   ( module DA.Finance.Trade.Dvp
   , module DA.Finance.Trade.Types
   )
   where
 
-import DA.Next.Set hiding (null)
+import DA.Set hiding (null)
 
 import DA.Finance.Trade.Types
 import DA.Finance.Types
