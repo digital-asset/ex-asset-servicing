@@ -4,7 +4,7 @@ import { isLocalDev, getParty } from "../config";
 import Ledger from "@daml/ledger";
 import { Party } from "@daml/types";
 import { InitDone } from "@daml.js/asset-servicing-0.0.1/lib/Init";
-import { getAccount, getAsset, empty } from "./Util";
+import { getAccount, getAsset, emptySet } from "./Util";
 
 export const setup = async (ledger : Ledger, bank : Party) => {
   const csd = isLocalDev ? "CSD" : getParty("CSD");
@@ -39,16 +39,16 @@ export const setup = async (ledger : Ledger, bank : Party) => {
 
   // 2> Deposits
   console.log("Creating asset deposits");
-  await ledger.create(AssetDeposit, { account: c1Acc, asset: acbrc, observers: empty });
-  await ledger.create(AssetDeposit, { account: c1Acc, asset: bond, observers: empty });
-  await ledger.create(AssetDeposit, { account: c1Acc, asset: csgn1, observers: empty });
-  await ledger.create(AssetDeposit, { account: c2Acc, asset: csgnCall, observers: empty });
-  await ledger.create(AssetDeposit, { account: c2Acc, asset: ubsg, observers: empty });
-  await ledger.create(AssetDeposit, { account: c2Acc, asset: ubsgPut, observers: empty });
-  await ledger.create(AssetDeposit, { account: c3Acc, asset: chf, observers: empty });
-  await ledger.create(AssetDeposit, { account: c3Acc, asset: csgn2, observers: empty });
-  await ledger.create(AssetDeposit, { account: c4Acc, asset: usd, observers: empty });
-  await ledger.create(AssetDeposit, { account: c4Acc, asset: eur, observers: empty });
+  await ledger.create(AssetDeposit, { account: c1Acc, asset: acbrc, observers: emptySet<string>() });
+  await ledger.create(AssetDeposit, { account: c1Acc, asset: bond, observers: emptySet<string>() });
+  await ledger.create(AssetDeposit, { account: c1Acc, asset: csgn1, observers: emptySet<string>() });
+  await ledger.create(AssetDeposit, { account: c2Acc, asset: csgnCall, observers: emptySet<string>() });
+  await ledger.create(AssetDeposit, { account: c2Acc, asset: ubsg, observers: emptySet<string>() });
+  await ledger.create(AssetDeposit, { account: c2Acc, asset: ubsgPut, observers: emptySet<string>() });
+  await ledger.create(AssetDeposit, { account: c3Acc, asset: chf, observers: emptySet<string>() });
+  await ledger.create(AssetDeposit, { account: c3Acc, asset: csgn2, observers: emptySet<string>() });
+  await ledger.create(AssetDeposit, { account: c4Acc, asset: usd, observers: emptySet<string>() });
+  await ledger.create(AssetDeposit, { account: c4Acc, asset: eur, observers: emptySet<string>() });
 
   // 3> Init Done
   console.log("Creating init done");

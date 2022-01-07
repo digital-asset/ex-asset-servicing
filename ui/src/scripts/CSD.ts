@@ -16,7 +16,7 @@ import { isLocalDev, getParty } from "../config";
 import Ledger from "@daml/ledger";
 import { Party } from "@daml/types";
 import { InitDone } from "@daml.js/asset-servicing-0.0.1/lib/Init";
-import { getAsset, getAccount, getOptionEuropeanCash, getId } from "./Util";
+import { getAsset, getAccount, getOptionEuropeanCash, getId, toSet, emptySet } from "./Util";
 
 export const setup = async (ledger : Ledger, csd : Party) => {
   const bank = isLocalDev ? "BANK" : getParty("BANK");
@@ -48,41 +48,42 @@ export const setup = async (ledger : Ledger, csd : Party) => {
 
   // 2> Create Asset Categories
   console.log("Creating asset categories");
+  const observerSet = toSet(bank, c1, c2, c3, c4);
   await Promise.all([
-    ledger.create(AssetCategorization, { id: usdId, assetType: "Currency", assetClass: "FX", observers: { textMap: { [bank]: {}, [c1]: {}, [c2]: {}, [c3]: {}, [c4]: {} } } }),
-    ledger.create(AssetCategorization, { id: eurId, assetType: "Currency", assetClass: "FX", observers: { textMap: { [bank]: {}, [c1]: {}, [c2]: {}, [c3]: {}, [c4]: {} } } }),
-    ledger.create(AssetCategorization, { id: chfId, assetType: "Currency", assetClass: "FX", observers: { textMap: { [bank]: {}, [c1]: {}, [c2]: {}, [c3]: {}, [c4]: {} } } }),
-    ledger.create(AssetCategorization, { id: csgnId, assetType: "Stock", assetClass: "Equity", observers: { textMap: { [bank]: {}, [c1]: {}, [c2]: {}, [c3]: {}, [c4]: {} } } }),
-    ledger.create(AssetCategorization, { id: ubsgId, assetType: "Stock", assetClass: "Equity", observers: { textMap: { [bank]: {}, [c1]: {}, [c2]: {}, [c3]: {}, [c4]: {} } } }),
-    ledger.create(AssetCategorization, { id: csgnCallId, assetType: "Option", assetClass: "Equity", observers: { textMap: { [bank]: {}, [c1]: {}, [c2]: {}, [c3]: {}, [c4]: {} } } }),
-    ledger.create(AssetCategorization, { id: ubsgPutId, assetType: "Option", assetClass: "Equity", observers: { textMap: { [bank]: {}, [c1]: {}, [c2]: {}, [c3]: {}, [c4]: {} } } }),
-    ledger.create(AssetCategorization, { id: acbrcId, assetType: "Exotic", assetClass: "Equity", observers: { textMap: { [bank]: {}, [c1]: {}, [c2]: {}, [c3]: {}, [c4]: {} } } }),
-    ledger.create(AssetCategorization, { id: bondId, assetType: "Bond", assetClass: "FixedIncome", observers: { textMap: { [bank]: {}, [c1]: {}, [c2]: {}, [c3]: {}, [c4]: {} } } }),
+    ledger.create(AssetCategorization, { id: usdId, assetType: "Currency", assetClass: "FX", observers: observerSet}),
+    ledger.create(AssetCategorization, { id: eurId, assetType: "Currency", assetClass: "FX", observers: observerSet}),
+    ledger.create(AssetCategorization, { id: chfId, assetType: "Currency", assetClass: "FX", observers: observerSet}),
+    ledger.create(AssetCategorization, { id: csgnId, assetType: "Stock", assetClass: "Equity", observers: observerSet}),
+    ledger.create(AssetCategorization, { id: ubsgId, assetType: "Stock", assetClass: "Equity", observers: observerSet}),
+    ledger.create(AssetCategorization, { id: csgnCallId, assetType: "Option", assetClass: "Equity", observers: observerSet}),
+    ledger.create(AssetCategorization, { id: ubsgPutId, assetType: "Option", assetClass: "Equity", observers: observerSet}),
+    ledger.create(AssetCategorization, { id: acbrcId, assetType: "Exotic", assetClass: "Equity", observers: observerSet}),
+    ledger.create(AssetCategorization, { id: bondId, assetType: "Bond", assetClass: "FixedIncome", observers: observerSet}),
   ]);
 
   // 3> Deposits
   console.log("Creating asset deposits");
-  await ledger.create(AssetDeposit, { account: fixAcc, asset: usd, observers: { textMap: {} } });
-  await ledger.create(AssetDeposit, { account: fixAcc, asset: eur, observers: { textMap: {} } });
-  await ledger.create(AssetDeposit, { account: fixAcc, asset: chf, observers: { textMap: {} } });
-  await ledger.create(AssetDeposit, { account: stkAcc, asset: csgn, observers: { textMap: {} } });
-  await ledger.create(AssetDeposit, { account: stkAcc, asset: ubsg, observers: { textMap: {} } });
-  await ledger.create(AssetDeposit, { account: drvAcc, asset: csgnCall, observers: { textMap: {} } });
-  await ledger.create(AssetDeposit, { account: drvAcc, asset: ubsgPut, observers: { textMap: {} } });
-  await ledger.create(AssetDeposit, { account: drvAcc, asset: acbrc, observers: { textMap: {} } });
-  await ledger.create(AssetDeposit, { account: fixAcc, asset: bond, observers: { textMap: {} } });
+  await ledger.create(AssetDeposit, { account: fixAcc, asset: usd, observers: emptySet<string>()});
+  await ledger.create(AssetDeposit, { account: fixAcc, asset: eur, observers: emptySet<string>()});
+  await ledger.create(AssetDeposit, { account: fixAcc, asset: chf, observers: emptySet<string>()});
+  await ledger.create(AssetDeposit, { account: stkAcc, asset: csgn, observers: emptySet<string>()});
+  await ledger.create(AssetDeposit, { account: stkAcc, asset: ubsg, observers: emptySet<string>()});
+  await ledger.create(AssetDeposit, { account: drvAcc, asset: csgnCall, observers: emptySet<string>()});
+  await ledger.create(AssetDeposit, { account: drvAcc, asset: ubsgPut, observers: emptySet<string>()});
+  await ledger.create(AssetDeposit, { account: drvAcc, asset: acbrc, observers: emptySet<string>()});
+  await ledger.create(AssetDeposit, { account: fixAcc, asset: bond, observers: emptySet<string>()});
 
   // 4> Instruments
   console.log("Creating instruments");
   await Promise.all([
-    ledger.create(Currency, { id: usdId, isoCode: "USD", observers: { textMap: { [bank]: {} } } }),
-    ledger.create(Currency, { id: eurId, isoCode: "EUR", observers: { textMap: { [bank]: {} } } }),
-    ledger.create(Currency, { id: chfId, isoCode: "CHF", observers: { textMap: { [bank]: {} } } })
+    ledger.create(Currency, { id: usdId, isoCode: "USD", observers: toSet(bank)}),
+    ledger.create(Currency, { id: eurId, isoCode: "EUR", observers: toSet(bank)}),
+    ledger.create(Currency, { id: chfId, isoCode: "CHF", observers: toSet(bank)})
   ]);
 
   await Promise.all([
-    ledger.create(EquityStock, { id: csgnId, ccy: chfId, observers: { textMap: { [bank]: {} } } }),
-    ledger.create(EquityStock, { id: ubsgId, ccy: chfId, observers: { textMap: { [bank]: {} } } })
+    ledger.create(EquityStock, { id: csgnId, ccy: chfId, observers: toSet(bank)}),
+    ledger.create(EquityStock, { id: ubsgId, ccy: chfId, observers: toSet(bank)})
   ]);
 
   await Promise.all([
@@ -102,30 +103,30 @@ export const setup = async (ledger : Ledger, csd : Party) => {
     ledger.create(EquityOption, getOptionEuropeanCash(getId(csd, "UBSG-PUT-Jan20"), ubsgId, OptionType.PUT, "10.0", "100.0", "2020-01-21", bank))
   ]);
 
-  await ledger.create(ACBRC, { id: acbrcId, underlyingId: ubsgId, currencyId: chfId, knockInBarrier: "0.8", knockInBarrierHit: false, callBarrier: "1.0", callBarrierHit: false, fixingDates: ["2019-06-15", "2019-09-15", "2019-12-15", "2020-03-15"], fixingIdx: "1", coupon: "0.05", initialFixing: "10.0", observers: { textMap: { [bank]: {} } } });
-  await ledger.create(Bond, { id: bondId, currencyId: chfId, couponDates: ["2018-01-12", "2019-01-12", "2020-01-12"], couponIdx: "1", coupon: "0.025", observers: { textMap: { [bank]: {} } } });
+  await ledger.create(ACBRC, { id: acbrcId, underlyingId: ubsgId, currencyId: chfId, knockInBarrier: "0.8", knockInBarrierHit: false, callBarrier: "1.0", callBarrierHit: false, fixingDates: ["2019-06-15", "2019-09-15", "2019-12-15", "2020-03-15"], fixingIdx: "1", coupon: "0.05", initialFixing: "10.0", observers: toSet(bank)});
+  await ledger.create(Bond, { id: bondId, currencyId: chfId, couponDates: ["2018-01-12", "2019-01-12", "2020-01-12"], couponIdx: "1", coupon: "0.025", observers: toSet(bank) });
 
   // 5> Events
   console.log("Creating events");
-  await ledger.create(EquityCashDividend, { id: csgnId, exDate: "2019-05-03", settlementDate: "2019-05-05", perShare: "0.26", observers: { textMap: { [bank]: {} } } });
-  await ledger.create(EquityStockSplit, { id: ubsgId, exDate: "2019-08-15", rFactor: "0.5", observers: { textMap: { [bank]: {} } } });
+  await ledger.create(EquityCashDividend, { id: csgnId, exDate: "2019-05-03", settlementDate: "2019-05-05", perShare: "0.26", observers: toSet(bank) });
+  await ledger.create(EquityStockSplit, { id: ubsgId, exDate: "2019-08-15", rFactor: "0.5", observers: toSet(bank)});
   await Promise.all([
-    ledger.create(Fixing, { id: ubsgId, currency: chfId, date: "2019-06-15", value: "9.0", observers: { textMap: { [bank]: {} } } }),
-    ledger.create(Fixing, { id: ubsgId, currency: chfId, date: "2019-09-15", value: "7.6", observers: { textMap: { [bank]: {} } } }),
-    ledger.create(Fixing, { id: ubsgId, currency: chfId, date: "2019-12-15", value: "10.4", observers: { textMap: { [bank]: {} } } }),
-    ledger.create(Fixing, { id: { signatories: { textMap: { [csd]: {} } }, label: "UBSG.S", version: "1" }, currency: chfId, date: "2019-06-15", value: "4.5", observers: { textMap: { [bank]: {} } } }),
-    ledger.create(Fixing, { id: { signatories: { textMap: { [csd]: {} } }, label: "UBSG.S", version: "1" }, currency: chfId, date: "2019-09-15", value: "3.8", observers: { textMap: { [bank]: {} } } }),
-    ledger.create(Fixing, { id: { signatories: { textMap: { [csd]: {} } }, label: "UBSG.S", version: "1" }, currency: chfId, date: "2019-12-15", value: "5.2", observers: { textMap: { [bank]: {} } } })
+    ledger.create(Fixing, { id: ubsgId, currency: chfId, date: "2019-06-15", value: "9.0", observers: toSet(bank) }),
+    ledger.create(Fixing, { id: ubsgId, currency: chfId, date: "2019-09-15", value: "7.6", observers: toSet(bank) }),
+    ledger.create(Fixing, { id: ubsgId, currency: chfId, date: "2019-12-15", value: "10.4", observers: toSet(bank) }),
+    ledger.create(Fixing, { id: { signatories: toSet(csd), label: "UBSG.S", version: "1" }, currency: chfId, date: "2019-06-15", value: "4.5", observers: toSet(bank) }),
+    ledger.create(Fixing, { id: { signatories: toSet(csd), label: "UBSG.S", version: "1" }, currency: chfId, date: "2019-09-15", value: "3.8", observers: toSet(bank) }),
+    ledger.create(Fixing, { id: { signatories: toSet(csd), label: "UBSG.S", version: "1" }, currency: chfId, date: "2019-12-15", value: "5.2", observers: toSet(bank) })
   ]);
 
   // 6> Lifecycle Rules
   console.log("Creating lifecycle rules");
-  await ledger.create(EquityStockSplitRule, { signatories: { textMap: { [csd]: {} } } });
-  await ledger.create(EquityOptionStockSplitRule, { signatories: { textMap: { [csd]: {} } } });
-  await ledger.create(ACBRCStockSplitRule, { signatories: { textMap: { [csd]: {} } } });
-  await ledger.create(EquityStockCashDividendRule, { signatories: { textMap: { [csd]: {} } } });
-  await ledger.create(ACBRCFixingRule, { signatories: { textMap: { [csd]: {} } } });
-  await ledger.create(BondCouponRule, { signatories: { textMap: { [csd]: {} } } });
+  await ledger.create(EquityStockSplitRule, { signatories: toSet(csd) });
+  await ledger.create(EquityOptionStockSplitRule, { signatories: toSet(csd) });
+  await ledger.create(ACBRCStockSplitRule, { signatories: toSet(csd) });
+  await ledger.create(EquityStockCashDividendRule, { signatories: toSet(csd) });
+  await ledger.create(ACBRCFixingRule, { signatories: toSet(csd) });
+  await ledger.create(BondCouponRule, { signatories: toSet(csd) });
 
   // 7> Init Done
   console.log("Creating init done");
